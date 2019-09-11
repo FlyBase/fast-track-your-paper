@@ -1,0 +1,16 @@
+version: "3.5"
+services:
+  db:
+    image: postgres:10-alpine
+    restart: always
+    volumes:
+      - ftyp-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  ftyp-data: {}
