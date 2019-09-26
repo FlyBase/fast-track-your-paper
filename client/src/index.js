@@ -12,10 +12,15 @@ import './index.css'
 import App from 'components/App'
 
 Sentry.init({
-  dsn: 'https://404718b179a3430d9afe12bad7b4321d@sentry.io/1462359',
+  dsn: process.env.REACT_APP_SENTRY_DSN,
   environment: process.env.NODE_ENV,
 })
 
+
+if (process.env.NODE_ENV !== 'production') {
+  const axe = require('react-axe')
+  axe(React, ReactDOM, 1000)
+}
 ReactDOM.render(<App />, document.getElementById('root'))
 
 // If you want your app to work offline and load faster, you can change

@@ -7,20 +7,19 @@
     "@xstate/react": "^0.7.1",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
-    "react-app-polyfill": "^1.0.2",
+    "react-app-polyfill": "^1.0.3",
     "react-dom": "^16.9.0",
-    "react-scripts": "3.1.1",
+    "react-scripts": "^3.1.2",
     "xstate": "^4.6.7"
   },
   "scripts": {
     "prestart": "npm run format",
-    "start": "react-scripts start",
-    "prebuild": "npm run format && npm run eslint",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "prebuild": "npm run format",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject",
     "format": "prettier --write 'src/**/*.{js,gql}'",
-    "eslint": "eslint --ignore-pattern serviceWorker.js src/**/*.{js,jsx}"
   },
   "browserslist": {
     "production": [
@@ -34,18 +33,13 @@
       "last 1 safari version"
     ]
   },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
   "devDependencies": {
+    "@craco/craco": "^5.5.0",
+    "@testing-library/jest-dom": "^4.1.0",
     "@testing-library/react": "^9.1.4",
-    "eslint": "^6.3.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-config-prettier": "^6.3.0",
-    "eslint-config-react-app": "^5.0.1",
-    "eslint-plugin-flowtype": "^4.3.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.14.3",
-    "eslint-plugin-react-hooks": "^2.0.1",
-    "jest-dom": "^4.0.0",
     "prettier": "^1.18.2",
     "react-axe": "^3.3.0"
   },
