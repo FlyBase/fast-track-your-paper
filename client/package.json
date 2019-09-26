@@ -14,12 +14,12 @@
   },
   "scripts": {
     "prestart": "npm run format",
-    "start": "craco start",
+    "start": "react-scripts start",
     "prebuild": "npm run format",
-    "build": "craco build",
-    "test": "craco test",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "prettier --write 'src/**/*.{js,gql}'",
+    "format": "prettier --write 'src/**/*.{js,gql}'"
   },
   "browserslist": {
     "production": [
@@ -37,7 +37,6 @@
     "extends": "react-app"
   },
   "devDependencies": {
-    "@craco/craco": "^5.5.0",
     "@testing-library/jest-dom": "^4.1.0",
     "@testing-library/react": "^9.1.4",
     "prettier": "^1.18.2",
