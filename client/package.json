@@ -5,11 +5,14 @@
   "dependencies": {
     "@sentry/browser": "^5.6.3",
     "@xstate/react": "^0.7.1",
+    "antd": "^3.23.4",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-app-polyfill": "^1.0.3",
     "react-dom": "^16.9.0",
+    "react-router-dom": "^5.1.0",
     "react-scripts": "^3.1.2",
+    "styled-components": "^4.4.0",
     "xstate": "^4.6.7"
   },
   "scripts": {

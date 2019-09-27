@@ -9,7 +9,6 @@
       name="description"
       content="Web site created using create-react-app"
     />
-    <link rel="apple-touch-icon" href="logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -37,15 +36,32 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
             integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+    <style>
+      header, footer {
+        background-color: #CCCCCC;
+        height: 7em;
+      }
+      main {
+        display: flex;
+        justify-content: center;
+        height: 70vh;
+      }
+
+    </style>
     <title>FTYP</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <header>FlyBase header goes here</header>
+    <header class="container-fluid">
+      <h2>FlyBase header goes here</h2>
+    </header>
     <main class="container-fluid">
       <div id="root"></div>
     </main>
-    <footer> FlyBase footer goes here</footer>
+    <footer class="container-fluid">
+      <h3>FlyBase footer goes here</h3>
+    </footer>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

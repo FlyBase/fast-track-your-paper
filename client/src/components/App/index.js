@@ -1,27 +1,21 @@
 import React from 'react'
-import { useMachine } from '@xstate/react'
-import { Router } from '@reach/router'
-import { ftypSteps } from './stepMachine'
-import PubStep from 'components/PubStep'
-import AuthorStep from 'components/AuthorStep'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import StepContainer from 'components/StepContainer'
 
 function App() {
-  const [current, send] = useMachine(ftypSteps)
-  console.log(current)
   return (
     <div>
-      <h1>Fast Track Your Paper!</h1>
-      <h2>Current step is {current.value}</h2>
+      <h3>Fast Track Your Paper!</h3>
       <Router>
-        <PubStep path="pub" />
-        <AuthorStep path="author"/>
+        <Route exact path="/" component={StepContainer} />
+        <Route path="/:fbrf/:email" component={EmailSubmission} />
       </Router>
-      <nav>
-        <button onClick={() => send('PREV')}>Prev</button>
-        <button onClick={() => send('NEXT')}>Next</button>
-      </nav>
     </div>
   )
 }
+
+const EmailSubmission = () => (
+  <div>This is where the email link handling will go</div>
+)
 
 export default App

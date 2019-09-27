@@ -1,12 +1,20 @@
 import { Machine } from 'xstate'
 //const { assign } = actions
 
-export const ftypSteps = Machine({
+export const ftypSteps = Machine(
+  {
     id: 'ftypsteps',
     initial: 'pub',
     context: {
-      submission: {},
-      hasPublication: false,
+      publication: null,
+      citation: null,
+      submitter: {
+        name: null,
+        email: null,
+        isAuthor: false,
+      },
+      flags: {},
+      genes: {},
     },
     states: {
       pub: {
@@ -14,6 +22,7 @@ export const ftypSteps = Machine({
           NEXT: {
             target: 'author',
             cond: 'hasPublication',
+            actions: ['persist'],
           },
         },
       },
@@ -48,7 +57,13 @@ export const ftypSteps = Machine({
   },
   {
     guards: {
-      hasPublication: (context, event) => context.hasPublication
+      hasPublication: (context, event) => {
+        return (
+          event.hasPub ||
+          ((context.publication && context.publication.fbrf) ||
+            context.citation)
+        )
+      },
     },
-  },
+  }
 )
