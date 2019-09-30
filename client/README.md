@@ -1,3 +1,31 @@
+# Fast Track Your Paper
+
+## QuickStart
+
+```bash
+git clone https://github.com/FlyBase/fast-track-your-paper
+cd fast-track-your-paper
+```
+
+## Development Guidelines
+
+1. Install [git-flow](https://github.com/nvie/gitflow)
+2. Use [git-flow](https://nvie.com/posts/a-successful-git-branching-model/) conventions.
+3. Install / Use [yarn](https://yarnpkg.com/lang/en/)
+
+## Client
+
+The FTYP client was bootstrapped with Create React App (CRA).  To start developing you will need to install the dependencies and run `yarn run start`
+
+e.g.
+```bash
+cd fast-track-your-paper/client
+yarn install
+yarn run start
+```
+
+## Create React App Info
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

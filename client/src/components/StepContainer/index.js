@@ -9,7 +9,7 @@ import 'antd/dist/antd.css'
 import { ftypSteps } from './stepMachine'
 
 import PubStep from 'components/PubStep'
-import AuthorStep from 'components/ConfirmStep'
+import AuthorStep from 'components/AuthorStep'
 import FlagsStep from 'components/FlagsStep'
 import GenesStep from 'components/GenesStep'
 import ConfirmStep from 'components/ConfirmStep'
@@ -54,11 +54,12 @@ function StepContainer() {
         <Step title="Finished" />
       </Steps>
       <Divider />
-      <div css={`
-        display: flex;
-        flex-flow: column nowrap;
-        align-items: center;
-      `}>
+      <div
+        css={`
+          display: flex;
+          flex-flow: column nowrap;
+          align-items: center;
+        `}>
         {current.matches('pub') && <PubStep />}
         {current.matches('author') && <AuthorStep />}
         {current.matches('flags') && <FlagsStep />}
@@ -66,8 +67,14 @@ function StepContainer() {
         {current.matches('confirm') && <ConfirmStep />}
         {current.matches('submitted') && <SubmitStep />}
         <nav>
-          <button className="btn btn-primary" onClick={() => send('PREV')}>Prev</button>
-          <button className="btn btn-primary" onClick={() => send('NEXT', { hasPub: true })}>Next</button>
+          <button className="btn btn-primary" onClick={() => send('PREV')}>
+            Prev
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => send('NEXT', { hasPub: true })}>
+            Next
+          </button>
         </nav>
       </div>
     </div>
