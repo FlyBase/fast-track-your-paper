@@ -10,8 +10,17 @@ cd fast-track-your-paper
 ## Development Guidelines
 
 1. Install [git-flow](https://github.com/nvie/gitflow)
-2. Use [git-flow](https://nvie.com/posts/a-successful-git-branching-model/) conventions.
+2. Use git-flow conventions
+  * [Using git-flow to automate your git branching workflow](https://jeffkreeftmeijer.com/git-flow/)
+  * [Vincent Driessen's "git flow" branching model](https://nvie.com/posts/a-successful-git-branching-model/) 
 3. Install / Use [yarn](https://yarnpkg.com/lang/en/)
+
+## Directory layout
+
+* api     - GraphQL API server for PostgreSQL provided by Postgraphile 
+* db      - PostgreSQL docker container related files 
+* proxy   - nginx proxy server to map all HTTP ports behind a single source.
+* scripts - Misc scripts.
 
 ## Client
 
