@@ -1,0 +1,3 @@
+CREATE SCHEMA ftyp;
+CREATE SCHEMA chado;
+

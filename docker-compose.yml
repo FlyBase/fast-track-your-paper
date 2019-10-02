@@ -1,12 +1,28 @@
 version: "3.5"
 services:
+  # See https://hub.docker.com/_/postgres for details on using
+  # the postgres docker container.
   db:
     image: postgres:10-alpine
     restart: always
+    environment:
+      POSTGRES_DB: ftyp
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+
     volumes:
       - ftyp-data:/var/lib/postgresql/data
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
     networks:
       - backend
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    command: "serve -s build"
+    volumes:
+      - ./client:/home/node/app
+    networks:
+      - frontend
 
 networks:
   frontend:
