@@ -66,15 +66,21 @@ function StepContainer() {
         {current.matches('genes') && <GenesStep />}
         {current.matches('confirm') && <ConfirmStep />}
         {current.matches('submitted') && <SubmitStep />}
-        <nav>
-          <button className="btn btn-primary" onClick={() => send('PREV')}>
-            Prev
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => send('NEXT', { hasPub: true })}>
-            Next
-          </button>
+        <nav className="navbar">
+          <div className="container-fluid">
+            <button
+              type="button"
+              className="btn btn-primary navbar-btn"
+              onClick={() => send('PREV')}>
+              Prev
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary navbar-btn"
+              onClick={() => send('NEXT', { hasPub: true })}>
+              Next
+            </button>
+          </div>
         </nav>
       </div>
     </div>
