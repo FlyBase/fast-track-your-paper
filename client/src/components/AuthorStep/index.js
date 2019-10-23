@@ -1,6 +1,6 @@
 import React from 'react'
 import { ErrorMessage, Field, Formik } from 'formik'
-import { AuthorSchema} from './validation'
+import { AuthorSchema } from './validation'
 
 const AuthorStep = () => (
   <>
