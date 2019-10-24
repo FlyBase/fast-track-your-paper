@@ -1,5 +1,16 @@
 # FTYP Database Container
 
+## QuickStart
+
+```bash
+cd fast-track-your-paper
+docker-compose up -d 
+cd db
+PGHOST=<hostname> PGUSER=<username> PGPORT=<port> PGDATABASE=<dbname> ./scripts/pull_chado_data.sh
+cd ..
+docker-compose exec -u postgres db /ftyp/scripts/load_chado_data.sh
+```
+
 ## Docker container
 
 The FTYP database is provided by a docker container running PostgreSQL 10
@@ -41,8 +52,8 @@ directory.  Once the data has been pulled, you initiate a load into the DB servi
 container by this command.
 
 ```bash
-cd fast-track-your-paper/db
-
-
+cd fast-track-your-paper
+docker-compose up -d --build
+docker-compose exec -u postgres db /ftyp/scripts/load_chado_data.sh
 ```
 
