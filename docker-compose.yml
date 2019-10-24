@@ -1,5 +1,17 @@
 version: "3.5"
 services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: always
+    user: "node"
+    working_dir: /home/node/app
+    command: "yarn run start"
+    networks:
+      - frontend
+      - backend
+
   # See https://hub.docker.com/_/postgres for details on using
   # the postgres docker container.
   db:

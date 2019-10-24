@@ -9,4 +9,4 @@
 # PGPORT
 # PGUSER
 # PGDATABASE
-pg_dump -s -x -O -n public -T audit > initdb.d/01.production.chado.schema.sql
+pg_dump -s -x -O -c --if-exists -n public -T audit > initdb.d/01.production.chado.schema.sql

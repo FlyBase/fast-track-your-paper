@@ -17,17 +17,21 @@ JOBS=${PGJOBS:-3}
 # Pull data for select tables.
 # The directory format (-F d) allows us to use a multi-threaded dump
 # where -j n sets the number of threads/jobs used.
-pg_dump -x -O -n public \
-        -a cvterm \
-        -a db \
-        -a dbxref \
-        -a synonym \
-        -a feature_synonym \
-        -a pub \
-        -a pubprop \
-        -a pub_dbxref \
-        -a organism \
+pg_dump -x -O -n public -s -t feature -T audit -F d -j ${JOBS} -d production_chado -f data/feature
+pg_dump -x -O -n public -c --if-exists --disable-triggers \
+        -t cvterm \
+        -t db \
+        -t dbxref \
+        -t synonym \
+        -t feature_synonym \
+        -t pub \
+        -t pubprop \
+        -t pub_dbxref \
+        -t organism \
+        -T audit \
         -F d -j ${JOBS} -d production_chado -f data/chado
+
+chmod 755 data/chado data/feature
 
 # Pull only gene data for the feature table.
 # Can't use directory format here since we are pulling a subset
