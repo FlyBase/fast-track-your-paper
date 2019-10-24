@@ -1,16 +1,52 @@
 version: "3.5"
 services:
+  proxy:
+    image: nginx:mainline-alpine
+    ports:
+      - "8888:80"
+    volumes:
+      - ./proxy/conf.d:/etc/nginx/conf.d
+    networks:
+      - frontend
+  api:
+    image: graphile/postgraphile:4
+    restart: "on-failure"
+    command: "-c 'postgres://postgres:@db/ftyp' --watch"
+    networks:
+      - frontend
+      - internal
+
+  # See https://hub.docker.com/_/postgres for details on using
+  # the postgres docker container.
   db:
-    image: postgres:10-alpine
+    build:
+      context: ./db
+      dockerfile: Dockerfile
     restart: always
+    environment:
+      POSTGRES_DB: ftyp
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     volumes:
       - ftyp-data:/var/lib/postgresql/data
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+      - ./db/data:/ftyp/data
+      - ./db/scripts:/ftyp/scripts
     networks:
-      - backend
+      - internal
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    working_dir: "/home/node/app"
+    command: "serve -s build"
+    volumes:
+      - ./client:/home/node/app
+    networks:
+      - frontend
 
 networks:
   frontend:
-  backend:
+  internal:
 
 volumes:
   ftyp-data: {}
