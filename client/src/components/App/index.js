@@ -5,7 +5,7 @@ import StepContainer from 'components/StepContainer'
 function App() {
   return (
     <div>
-      <h3>Fast Track Your Paper!</h3>
+      <h3>Fast-Track Your Paper!</h3>
       <Router>
         <Route exact path="/" component={StepContainer} />
         <Route path="/:fbrf/:email" component={EmailSubmission} />

@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+
+import { useStateFromProp } from '../../hooks/useStateFromProp'
 
 const OptForm = ({ show = false, children = null }) => {
-  const [isVisible, setIsVisible] = useState(show)
-  useEffect( () => setIsVisible(show), [show] )
-  return (
-    <>
-      {isVisible && (children) }
-    </>
-  )
+  const [isVisible, setIsVisible] = useStateFromProp(show)
+  return <>{isVisible && children}</>
 }
 
 export default OptForm
