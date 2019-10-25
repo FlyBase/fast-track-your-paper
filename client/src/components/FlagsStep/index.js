@@ -11,10 +11,11 @@ const FlagsStep = () => {
         <div className="panel-heading">
           <h3 className="panel-title">
             Data Type Curation Flags
-            <button type="button"
+            <button
+              type="button"
               className="pull-right btn btn-default btn-xs"
               onClick={() => setShowAllHelp(!showAllHelp)}>
-              { (showAllHelp) ? 'Hide' : 'Show' } All Help Messages
+              {showAllHelp ? 'Hide' : 'Show'} All Help Messages
             </button>
           </h3>
         </div>
@@ -71,9 +72,9 @@ const FlagsStep = () => {
             </div>
 
             <label>Human Disease</label>
-              <IconHelp initial={showAllHelp}>
-                <div className="row">
-                  <div className="col-md-6 col-lg-5">
+            <IconHelp initial={showAllHelp}>
+              <div className="row">
+                <div className="col-md-6 col-lg-5">
                   Your publication reports experimental data for a Drosophila
                   model of human disease (e.g. mutation of Drosophila genes,
                   introduction of human genes into flies, chemical exposure,
@@ -81,19 +82,18 @@ const FlagsStep = () => {
                   of the relevant disease(s) in the text area below. Separate
                   multiple diseases by placing them each on their own line;
                   i.e.:
-                  </div>
-                  <div className="col-md-6 col-lg-7">
+                </div>
+                <div className="col-md-6 col-lg-7">
                   <pre>
                     heart disease
                     <br />
                     Parkinson&rsquo;s disease
                   </pre>
-                  </div>
                 </div>
-              </IconHelp>
+              </div>
+            </IconHelp>
             <div className="form-horizontal">
               <div className="form-group" id="Human_Disease">
-
                 <div className="col-md-6 col-lg-5">
                   <div className="checkbox">
                     <label>
@@ -104,9 +104,12 @@ const FlagsStep = () => {
                 </div>
 
                 <div className="col-md-6 col-lg-7">
-                  <textarea className="form-control" id="disease_text" rows="3" placeholder="Enter disease name(s) by placing each on its own line"></textarea>
+                  <textarea
+                    className="form-control"
+                    id="disease_text"
+                    rows="3"
+                    placeholder="Enter disease name(s) by placing each on its own line"></textarea>
                 </div>
-
               </div>
             </div>
 
@@ -287,7 +290,8 @@ const FlagsStep = () => {
               <div className="checkbox">
                 <label>
                   <input type="checkbox" id="" />
-                  Characterization of new cell type or anatomical structure in <i>D. melanogaster</i>
+                  Characterization of new cell type or anatomical structure in{' '}
+                  <i>D. melanogaster</i>
                 </label>
                 <IconHelp
                   initial={showAllHelp}

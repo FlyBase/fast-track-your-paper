@@ -4,7 +4,7 @@ import './index.css'
 import { useStateFromProp } from '../../hooks/useStateFromProp'
 
 const IconHelp = ({ initial = true, message = '', children = null }) => {
-  const [isVisible, setIsVisible] = useStateFromProp( initial )
+  const [isVisible, setIsVisible] = useStateFromProp(initial)
   return (
     <>
       <a onClick={() => setIsVisible(!isVisible)}>

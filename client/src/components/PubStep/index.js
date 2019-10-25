@@ -9,9 +9,7 @@ const PubStep = () => (
         <h3 className="panel-title">Choose a Publication to Annotate</h3>
       </div>
       <div className="panel-body">
-
         <form className="form-horizontal">
-
           <div className="col-sm-9">
             <input
               type="text"
@@ -28,16 +26,18 @@ const PubStep = () => (
           <IconHelp initial={false}>
             <br />
             Try searching with an author, a year and part of a journal title.
-            For example, enter &ldquo;Adams 2000 Science&rdquo; (without the quotes).
-            Or, try searching with a PubMed ID (PMID).  For example, enter &ldquo;10731132&rdquo; (without the quotes).
-            Also note that <a href="/static_pages/docs/wild_cards.html">wild cards</a> (*) can be added to your search terms.
+            For example, enter &ldquo;Adams 2000 Science&rdquo; (without the
+            quotes). Or, try searching with a PubMed ID (PMID). For example,
+            enter &ldquo;10731132&rdquo; (without the quotes). Also note that{' '}
+            <a href="/static_pages/docs/wild_cards.html">wild cards</a> (*) can
+            be added to your search terms.
             <br />
-            The database searched by this tool contains only items classified by FlyBase as <b>papers</b> or <b>reviews</b>.
+            The database searched by this tool contains only items classified by
+            FlyBase as <b>papers</b> or <b>reviews</b>.
           </IconHelp>
         </form>
 
         <SearchPubs keywords={'Kaufmann'} />
-
       </div>
     </div>
   </div>
