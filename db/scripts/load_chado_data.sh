@@ -7,11 +7,12 @@ pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/fe
 
 psql -d $POSTGRES_DB -f /ftyp/scripts/load_genes.sql
 
-
 psql -d $POSTGRES_DB -f /chado/schema/data_classes/utils.sql
 psql -d $POSTGRES_DB -f /chado/schema/ids/id_updater.sql
 psql -d $POSTGRES_DB -f /chado/schema/symbols/current_synonym.sql
 psql -d $POSTGRES_DB -f /chado/schema/FBrf/main.sql
+
+psql -d $POSTGRES_DB -f /ftyp/scripts/ftyp.sql
 
 vacuumdb -f -v -z -a
 

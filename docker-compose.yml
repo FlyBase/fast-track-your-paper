@@ -11,7 +11,7 @@ services:
   api:
     image: graphile/postgraphile:4
     restart: "on-failure"
-    command: "-c 'postgres://postgres:@db/ftyp' --watch"
+    command: "-c 'postgres://postgres:@db/ftyp' -s public,flybase,ftyp --watch"
     networks:
       - frontend
       - internal
