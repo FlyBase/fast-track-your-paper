@@ -3,7 +3,8 @@
   It is in the ftyp_hidden schema so that it is not directly exposed
   to the GraphQL API and instead access through the ftyp.search_pubs() function.
  */
-CREATE MATERIALIZED VIEW IF NOT EXISTS
+DROP MATERIALIZED VIEW IF EXISTS ftyp_hidden.pub_search;
+CREATE MATERIALIZED VIEW
     ftyp_hidden.pub_search AS
 /**
   Create a 3 column view of pub_id, uniquename, and the full text vector type for indexing.
@@ -11,42 +12,45 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS
  */
 SELECT p.pub_id,
        p.uniquename,
-       to_tsvector('english',
-                   concat_ws(' ',
-                             p.miniref,
-                             p.title,
-                             p.pyear,
-                             p.uniquename,
-                             p.pages,
-                             p.volume,
-                             p.volumetitle,
-                             p.issue,
-                             p.series_name,
-                             p.publisher,
-                             p.pubplace,
-                             pa.txt, -- Pub authors
-                             pdbx.txt -- Pub DBxrefs (PubMed, PMCID, DOI, FBrf, etc.)
-                       )) as text_index_col
+       (
+           -- Weights can be A-D in Postgres v10
+           concat_ws(' ',
+                     setweight(to_tsvector('simple', p.uniquename), 'A'),
+                     setweight(to_tsvector('simple', p.miniref), 'B'),
+                     setweight(to_tsvector('simple', p.title), 'B'),
+               -- PubMed, PMC ID, DOI, ISBN, secondary FBrf
+                     setweight(to_tsvector('simple', pdbx.txt), 'C'),
+               -- Authors
+                     setweight(to_tsvector('simple', pa.txt), 'A'),
+                     setweight(to_tsvector('simple', p.pyear), 'C'),
+                     setweight(to_tsvector('simple', p.pages), 'D'),
+                     setweight(to_tsvector('simple', p.volume), 'D'),
+                     setweight(to_tsvector('simple', p.volumetitle), 'D'),
+                     setweight(to_tsvector('simple', p.issue), 'D'),
+                     setweight(to_tsvector('simple', p.series_name), 'D'),
+                     setweight(to_tsvector('simple', p.publisher), 'D'),
+                     setweight(to_tsvector('simple', p.pubplace), 'D')
+               )
+           )::tsvector as text_index_col
 FROM pub p
          -- Pull in all pub authors.
          LEFT JOIN (
     SELECT pa.pub_id,
-           -- Concatenate the pubauthor fields into a single value.
+           -- Since pub->author is a one to many relationship we concatenate the
+           -- pubauthor fields into a single value.
            concat_ws(' ',
                /**
                  string_agg is used here to combine multiple rows of results into a
                  single text value.
-                 e.g. Instead of 1 result with 3 rows
-                 Gelbart
-                 Kaufman
-                 Calvi
+                 e.g. Instead of a result with 3 rows
+                 W. Gelbart
+                 T. Kaufman
+                 B. Calvi
 
-                 we produce 1 result with 1 row delimted by spaces.
-                 Gelbart Kaufman Calvi
+                 we produce a result with 1 row delimited by spaces.
+                 W. Gelbart T. Kaufman B. Calvi
                 */
-                     string_agg(pa.givennames, ' '),
-                     string_agg(pa.surname, ' '),
-                     string_agg(pa.suffix, ' ')
+                     string_agg(concat_ws(' ', pa.givennames, pa.surname, pa.suffix), ' ')
                ) AS txt
     FROM pubauthor pa
          -- The 1 here refers to the pa.pub_id column.
@@ -91,7 +95,12 @@ BEGIN
         WHERE text_index_col @@ search_terms
         ORDER BY ts_rank_cd(text_index_col, search_terms) DESC
         LOOP
-            RETURN QUERY SELECT * FROM pub p WHERE p.pub_id = pub_result.pub_id;
+            RETURN QUERY
+                SELECT p.*
+                FROM pub p
+                         JOIN cvterm cvt on (p.type_id = cvt.cvterm_id)
+                WHERE p.pub_id = pub_result.pub_id
+                  AND cvt.name in ('paper', 'review', 'note');
         END LOOP;
     RETURN;
 END;
