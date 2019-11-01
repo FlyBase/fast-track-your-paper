@@ -89,11 +89,11 @@ DECLARE
     search_terms tsquery = plainto_tsquery(terms);
     pub_result   pub%rowtype;
 BEGIN
-    FOR pub_result IN
-        SELECT *
+    FOR pub_result IN EXECUTE
+        'SELECT *
         FROM ftyp_hidden.pub_search
-        WHERE text_index_col @@ search_terms
-        ORDER BY ts_rank_cd(text_index_col, search_terms) DESC
+        WHERE text_index_col @@ $1
+        ORDER BY ts_rank_cd(text_index_col, $1) DESC' USING search_terms
         LOOP
             RETURN QUERY
                 SELECT p.*
