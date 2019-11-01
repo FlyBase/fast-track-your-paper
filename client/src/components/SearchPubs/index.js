@@ -16,7 +16,7 @@ const SearchPubs = ({ keywords = '' }) => {
             <div className="well small">
               <p>
                 <strong>The selected publication:</strong>
-                /* miniref */
+                {/* miniref */}
               </p>
               <p>
                 <strong>Please note:</strong>

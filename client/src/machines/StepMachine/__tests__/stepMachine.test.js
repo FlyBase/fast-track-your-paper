@@ -1,5 +1,5 @@
 import { interpret } from 'xstate'
-import { ftypSteps } from '../stepMachine'
+import { ftypSteps } from '../'
 
 const ftypStepsWithPub = ftypSteps.withContext({
   publication: {

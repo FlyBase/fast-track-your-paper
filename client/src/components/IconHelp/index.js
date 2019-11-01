@@ -8,7 +8,7 @@ const IconHelp = ({ initial = true, message = '', children = null }) => {
   return (
     <>
       <a onClick={() => setIsVisible(!isVisible)}>
-        &nbsp;<i class="fa fa-question-circle"></i>
+        &nbsp;<i className="fa fa-question-circle"></i>
       </a>
       {isVisible && (
         <div className="small text-info message">

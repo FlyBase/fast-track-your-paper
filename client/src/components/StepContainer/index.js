@@ -1,12 +1,10 @@
 import React from 'react'
 import { useMachine } from '@xstate/react'
-import { Divider, Steps } from 'antd'
+import { Divider } from 'antd'
 // eslint-disable-next-line
 import styled from 'styled-components/macro'
 
-import 'antd/dist/antd.css'
-
-import { ftypSteps } from './stepMachine'
+import { ftypSteps } from 'machines/StepMachine'
 
 import PubStep from 'components/PubStep'
 import AuthorStep from 'components/AuthorStep'
@@ -14,8 +12,7 @@ import FlagsStep from 'components/FlagsStep'
 import GenesStep from 'components/GenesStep'
 import ConfirmStep from 'components/ConfirmStep'
 import SubmitStep from 'components/SubmitStep'
-
-const { Step } = Steps
+import StepIndicator from 'components/StepIndicator'
 
 const fetchFromLocalStorage = key => {
   try {
@@ -40,19 +37,27 @@ const persistedStepsMachine = ftypSteps.withConfig(
   }
 )
 
+// An array to map the step matchine state names to user friendly labels.
+const steps = [
+  { name: 'pub', label: 'Publication' },
+  { name: 'author', label: 'Submitter Info' },
+  { name: 'flags', label: 'Data' },
+  { name: 'genes', label: 'Genes' },
+  { name: 'confirm', label: 'Confirm' },
+  { name: 'submitted', label: 'Finished' },
+]
+
 function StepContainer() {
   const [current, send] = useMachine(persistedStepsMachine)
+  /*
+  Get the array index of the current step.
+    This is required to show progress in the StepIndicator component.
+   */
+  const currentStepIdx = steps.findIndex(s => s.name === current.value)
+
   return (
     <div>
-      {/* See https://ant.design/components/steps/ for full details */}
-      <Steps progressDot size="small" current={0}>
-        <Step title="Publication" />
-        <Step title="Submitter Info" />
-        <Step title="Data" />
-        <Step title="Genes" />
-        <Step title="Confirm" />
-        <Step title="Finished" />
-      </Steps>
+      <StepIndicator steps={steps} currentStep={currentStepIdx} />
       <Divider />
       <div
         css={`
@@ -82,6 +87,8 @@ function StepContainer() {
             </button>
           </div>
         </nav>
+        <Divider />
+        <StepIndicator steps={steps} currentStep={currentStepIdx} />
       </div>
     </div>
   )
