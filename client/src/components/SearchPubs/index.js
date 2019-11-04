@@ -12,6 +12,7 @@ const SearchPubs = ({ keywords = '' }) => {
       <div className="row">
         <div className="col-sm-12">
           <a onClick={() => setShowSelectedPub(!showSelectedPub)}>toggle</a>
+
           {showSelectedPub && (
             <div className="well small">
               <p>
@@ -46,6 +47,7 @@ const SearchPubs = ({ keywords = '' }) => {
           <a onClick={() => setShowSearchResultsPanel(!showSearchResultsPanel)}>
             toggle
           </a>
+
           {showSearchResultsPanel && (
             <div className="panel panel-info">
               <div className="panel-heading">
@@ -72,19 +74,25 @@ const SearchPubs = ({ keywords = '' }) => {
                   </div>
                 </IconHelp>
               </div>
-              <div className="panel-body"></div>
-            </div>
-          )}
-        </div>
-      </div>
 
-      <div className="row">
-        <div className="col-sm-12">
-          <a onClick={() => setIsVisible(!isVisible)}>toggle</a>
-          {isVisible && (
-            <div className="well">
-              <p className="small">{keywords}</p>
-            </div>
+              <div className="panel-body"></div>
+
+              <div className="panel-footer small">
+                <strong>Can't find what you are looking for?</strong>
+                <br />
+                FlyBase only incorporates and curates papers that are 'fully
+                published'. This means the paper must be available in its final,
+                properly formatted version and have been assigned volume and
+                page numbers. Publications that have not yet reached this stage
+                will not be included in the FlyBase bibliography. Please wait
+                until your paper is fully published before submitting it to
+                FlyBase using the Fast-Track Your Paper tool.
+                <br />
+                If the above does not apply to you, you can{' '}
+                <a id="submitUnknownPub">still make a submission</a> with a
+                publication unknown to FlyBase.
+              </div>
+            </div> /* end .panel */ /* inside an already-block-quoted JSX block, use bare JS comment style */
           )}
         </div>
       </div>
