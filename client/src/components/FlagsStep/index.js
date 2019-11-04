@@ -3,8 +3,11 @@ import IconHelp from '../IconHelp'
 import OptForm from '../OptForm'
 
 const FlagsStep = () => {
-  const [showAllHelp, setShowAllHelp] = useState(true)
+  const [showAllHelp, setShowAllHelp] = useState(false)
+  const [showDiseaseSubform, setShowDiseaseSubform] = useState(false)
   const [showCellLineSubform, setShowCellLineSubform] = useState(false)
+  const [showDatasetSubform, setShowDatasetSubform] = useState(false)
+  const [showAccessionsSubform, setShowAccessionsSubform] = useState(false)
   return (
     <div className="container">
       <div className="panel panel-primary">
@@ -72,45 +75,54 @@ const FlagsStep = () => {
             </div>
 
             <label>Human Disease</label>
-            <IconHelp initial={showAllHelp}>
-              <div className="row">
-                <div className="col-md-6 col-lg-5">
-                  Your publication reports experimental data for a Drosophila
-                  model of human disease (e.g. mutation of Drosophila genes,
-                  introduction of human genes into flies, chemical exposure,
-                  infection or environmental change). Please enter the name(s)
-                  of the relevant disease(s) in the text area below. Separate
-                  multiple diseases by placing them each on their own line;
-                  i.e.:
-                </div>
-                <div className="col-md-6 col-lg-7">
-                  <pre>
-                    heart disease
-                    <br />
-                    Parkinson&rsquo;s disease
-                  </pre>
-                </div>
-              </div>
-            </IconHelp>
             <div className="form-horizontal">
               <div className="form-group" id="Human_Disease">
-                <div className="col-md-6 col-lg-5">
+                <div className="col-sm-12">
                   <div className="checkbox">
                     <label>
-                      <input type="checkbox" id="" />
+                      <input
+                        type="checkbox"
+                        id=""
+                        onClick={() =>
+                          setShowDiseaseSubform(!showDiseaseSubform)
+                        }
+                      />
                       Description or use of Drosophila model of human disease
                     </label>
+                    <IconHelp
+                      initial={showAllHelp}
+                      message="Your publication reports experimental data for a Drosophila model of human disease (e.g. mutation of Drosophila genes, introduction of human genes into flies, chemical exposure, infection or environmental change)."
+                    />
                   </div>
                 </div>
-
-                <div className="col-md-6 col-lg-7">
-                  <textarea
-                    className="form-control"
-                    id="disease_text"
-                    rows="3"
-                    placeholder="Enter disease name(s) by placing each on its own line"></textarea>
-                </div>
               </div>
+              <OptForm show={showDiseaseSubform}>
+                <div className="form-group">
+                  <div className="col-md-6 col-lg-5">
+                    <div
+                      className="small text-info"
+                      style={{ margin: '0 2em' }}>
+                      <em>
+                        Please enter the name(s) of the relevant disease(s) in
+                        the text area. Separate multiple diseases by placing
+                        each on a different line; i.e.:
+                        <pre>
+                          heart disease
+                          <br />
+                          Parkinson&rsquo;s disease
+                        </pre>
+                      </em>
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-lg-7">
+                    <textarea
+                      className="form-control"
+                      id="disease_text"
+                      rows="4"
+                      placeholder="Enter disease name(s) by placing each on its own line"></textarea>
+                  </div>
+                </div>
+              </OptForm>
             </div>
 
             <div className="well well-sm text-info">
@@ -141,15 +153,18 @@ const FlagsStep = () => {
 
             <OptForm show={showCellLineSubform}>
               <div
-                className="form-horizontal well"
+                className="form-horizontal well well-sm"
                 style={{ marginLeft: '2em' }}>
                 <div className="form-group">
-                  <label>
-                    <em>
-                      Optional: please give us more information about the cell
-                      line used:
-                    </em>
-                  </label>
+                  <div className="col-sm-12">
+                    <p className="form-control-static">
+                      <b>Optional</b>{' '}
+                      <em>
+                        please give us more information about the cell line
+                        used:
+                      </em>
+                    </p>
+                  </div>
                 </div>
                 <div className="form-group">
                   <div className="col-md-4 col-lg-3">
@@ -300,6 +315,103 @@ const FlagsStep = () => {
               </div>
             </div>
 
+            <label>New technique/reagent/resource</label>
+            <div className="form-group" id="new_tech">
+              <div className="checkbox">
+                <label>
+                  <input type="checkbox" id="" />
+                  New technique/reagent/resource
+                </label>
+                <IconHelp
+                  initial={showAllHelp}
+                  message="A major part of this paper describes a new technique, reagent or resource."
+                />
+              </div>
+            </div>
+
+            <label>Large-scale Dataset</label>
+            <div className="form-group" id="largescale_dataset">
+              <div className="checkbox">
+                <label>
+                  <input
+                    type="checkbox"
+                    id="dataset"
+                    onClick={() => setShowDatasetSubform(!showDatasetSubform)}
+                  />
+                  Dataset
+                </label>
+                <IconHelp
+                  initial={showAllHelp}
+                  message="Your publication contains high-throughput or large-scale data. This would include submissions with a data repository ID (e.g., GEO, EBI), genome-wide scans for sequence elements (e.g., regulatory motifs, SNPs), screens (e.g., RNAi, chemical libraries), interaction studies and clustering projects."
+                />
+              </div>
+            </div>
+
+            <OptForm show={showDatasetSubform}>
+              <div
+                className="form-horizontal well well-sm"
+                style={{ marginLeft: '2em' }}>
+                <div className="form-group">
+                  <div className="col-sm-12">
+                    <p className="form-control-static">
+                      <b>Optional</b>{' '}
+                      <em>
+                        please give us more information about your dataset:
+                      </em>
+                    </p>
+                  </div>
+                  <div className="col-sm-12">
+                    <div className="checkbox">
+                      <label>
+                        <input type="checkbox" id="dataset_pheno" />
+                        Phenotypic screen (e.g. a particular phenotype is
+                        assessed in multiple RNAi or UAS or deficiency lines)
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-sm-12">
+                    <div className="checkbox">
+                      <label>
+                        <input
+                          type="checkbox"
+                          id="dataset_accessions"
+                          onClick={() =>
+                            setShowAccessionsSubform(!showAccessionsSubform)
+                          }
+                        />
+                        Data repository ID (e.g. GSE000001, SRP0000001,
+                        PXD000001, E-MTAB-0001, PRJNA000001)
+                      </label>
+                    </div>
+                  </div>
+                  <OptForm show={showAccessionsSubform}>
+                    <div className="col-sm-12">
+                      <textarea
+                        className="form-control"
+                        id="dataset_accession_numbers"
+                        rows="2"
+                        placeholder="Please enter relevant accession numbers, separated by commas"></textarea>
+                    </div>
+                  </OptForm>
+                </div>
+              </div>
+              {/* .well */}
+            </OptForm>
+
+            <label>Pathways</label>
+            <div className="form-group" id="pathway_member">
+              <div className="checkbox">
+                <label>
+                  <input type="checkbox" id="" />
+                  New member of receptor signaling pathway
+                </label>
+                <IconHelp
+                  initial={showAllHelp}
+                  message="Your publication contains evidence that a gene is a new member or direct regulator of a receptor signaling pathway."
+                />
+              </div>
+            </div>
+
             <label>None</label>
             <div className="form-group" id="">
               <div className="checkbox">
@@ -309,16 +421,8 @@ const FlagsStep = () => {
                 </label>
                 <IconHelp
                   initial={showAllHelp}
-                  message="do we need help here?"
+                  message="Your publication reports other kinds of data than those listed above. Letting us know will help us improve curation efficiency."
                 />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <div className="col-sm-offset-8 col-sm-4">
-                <button type="submit" className="btn btn-primary pull-right">
-                  <i className="fa fa-check"></i>Submit data types
-                </button>
               </div>
             </div>
           </form>
