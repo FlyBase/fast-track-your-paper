@@ -72,13 +72,15 @@ function StepContainer() {
               type="button"
               className="btn btn-primary navbar-btn"
               onClick={() => send('PREV')}>
-              Prev
+              <i class="fa fa-long-arrow-left fa-lg"></i> Return to previous
+              step
             </button>
             <button
               type="button"
               className="btn btn-primary navbar-btn"
               onClick={() => send('NEXT', { hasPub: true })}>
-              Next
+              <b>Save</b> and go to next step ({Step}/5){' '}
+              <i class="fa fa-long-arrow-right fa-lg"></i>
             </button>
           </div>
         </nav>

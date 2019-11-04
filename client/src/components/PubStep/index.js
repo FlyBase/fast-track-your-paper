@@ -8,11 +8,13 @@ const PubStep = () => (
       <div className="panel-heading">
         <h3 className="panel-title">Choose a Publication to Annotate</h3>
       </div>
+
       <div className="panel-body">
         <form className="form-horizontal">
           <div className="col-sm-9">
             <input
               type="text"
+              placeholder="enter key terms, author name, publication year, etc."
               className="form-control"
               id="pub_search_keywords"
             />
@@ -23,6 +25,7 @@ const PubStep = () => (
               <i class="fa fa-search"></i>&nbsp;Search
             </button>
           </div>
+
           <IconHelp initial={false}>
             <br />
             Try searching with an author, a year and part of a journal title.
@@ -39,7 +42,9 @@ const PubStep = () => (
 
         <SearchPubs keywords={'Kaufmann'} />
       </div>
+      {/* end .panel-body */}
     </div>
+    {/* end .panel */}
   </div>
 )
 
