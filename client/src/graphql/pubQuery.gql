@@ -1,0 +1,13 @@
+query PubQuery($terms: String) {
+  pubs: searchPubs(terms: $terms, first: 1000) {
+    totalCount
+    nodes {
+      uniquename
+      miniref
+      title
+      cvtermByTypeId {
+        name
+      }
+    }
+  }
+}

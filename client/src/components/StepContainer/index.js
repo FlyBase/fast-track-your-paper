@@ -1,12 +1,10 @@
 import React from 'react'
 import { useMachine } from '@xstate/react'
-import { Divider, Steps } from 'antd'
+import { Divider } from 'antd'
 // eslint-disable-next-line
 import styled from 'styled-components/macro'
 
-import 'antd/dist/antd.css'
-
-import { ftypSteps } from './stepMachine'
+import { ftypSteps } from 'machines/StepMachine'
 
 import PubStep from 'components/PubStep'
 import AuthorStep from 'components/AuthorStep'
@@ -14,8 +12,7 @@ import FlagsStep from 'components/FlagsStep'
 import GenesStep from 'components/GenesStep'
 import ConfirmStep from 'components/ConfirmStep'
 import SubmitStep from 'components/SubmitStep'
-
-const { Step } = Steps
+import StepIndicator from 'components/StepIndicator'
 
 const fetchFromLocalStorage = key => {
   try {
@@ -40,19 +37,27 @@ const persistedStepsMachine = ftypSteps.withConfig(
   }
 )
 
+// An array to map the step matchine state names to user friendly labels.
+const steps = [
+  { name: 'pub', label: 'Publication' },
+  { name: 'author', label: 'Contact' },
+  { name: 'flags', label: 'Data' },
+  { name: 'genes', label: 'Genes' },
+  { name: 'confirm', label: 'Confirmation' },
+  { name: 'submitted', label: 'Finished' },
+]
+
 function StepContainer() {
   const [current, send] = useMachine(persistedStepsMachine)
+  /*
+  Get the array index of the current step.
+    This is required to show progress in the StepIndicator component.
+   */
+  const currentStepIdx = steps.findIndex(s => s.name === current.value)
+
   return (
     <div>
-      {/* See https://ant.design/components/steps/ for full details */}
-      <Steps progressDot size="small" current={0}>
-        <Step title="Publication" />
-        <Step title="Submitter Info" />
-        <Step title="Data" />
-        <Step title="Genes" />
-        <Step title="Confirm" />
-        <Step title="Finished" />
-      </Steps>
+      <StepIndicator steps={steps} currentStep={currentStepIdx} />
       <Divider />
       <div
         css={`
@@ -68,22 +73,27 @@ function StepContainer() {
         {current.matches('submitted') && <SubmitStep />}
         <nav className="navbar">
           <div className="container-fluid">
-            <button
-              type="button"
-              className="btn btn-primary navbar-btn"
-              onClick={() => send('PREV')}>
-              <i class="fa fa-long-arrow-left fa-lg"></i> Return to previous
-              step
-            </button>
+            {currentStepIdx > 0 && (
+              <button
+                type="button"
+                className="btn btn-primary navbar-btn"
+                onClick={() => send('PREV')}>
+                <i class="fa fa-long-arrow-left fa-lg"></i>&nbsp; Return to{' '}
+                {steps[currentStepIdx - 1].label} step
+              </button>
+            )}
             <button
               type="button"
               className="btn btn-primary navbar-btn"
               onClick={() => send('NEXT', { hasPub: true })}>
-              <b>Save</b> and go to next step ({Step}/5){' '}
+              <b>Save</b> {steps[currentStepIdx].label} step and go to{' '}
+              {steps[currentStepIdx + 1].label} step&ensp;
               <i class="fa fa-long-arrow-right fa-lg"></i>
             </button>
           </div>
         </nav>
+        <Divider />
+        <StepIndicator steps={steps} currentStep={currentStepIdx} />
       </div>
     </div>
   )

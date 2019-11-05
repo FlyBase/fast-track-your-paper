@@ -7,7 +7,7 @@ const AuthorStep = () => (
     <div className="container">
       <div className="panel panel-primary">
         <div className="panel-heading">
-          <h3 className="panel-title">Attribution</h3>
+          <h3 className="panel-title">Contact Information</h3>
         </div>
         <div className="panel-body">
           <Formik
@@ -84,13 +84,6 @@ const AuthorStep = () => (
                     />
                     no
                   </label>
-                </div>
-                <div className="form-group">
-                  <div className="col-sm-offset-8 col-sm-4">
-                    <button type="submit" class="btn btn-primary pull-right">
-                      <i class="fa fa-check"></i>Submit contact information
-                    </button>
-                  </div>
                 </div>
               </form>
             )}
