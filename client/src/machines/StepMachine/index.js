@@ -10,7 +10,6 @@ const { assign } = actions
 const initialContext = {
   // Reference to the substep actors
   stepMachines: {},
-  confirmed: false,
   // The FTYP submission object.
   submission: {
     publication: null,
@@ -28,10 +27,10 @@ const initialContext = {
 // Main FTYP machine configuration.
 export const ftypSteps = Machine(
   {
-    id: 'ftypsteps',
-    initial: 'pub',
+    id: 'ftyp',
+    initial: 'pending',
     // Set initial context
-    context: {...initialContext},
+    context: { ...initialContext },
     /*
     All states of the step machine.
     The following describes all possible states of the machine
@@ -39,85 +38,77 @@ export const ftypSteps = Machine(
     those states.
      */
     states: {
-      // Pub state
-      pub: {
-        // Call the 'persist' action to store app state to localstorage
-        // or whatever the persist action implements.
-        entry: ['persist'],
+      pending: {
+        id: 'pending',
+        initial: 'pub',
         on: {
-          // Advance to next step if the user has selected a publication.
-          // See 'guards' section for the hasPublication function.
-          NEXT: {
-            target: 'author',
-            cond: 'hasPublication',
+          GOTO_PUB: { target: '.pub' },
+          GOTO_AUTHOR: { target: '.author', cond: 'hasPublication' },
+          GOTO_FLAGS: { target: '.flags', cond: 'hasPublication' },
+          GOTO_GENES: { target: '.genes', cond: 'hasPublication' },
+          GOTO_CONFIRM: { target: '.confirm', cond: 'hasPublication' },
+        },
+        states: {
+          // Pub state
+          pub: {
+            // Call the 'persist' action to store app state to localstorage
+            // or whatever the persist action implements.
+            entry: ['persist'],
+            on: {
+              // Advance to next step if the user has selected a publication.
+              // See 'guards' section for the hasPublication function.
+              NEXT: {
+                target: 'author',
+                cond: 'hasPublication',
+              },
+            },
           },
-          GOTO_AUTHOR: { target:'author', cond: 'hasPublication' },
-          GOTO_FLAGS: { target:'flags', cond: 'hasPublication' },
-          GOTO_GENES: { target: 'genes', cond: 'hasPublication' },
-          GOTO_CONFIRM: { target: 'confirm', cond: 'hasPublication' },
-        },
-      },
-      // Author state
-      author: {
-        entry: ['persist'],
-        on: {
-          // Valid transition targets for author step.
-          NEXT: { target: 'flags', cond: 'hasPublication' },
-          PREV: { target: 'pub', cond: 'hasPublication' },
-          GOTO_PUB: 'pub',
-          GOTO_FLAGS: { target:'flags', cond: 'hasPublication' },
-          GOTO_GENES: { target: 'genes', cond: 'hasPublication' },
-          GOTO_CONFIRM: { target: 'confirm', cond: 'hasPublication' },
-        },
-      },
-      // Data flags step
-      flags: {
-        entry: ['persist'],
-        on: {
-          NEXT: { target: 'genes', cond: 'hasPublication' },
-          PREV: { target: 'author', cond: 'hasPublication' },
-          GOTO_PUB: 'pub',
-          GOTO_AUTHOR: { target:'author', cond: 'hasPublication' },
-          GOTO_GENES: { target: 'genes', cond: 'hasPublication' },
-          GOTO_CONFIRM: { target: 'confirm', cond: 'hasPublication' },
-        },
-      },
-      // Genes step
-      genes: {
-        entry: ['persist'],
-        on: {
-          NEXT: { target: 'confirm', cond: 'hasPublication' },
-          PREV: { target: 'flags', cond: 'hasPublication' },
-          GOTO_PUB: 'pub',
-          GOTO_AUTHOR: { target:'author', cond: 'hasPublication' },
-          GOTO_FLAGS: { target:'flags', cond: 'hasPublication' },
-          GOTO_CONFIRM: { target: 'confirm', cond: 'hasPublication' },
-        },
-      },
-      // Confirmation step
-      confirm: {
-        entry: ['persist'],
-        on: {
-          NEXT: {
-            actions: 'confirmSubmission',
-            target: 'submitted',
-            cond: 'hasPublication'
+          // Author state
+          author: {
+            entry: ['persist'],
+            on: {
+              // Valid transition targets for author step.
+              NEXT: { target: 'flags', cond: 'hasPublication' },
+              PREV: { target: 'pub', cond: 'hasPublication' },
+            },
           },
-          PREV: { target: 'genes', cond: 'hasPublication' },
-          GOTO_PUB: 'pub',
-          GOTO_AUTHOR: { target:'author', cond: 'hasPublication' },
-          GOTO_FLAGS: { target:'flags', cond: 'hasPublication' },
-          GOTO_GENES: { target: 'genes', cond: 'hasPublication' },
+          // Data flags step
+          flags: {
+            entry: ['persist'],
+            on: {
+              NEXT: { target: 'genes', cond: 'hasPublication' },
+              PREV: { target: 'author', cond: 'hasPublication' },
+            },
+          },
+          // Genes step
+          genes: {
+            entry: ['persist'],
+            on: {
+              NEXT: { target: 'confirm', cond: 'hasPublication' },
+              PREV: { target: 'flags', cond: 'hasPublication' },
+            },
+          },
+          // Confirmation step
+          confirm: {
+            entry: ['persist'],
+            on: {
+              NEXT: {
+                target: '#ftyp.submitted',
+                cond: 'hasPublication',
+              },
+              PREV: { target: 'genes', cond: 'hasPublication' },
+            },
+          },
         },
       },
       // Submitted step
       submitted: {
-        entry:['persist'],
+        entry: ['persist'],
         // When we leave this step we reset the context so the user
         // doesn't resubmit their data again.
-        onExit:['resetContext'],
+        onExit: ['resetContext'],
         on: {
-          START_OVER: { target: 'pub' },
+          START_OVER: { target: '#ftyp.pending.pub' },
         },
       },
     },
@@ -125,8 +116,8 @@ export const ftypSteps = Machine(
   {
     actions: {
       // This action resets the application context to its initial state.
-      resetContext: assign({...initialContext }),
-      confirmSubmission: assign({confirmed: true}),
+      resetContext: assign({ ...initialContext }),
+      confirmSubmission: assign({ confirmed: true }),
     },
     guards: {
       // Check that the submission has an associated publication or citation.

@@ -26,7 +26,6 @@ const steps = [
   { name: 'submitted', label: 'Finished' },
 ]
 
-
 function StepContainer() {
   const localStorageKey = 'ftyp-state'
   const [current, send] = useMachine(ftypSteps, {
@@ -44,19 +43,30 @@ function StepContainer() {
        GOTO_GENES to jump to the genes step.
        etc...
 
-  This allows for a user
+  This allows for a user to jump around to various allowable steps.
 
    */
-  const handleOnStepClick = stepIdx => send(`GOTO_${steps[stepIdx].name.toLocaleUpperCase()}`, { hasPub: true})
+  const handleOnStepClick = stepIdx =>
+    send(`GOTO_${steps[stepIdx].name.toLocaleUpperCase()}`, { hasPub: true })
   /*
     Get the array index of the current step.
     This is required to show progress in the StepIndicator component.
    */
-  const currentStepIdx = steps.findIndex(s => s.name === current.value)
+  const currentStepIdx = steps.findIndex(s => {
+    // Check for nested pending state
+    if (current.value.pending) {
+      return s.name === current.value.pending
+    }
+    return s.name === current.value
+  })
 
   return (
     <div>
-      <StepIndicator steps={steps} currentStep={currentStepIdx} onChange={handleOnStepClick} />
+      <StepIndicator
+        steps={steps}
+        currentStep={currentStepIdx}
+        onChange={handleOnStepClick}
+      />
       <Divider />
       <div
         css={`
@@ -64,11 +74,11 @@ function StepContainer() {
           flex-flow: column nowrap;
           align-items: center;
         `}>
-        {current.matches('pub') && <PubStep />}
-        {current.matches('author') && <AuthorStep />}
-        {current.matches('flags') && <FlagsStep />}
-        {current.matches('genes') && <GenesStep />}
-        {current.matches('confirm') && <ConfirmStep />}
+        {current.matches({ pending: 'pub' }) && <PubStep />}
+        {current.matches({ pending: 'author' }) && <AuthorStep />}
+        {current.matches({ pending: 'flags' }) && <FlagsStep />}
+        {current.matches({ pending: 'genes' }) && <GenesStep />}
+        {current.matches({ pending: 'confirm' }) && <ConfirmStep />}
         {current.matches('submitted') && <SubmitStep />}
         <nav className="navbar">
           <div className="container-fluid">
@@ -77,7 +87,7 @@ function StepContainer() {
                 <button
                   type="button"
                   className="btn btn-primary navbar-btn"
-                  onClick={() => send('PREV', {hasPub: true })}>
+                  onClick={() => send('PREV', { hasPub: true })}>
                   Prev
                 </button>
                 <button
@@ -99,7 +109,11 @@ function StepContainer() {
           </div>
         </nav>
         <Divider />
-        <StepIndicator steps={steps} currentStep={currentStepIdx} onChange={handleOnStepClick} />
+        <StepIndicator
+          steps={steps}
+          currentStep={currentStepIdx}
+          onChange={handleOnStepClick}
+        />
       </div>
     </div>
   )
