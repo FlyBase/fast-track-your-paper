@@ -1,15 +1,33 @@
 import { interpret } from 'xstate'
 import { ftypSteps } from '../'
 
-const ftypStepsWithPub = ftypSteps.withContext({
-  publication: {
-    fbrf: 'FBrf0001234',
-  },
-})
+const ftypStepsWithPub = ftypSteps
+  .withConfig({
+    actions: {
+      persist: () => {},
+    },
+  })
+  .withContext({
+    ...ftypSteps.context,
+    submission: {
+      publication: {
+        fbrf: 'FBrf0001234',
+      },
+    },
+  })
 
-const ftypStepsWithCitation = ftypSteps.withContext({
-  citation: 'A custom user entered citation.',
-})
+const ftypStepsWithCitation = ftypSteps
+  .withConfig({
+    actions: {
+      persist: () => {},
+    },
+  })
+  .withContext({
+    ...ftypSteps.context,
+    submission: {
+      citation: 'A custom user entered citation.',
+    },
+  })
 
 describe('stepMachine', () => {
   it('Should not leave because hasPublication is false', () => {
@@ -21,6 +39,7 @@ describe('stepMachine', () => {
 
   it('Should leave because hasPublication is true', () => {
     let stepService = interpret(ftypStepsWithPub).start()
+    console.log(ftypStepsWithPub.context)
     expect(stepService.state.value).toEqual('pub')
     stepService.send('NEXT')
     expect(stepService.state.value).toEqual('author')

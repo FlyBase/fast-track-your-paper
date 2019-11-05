@@ -14,30 +14,9 @@ import ConfirmStep from 'components/ConfirmStep'
 import SubmitStep from 'components/SubmitStep'
 import StepIndicator from 'components/StepIndicator'
 
-const fetchFromLocalStorage = key => {
-  try {
-    return JSON.parse(localStorage.getItem(key)) || {}
-  } catch (e) {
-    return {}
-  }
-}
+import { fetchFromLocalStorage } from 'utils/storage'
 
-const persistedStepsMachine = ftypSteps.withConfig(
-  {
-    actions: {
-      persist: ctx => {
-        console.log('Persisting submission to local storage')
-        localStorage.setItem('ftyp-state', JSON.stringify(ctx))
-      },
-    },
-  },
-  // initial state from localstorage
-  {
-    ...fetchFromLocalStorage('ftyp-state'),
-  }
-)
-
-// An array to map the step matchine state names to user friendly labels.
+// An array to map the step machine state names to user friendly labels.
 const steps = [
   { name: 'pub', label: 'Publication' },
   { name: 'author', label: 'Submitter Info' },
@@ -47,17 +26,37 @@ const steps = [
   { name: 'submitted', label: 'Finished' },
 ]
 
+
 function StepContainer() {
-  const [current, send] = useMachine(persistedStepsMachine)
+  const localStorageKey = 'ftyp-state'
+  const [current, send] = useMachine(ftypSteps, {
+    ...fetchFromLocalStorage(localStorageKey),
+    actions: {
+      persist: (context, event, { action, state }) => {
+        localStorage.setItem(localStorageKey, JSON.stringify({ state }))
+      },
+    },
+  })
+
   /*
-  Get the array index of the current step.
+  Event handler that sends a GOTO_<target> event to the machine.
+  e.g. GOTO_PUB to jump to the pub step.
+       GOTO_GENES to jump to the genes step.
+       etc...
+
+  This allows for a user
+
+   */
+  const handleOnStepClick = stepIdx => send(`GOTO_${steps[stepIdx].name.toLocaleUpperCase()}`, { hasPub: true})
+  /*
+    Get the array index of the current step.
     This is required to show progress in the StepIndicator component.
    */
   const currentStepIdx = steps.findIndex(s => s.name === current.value)
 
   return (
     <div>
-      <StepIndicator steps={steps} currentStep={currentStepIdx} />
+      <StepIndicator steps={steps} currentStep={currentStepIdx} onChange={handleOnStepClick} />
       <Divider />
       <div
         css={`
@@ -73,22 +72,34 @@ function StepContainer() {
         {current.matches('submitted') && <SubmitStep />}
         <nav className="navbar">
           <div className="container-fluid">
-            <button
-              type="button"
-              className="btn btn-primary navbar-btn"
-              onClick={() => send('PREV')}>
-              Prev
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary navbar-btn"
-              onClick={() => send('NEXT', { hasPub: true })}>
-              Next
-            </button>
+            {!current.matches('submitted') && (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-primary navbar-btn"
+                  onClick={() => send('PREV', {hasPub: true })}>
+                  Prev
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary navbar-btn"
+                  onClick={() => send('NEXT', { hasPub: true })}>
+                  Next
+                </button>
+              </>
+            )}
+            {current.matches('submitted') && (
+              <button
+                className="btn btn-primary navbar-btn"
+                type="button"
+                onClick={() => send('START_OVER')}>
+                Start Over
+              </button>
+            )}
           </div>
         </nav>
         <Divider />
-        <StepIndicator steps={steps} currentStep={currentStepIdx} />
+        <StepIndicator steps={steps} currentStep={currentStepIdx} onChange={handleOnStepClick} />
       </div>
     </div>
   )

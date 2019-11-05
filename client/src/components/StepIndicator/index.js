@@ -7,11 +7,12 @@ import 'antd/dist/antd.css'
 const { Step } = Steps
 
 /* See https://ant.design/components/steps/ for full details */
-const StepIndicator = ({ steps = [], currentStep = 0 }) => {
+const StepIndicator = ({ steps = [], currentStep = 0, onChange = () => {} }) => {
   return (
-    <Steps progressDot size="small" current={currentStep}>
-      {steps.map(s => (
-        <Step key={s.name} title={s.label} />
+    <Steps progressDot size="small" current={currentStep} onChange={onChange}>
+      {steps.map((s, i) => (
+        /* Disable step indicator if it is the last step. */
+        <Step key={s.name} title={s.label} disabled={i === steps.length - 1}/>
       ))}
     </Steps>
   )
