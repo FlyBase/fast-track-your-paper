@@ -52,7 +52,7 @@ const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0 }) => {
                         <td>
                           <a
                             className={
-                              p.cvtermByTypeId.name == 'review'
+                              p.cvtermByTypeId.name.match(/review|note/i)
                                 ? 'text-warning'
                                 : 'text-info'
                             }
