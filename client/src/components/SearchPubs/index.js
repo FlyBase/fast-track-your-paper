@@ -57,7 +57,8 @@ const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0 }) => {
                                 : 'text-info'
                             }
                             href="">
-                            <b>{p.cvtermByTypeId.name}</b>: {p.miniref} <br /> <b>{p.title}</b>
+                            <b>{p.cvtermByTypeId.name}</b>: {p.miniref} <br />{' '}
+                            <b>{p.title}</b>
                           </a>
                         </td>
                       </tr>
