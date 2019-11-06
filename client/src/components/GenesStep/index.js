@@ -1,5 +1,19 @@
 import React from 'react'
 
-const GenesStep = () => <div>Upload your genes</div>
+const GenesStep = () => (
+<>
+    <div className="container">
+      <div className="panel panel-primary">
+        <div className="panel-heading">
+          <h3 className="panel-title">Associate Genes</h3>
+        </div>
+        <div className="panel-body">
+          <form>
+          </form>
+        </div>
+      </div>
+    </div>
+</>
+)
 
 export default GenesStep
