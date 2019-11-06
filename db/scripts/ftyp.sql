@@ -91,8 +91,8 @@ WHERE cvt.name IN ('paper', 'review', 'note')
   AND p.pub_id IN (
     SELECT pub_id
     FROM ftyp_hidden.pub_search
-    WHERE text_index_col @@ plainto_tsquery(terms)
-    ORDER BY ts_rank_cd(text_index_col, plainto_tsquery(terms)) DESC
+    WHERE text_index_col @@ plainto_tsquery('simple', terms)
+    ORDER BY ts_rank_cd(text_index_col, plainto_tsquery('simple', terms)) DESC
 );
 $$ LANGUAGE SQL STABLE;
 
