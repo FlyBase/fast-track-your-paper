@@ -156,7 +156,6 @@ const FlagsStep = () => {
                 className="form-horizontal well well-sm"
                 style={{ marginLeft: '2em' }}>
                 <div className="form-group">
-
                   <div className="col-sm-12">
                     <p className="form-control-static">
                       <b>Optional</b>{' '}
@@ -210,19 +209,25 @@ const FlagsStep = () => {
                       className="form-control"
                       id="cell_line_names"
                       rows="3"
-                      style={{resize:"none",width:"50%",display:"inline-block"}}
+                      style={{
+                        resize: 'none',
+                        width: '50%',
+                        display: 'inline-block',
+                      }}
                       placeholder="Enter cell line name(s) by placing each on its own line; e.g.&#10;S2-DGRC&#10;S2-cdi-GFP"></textarea>
 
                     <textarea
                       className="form-control"
                       id="cell_line_names"
                       rows="3"
-                      style={{resize:"none",width:"50%",display:"inline-block"}}
+                      style={{
+                        resize: 'none',
+                        width: '50%',
+                        display: 'inline-block',
+                      }}
                       placeholder="Enter corresponding cell line source(s) by placing each on its own line; e.g.&#10;DGRC&#10;this study"></textarea>
                   </div>
-
                 </div>
-
               </div>
             </OptForm>
 
@@ -413,7 +418,7 @@ const FlagsStep = () => {
                         className="form-control"
                         id="dataset_accession_numbers"
                         rows="2"
-                        placeholder="Please enter relevant accession numbers, separated by commas"></textarea>
+                        placeholder="Optional: Please enter relevant accession numbers, separated by commas"></textarea>
                     </div>
                   </OptForm>
                 </div>
