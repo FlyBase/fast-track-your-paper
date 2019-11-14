@@ -49,7 +49,7 @@ const PubStep = () => {
               <input
                 ref={inputEl}
                 type="text"
-                placeholder="enter key terms, author name, publication year, etc."
+                placeholder="enter key terms, author name, PubMed ID, etc."
                 className="form-control"
                 id="pub_search_keywords"
                 onKeyPress={handleSubmit}
@@ -69,8 +69,8 @@ const PubStep = () => {
               <br />
               Try searching with an author, a year and part of a journal title.
               For example, enter &ldquo;Adams 2000 Science&rdquo; (without the
-              quotes). Or, try searching with a PubMed ID (PMID).
-              For example, enter &ldquo;10731132&rdquo; (without the quotes).
+              quotes). Or, try searching with a PubMed ID (PMID). For example,
+              enter &ldquo;10731132&rdquo; (without the quotes).
               <br />
               The database searched by this tool contains only items classified
               by FlyBase as <b>papers</b> or <b>reviews</b>.
