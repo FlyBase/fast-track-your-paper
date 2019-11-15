@@ -60,5 +60,10 @@
     "jsxBracketSameLine": true,
     "tabWidth": 2,
     "printWidth": 80
+  },
+  "babelMacros": {
+    "styledComponents": {
+      "pure": true
+    }
   }
 }
