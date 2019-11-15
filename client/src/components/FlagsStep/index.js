@@ -13,7 +13,7 @@ const FlagsStep = () => {
       <div className="panel panel-primary">
         <div className="panel-heading">
           <h3 className="panel-title">
-            Data Type Curation Flags
+            Data Types
             <button
               type="button"
               className="pull-right btn btn-default btn-xs"
@@ -160,44 +160,72 @@ const FlagsStep = () => {
                     <p className="form-control-static">
                       <b>Optional</b>{' '}
                       <em>
-                        please give us more information about the cell line
+                        please give us more information about the cell line(s)
                         used:
                       </em>
                     </p>
                   </div>
-                </div>
-                <div className="form-group">
-                  <div className="col-md-4 col-lg-3">
+
+                  <div className="col-sm-5 col-md-4 col-lg-3">
                     <div className="checkbox">
                       <label>
                         <input type="checkbox" id="stable_line" />
                         Stable line generated
                       </label>
+                      <IconHelp
+                        initial={showAllHelp}
+                        message="Your publication reports the creation of a new stable Drosophila melanogaster cell line."
+                      />
                     </div>
                   </div>
-                  <div className="col-md-8 col-lg-9">
-                    <textarea
-                      className="form-control"
-                      id="cell_line_names"
-                      rows="3"
-                      placeholder="Enter cell line name(s) by placing each on its own line"></textarea>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <div className="col-md-4 col-lg-3">
+
+                  <div className="col-sm-7">
                     <div className="checkbox">
                       <label>
                         <input type="checkbox" id="commercial_line" />
                         Commercially purchased cell line
                       </label>
+                      <IconHelp
+                        initial={showAllHelp}
+                        message="Your publication reports the use of a commercially purchased Drosophila melanogaster cell line."
+                      />
                     </div>
                   </div>
-                  <div className="col-md-8 col-lg-9">
+
+                  <div className="col-sm-12">
+                    <p className="form-control-static">
+                      <em>
+                        Please provide the name and source for each cell line:
+                      </em>
+                      <IconHelp
+                        initial={showAllHelp}
+                        message="Enter corresponding cell line names and sources on separate aligned rows."
+                      />
+                    </p>
+                  </div>
+
+                  <div className="col-sm-12">
                     <textarea
                       className="form-control"
                       id="cell_line_names"
                       rows="3"
-                      placeholder="Enter cell line source(s) by placing each on its own line"></textarea>
+                      style={{
+                        resize: 'none',
+                        width: '50%',
+                        display: 'inline-block',
+                      }}
+                      placeholder="Enter cell line name(s) by placing each on its own line; e.g.&#10;S2-DGRC&#10;S2-cdi-GFP"></textarea>
+
+                    <textarea
+                      className="form-control"
+                      id="cell_line_names"
+                      rows="3"
+                      style={{
+                        resize: 'none',
+                        width: '50%',
+                        display: 'inline-block',
+                      }}
+                      placeholder="Enter corresponding cell line source(s) by placing each on its own line; e.g.&#10;DGRC&#10;this study"></textarea>
                   </div>
                 </div>
               </div>
@@ -390,7 +418,7 @@ const FlagsStep = () => {
                         className="form-control"
                         id="dataset_accession_numbers"
                         rows="2"
-                        placeholder="Please enter relevant accession numbers, separated by commas"></textarea>
+                        placeholder="Optional: Please enter relevant accession numbers, separated by commas"></textarea>
                     </div>
                   </OptForm>
                 </div>

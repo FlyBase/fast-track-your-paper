@@ -11,20 +11,23 @@ const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0 }) => {
         <div className="col-sm-12">
           <div className="panel panel-info">
             <div className="panel-heading">
-              {totalPubs ? (
-                pubs.length == totalPubs ? (
-                  <span>
-                    Showing {pubs.length} results for &ldquo;{keywords}&rdquo;
-                  </span>
-                ) : (
-                  <span>
-                    Showing first {pubs.length} results of {totalPubs} results
-                    for &ldquo;{keywords}&rdquo;
-                  </span>
-                )
-              ) : (
-                <span className="text-warning">No matching records found</span>
-              )}
+              {totalPubs ?
+              <>
+               (
+                 pubs.length == totalPubs ? (
+                    <span>
+                      Showing {pubs.length} results for &ldquo;{keywords}&rdquo;
+                    </span>
+                  ) : (
+                     <span>
+                      Showing first {pubs.length} results of {totalPubs} results
+                      for &ldquo;{keywords}&rdquo;
+                    </span>
+                  )
+                  <div style={{ float: 'right' }}> curated? </div>
+                  
+                )</> : ( <span className="text-warning">No matching records found</span> )
+              }
               <IconHelp initial={false}>
                 <div className="well well-sm">
                   Search results from the FlyBase bibliography database may
@@ -52,7 +55,7 @@ const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0 }) => {
                         <td>
                           <a
                             className={
-                              p.cvtermByTypeId.name == 'review'
+                              p.cvtermByTypeId.name.match(/review|note/i)
                                 ? 'text-warning'
                                 : 'text-info'
                             }
@@ -60,6 +63,9 @@ const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0 }) => {
                             <b>{p.cvtermByTypeId.name}</b>: {p.miniref} <br />{' '}
                             <b>{p.title}</b>
                           </a>
+                        </td>
+                        <td>
+                          { p.curationstatus ? <i className="fa fa-check"></i> : <i className="fa fa-times"></i> }
                         </td>
                       </tr>
                     ))}

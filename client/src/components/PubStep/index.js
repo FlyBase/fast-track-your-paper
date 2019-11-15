@@ -49,7 +49,7 @@ const PubStep = () => {
               <input
                 ref={inputEl}
                 type="text"
-                placeholder="enter key terms, author name, publication year, etc."
+                placeholder="enter key terms, author name, PubMed ID, etc."
                 className="form-control"
                 id="pub_search_keywords"
                 onKeyPress={handleSubmit}
