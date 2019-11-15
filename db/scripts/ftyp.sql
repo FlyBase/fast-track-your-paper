@@ -82,28 +82,17 @@ CREATE INDEX pub_text_idx ON ftyp_hidden.pub_search USING GIN (text_index_col);
   on this view.  It then orders them by a descending rank and returns
   the corresponding Chado pub table entry for the result.
  */
-CREATE OR REPLACE FUNCTION ftyp.search_pubs(terms text)
-    RETURNS SETOF pub AS
+CREATE OR REPLACE FUNCTION ftyp.search_pubs(terms text) RETURNS SETOF pub AS
 $$
-DECLARE
-    search_terms tsquery = plainto_tsquery(terms);
-    pub_result   pub%rowtype;
-BEGIN
-    FOR pub_result IN EXECUTE
-        'SELECT *
-        FROM ftyp_hidden.pub_search
-        WHERE text_index_col @@ $1
-        ORDER BY ts_rank_cd(text_index_col, $1) DESC' USING search_terms
-        LOOP
-            RETURN QUERY
-                SELECT p.*
-                FROM pub p
-                         JOIN cvterm cvt on (p.type_id = cvt.cvterm_id)
-                WHERE p.pub_id = pub_result.pub_id
-                  AND cvt.name in ('paper', 'review', 'note');
-        END LOOP;
-    RETURN;
-END;
-$$
-    LANGUAGE plpgsql
-    STABLE;
+SELECT p.*
+FROM pub p
+         JOIN cvterm cvt on (p.type_id = cvt.cvterm_id)
+WHERE cvt.name IN ('paper', 'review', 'note')
+  AND p.pub_id IN (
+    SELECT pub_id
+    FROM ftyp_hidden.pub_search
+    WHERE text_index_col @@ plainto_tsquery('simple', terms)
+    ORDER BY ts_rank_cd(text_index_col, plainto_tsquery('simple', terms)) DESC
+);
+$$ LANGUAGE SQL STABLE;
+

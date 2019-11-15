@@ -1,22 +1,26 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useContext } from 'react'
+import { useService } from '@xstate/react'
 import ChosenPub from '../ChosenPub'
 import SearchPubs from '../SearchPubs'
 import IconHelp from '../IconHelp'
 
-import { pubStepMachine } from 'machines/PubStepMachine'
-import { useMachine } from '@xstate/react'
+import { ApolloContext } from 'contexts'
 
-const PubStep = () => {
-  const [current, send] = useMachine(pubStepMachine)
+const PubStep = ({ service }) => {
+  //console.log('PubStep', service)
+  const [current, send] = useService(service)
+  //console.log('PubStep', service)
+  //console.log('PubStep.current', current, send)
   // Initialize DOM references to the form and input elements.
   // https://reactjs.org/docs/hooks-reference.html#useref
   const formEl = useRef(null)
   const inputEl = useRef(null)
 
-  const { totalPubs, pubs = [] } = current.context
+  // Get the GraphQL client from the apollo context object.
+  // https://reactjs.org/docs/hooks-reference.html#usecontext
+  const client = useContext(ApolloContext)
 
-  const [showChosen, setShowChosen] = useState(false)
-  const [showResults, setShowResults] = useState(false)
+  const { terms, selected, totalPubs, pubs = [] } = current.context
 
   /*
   Function to handle when a user hits enter in the input field
@@ -28,14 +32,13 @@ const PubStep = () => {
       (inputEl.current === currEl && e.key === 'Enter') ||
       formEl.current === e.target
     ) {
-      send('SUBMIT', { terms: inputEl.current.value })
+      send('SUBMIT', { terms: inputEl.current.value, client })
       e.preventDefault()
-      setShowResults(true)
     }
   }
 
   return (
-    <div className="container">
+    <div className="col-xs-12">
       <div className="panel panel-primary">
         <div className="panel-heading">
           <h3 className="panel-title">Choose a Publication to Annotate</h3>
@@ -77,17 +80,17 @@ const PubStep = () => {
             </IconHelp>
           </form>
 
-          {showChosen && <ChosenPub />}
-          {showResults && (
-            <SearchPubs
-              keywords={inputEl.current.value}
-              pubs={pubs}
-              totalPubs={totalPubs}
-            />
+          {selected && <ChosenPub />}
+          {/*
+           * Show search results if the user has entered some search terms
+           * and the state machine is in the 'search.loaded' state.
+           */}
+          {terms && current.matches({ search: 'loaded' }) && (
+            <SearchPubs keywords={terms} pubs={pubs} totalPubs={totalPubs} />
           )}
-        </div>{' '}
+        </div>
         {/* end .panel-body */}
-      </div>{' '}
+      </div>
       {/* end .panel */}
     </div> /* end .container */
   )

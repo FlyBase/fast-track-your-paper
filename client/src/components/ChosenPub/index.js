@@ -1,7 +1,6 @@
 import React from 'react'
 
 const SearchPubs = ({ keywords = '', pubs = [] }) => {
-  const numResults = 0
   return (
     <div style={{ paddingTop: '1em' }}>
       <div className="row">

@@ -5,11 +5,17 @@ import { useStateFromProp } from '../../hooks/useStateFromProp'
 
 const IconHelp = ({ initial = true, message = '', children = null }) => {
   const [isVisible, setIsVisible] = useStateFromProp(initial)
+
+  const handleOnClick = e => {
+    setIsVisible(!isVisible)
+    e.preventDefault()
+  }
+
   return (
     <>
-      <a onClick={() => setIsVisible(!isVisible)}>
-        &nbsp;<i className="fa fa-question-circle"></i>
-      </a>
+      <button className="btn btn-link" onClick={handleOnClick}>
+        <i className="fa fa-question-circle"></i>
+      </button>
       {isVisible && (
         <div className="small text-info message">
           <em>

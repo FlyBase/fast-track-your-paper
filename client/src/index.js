@@ -5,7 +5,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import ApolloClient from 'apollo-boost'
-import { ApolloProvider } from '@apollo/react-hooks'
+import { ApolloContext } from 'contexts/index'
 
 // Initialize error capturing.
 import * as Sentry from '@sentry/browser'
@@ -15,24 +15,30 @@ import * as serviceWorker from './serviceWorker'
 import './index.css'
 import App from 'components/App'
 
-const client = new ApolloClient({
-  url: '/graphql',
-})
-
+// Initialize Sentry bug capture client.
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
   environment: process.env.NODE_ENV,
 })
 
+// Run accessibility checks in development mode.
 if (process.env.NODE_ENV !== 'production') {
   const axe = require('react-axe')
   axe(React, ReactDOM, 1000)
 }
 
+/*
+ *  Initialize the Apollo client and context objects.
+ *  The context is used to pass this down to any deeply
+ *  nested components that need access to the GraphQL client
+ *  without having to prop drill it down.
+ */
+const client = new ApolloClient({ uri: '/graphql' })
+
 ReactDOM.render(
-  <ApolloProvider client={client}>
+  <ApolloContext.Provider value={client}>
     <App />
-  </ApolloProvider>,
+  </ApolloContext.Provider>,
   document.getElementById('root')
 )
 

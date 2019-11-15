@@ -1,33 +1,42 @@
-import React, { useState } from 'react'
-//import './index.css'
+import React from 'react'
 import IconHelp from '../IconHelp'
 
+const ResultMsg = ({ numPubs = 0, totalPubs = 0, keywords = '' }) => {
+  if (numPubs === totalPubs) {
+    return (
+      <span>
+        Showing {numPubs} results for &ldquo;{keywords}&rdquo;
+      </span>
+    )
+  }
+  return (
+    <span>
+      Showing first {numPubs} results of {totalPubs} results for &ldquo;
+      {keywords}&rdquo;
+    </span>
+  )
+}
+
 const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0 }) => {
-  const [showSearchResultsPanel, setShowSearchResultsPanel] = useState(true)
-  const [isVisible, setIsVisible] = useState(true)
   return (
     <div style={{ paddingTop: '1em' }}>
       <div className="row" style={{ marginTop: '1em' }}>
         <div className="col-sm-12">
           <div className="panel panel-info">
             <div className="panel-heading">
-              {totalPubs ?
-              <>
-               (
-                 pubs.length == totalPubs ? (
-                    <span>
-                      Showing {pubs.length} results for &ldquo;{keywords}&rdquo;
-                    </span>
-                  ) : (
-                     <span>
-                      Showing first {pubs.length} results of {totalPubs} results
-                      for &ldquo;{keywords}&rdquo;
-                    </span>
-                  )
+              {totalPubs === 0 && (
+                <span className="text-warning">No matching records found</span>
+              )}
+              {totalPubs > 0 && (
+                <>
+                  <ResultMsg
+                    numPubs={pubs.length}
+                    totalPubs={totalPubs}
+                    keywords={keywords}
+                  />
                   <div style={{ float: 'right' }}> curated? </div>
-                  
-                )</> : ( <span className="text-warning">No matching records found</span> )
-              }
+                </>
+              )}
               <IconHelp initial={false}>
                 <div className="well well-sm">
                   Search results from the FlyBase bibliography database may
@@ -53,19 +62,22 @@ const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0 }) => {
                       <tr>
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td>
-                          <a
+                          <button
                             className={
                               p.cvtermByTypeId.name.match(/review|note/i)
-                                ? 'text-warning'
-                                : 'text-info'
-                            }
-                            href="">
+                                ? 'text-warning btn btn-link'
+                                : 'text-info btn btn-link'
+                            }>
                             <b>{p.cvtermByTypeId.name}</b>: {p.miniref} <br />{' '}
                             <b>{p.title}</b>
-                          </a>
+                          </button>
                         </td>
                         <td>
-                          { p.curationstatus ? <i className="fa fa-check"></i> : <i className="fa fa-times"></i> }
+                          {p.curationstatus ? (
+                            <i className="fa fa-check"></i>
+                          ) : (
+                            <i className="fa fa-times"></i>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -86,8 +98,10 @@ const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0 }) => {
               using the Fast-Track Your Paper tool.
               <br />
               If the above does not apply to you, you can{' '}
-              <a id="submitUnknownPub">still make a submission</a> with a
-              publication unknown to FlyBase.
+              <button className="btn btn-link">
+                still make a submission
+              </button>{' '}
+              with a publication unknown to FlyBase.
             </div>
           </div>{' '}
           {/* end .panel */}
