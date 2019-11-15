@@ -1,61 +1,65 @@
 import { actions, Machine } from 'xstate'
 import { loader } from 'graphql.macro'
-import ApolloClient from 'apollo-boost'
 
 const { assign } = actions
 
 // The GraphQL query to search all publication data.
 const pubQuery = loader('graphql/pubQuery.gql')
 
-const client = new ApolloClient({
-  url: '/graphql',
-})
-
-const invokePubSearch = (context, event) => {
-  const { terms } = context
-  return client.query({ query: pubQuery, variables: { terms } })
-}
-
-export const pubStepMachine = Machine({
-  id: 'pubsteps',
-  initial: 'idle',
-  context: {
-    terms: null,
-    pubs: [],
-    selected: null,
-    totalPubs: 0,
-  },
-  on: {
-    SUBMIT: {
-      actions: assign({
-        terms: (context, event) => event.terms,
-      }),
-      target: 'search.loading',
-    },
-  },
-  states: {
-    idle: {},
-    search: {
+export const createPubStepMachine = () => {
+  return Machine(
+    {
+      id: 'pubsteps',
+      initial: 'idle',
+      context: {
+        client: null,
+        terms: null,
+        pubs: [],
+        totalPubs: 0,
+      },
+      on: {
+        SUBMIT: {
+          actions: ['setSearchTerms'],
+          target: 'search.loading',
+        },
+      },
       states: {
-        loading: {
-          invoke: {
-            id: 'query-publications',
-            src: invokePubSearch,
-            onDone: {
-              target: 'loaded',
-              actions: assign((context, event) => {
-                return {
-                  totalPubs: event.data.data.pubs.totalCount,
-                  pubs: event.data.data.pubs.nodes,
-                }
-              }),
+        idle: {},
+        search: {
+          states: {
+            loading: {
+              invoke: {
+                id: 'query-publications',
+                src: 'invokePubSearch',
+                onDone: {
+                  target: 'loaded',
+                  actions: ['setPubResults'],
+                },
+                onError: 'failed',
+              },
             },
-            onError: 'failed',
+            loaded: {},
+            failed: {},
           },
         },
-        loaded: {},
-        failed: {},
       },
     },
-  },
-})
+    {
+      actions: {
+        setSearchTerms: assign({ terms: (context, event) => event.terms }),
+        setPubResults: assign((context, event) => {
+          return {
+            totalPubs: event.data.data.pubs.totalCount,
+            pubs: event.data.data.pubs.nodes,
+          }
+        }),
+      },
+      services: {
+        invokePubSearch: (context, event) => {
+          const { client, terms } = event
+          return client.query({ query: pubQuery, variables: { terms } })
+        },
+      },
+    }
+  )
+}

@@ -12,6 +12,7 @@
     "formik": "^2.0.3",
     "graphql": "^14.5.8",
     "graphql.macro": "^1.4.2",
+    "lodash.isempty": "^4.4.0",
     "prop-types": "^15.7.2",
     "react": "^16.11.0",
     "react-app-polyfill": "^1.0.3",

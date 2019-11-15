@@ -5,3 +5,11 @@ export const fetchFromLocalStorage = key => {
     return {}
   }
 }
+
+export const replacer = (key, value) => {
+  if (key === 'pubMachine') {
+    return undefined
+  }
+
+  return value
+}

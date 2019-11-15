@@ -1,10 +1,11 @@
 import React from 'react'
 import { useMachine } from '@xstate/react'
 import { Divider } from 'antd'
+import isEmpty from 'lodash.isempty'
 // eslint-disable-next-line
 import styled from 'styled-components/macro'
 
-import { ftypSteps } from 'machines/StepMachine'
+import { createStepMachine } from 'machines/StepMachine'
 
 import PubStep from 'components/PubStep'
 import AuthorStep from 'components/AuthorStep'
@@ -14,7 +15,7 @@ import ConfirmStep from 'components/ConfirmStep'
 import SubmitStep from 'components/SubmitStep'
 import StepIndicator from 'components/StepIndicator'
 
-import { fetchFromLocalStorage } from 'utils/storage'
+import { fetchFromLocalStorage, replacer } from 'utils/storage'
 
 // An array to map the step machine state names to user friendly labels.
 const steps = [
@@ -28,14 +29,30 @@ const steps = [
 
 function StepContainer() {
   const localStorageKey = 'ftyp-state'
-  const [current, send] = useMachine(ftypSteps, {
-    ...fetchFromLocalStorage(localStorageKey),
+  // TODO reading state from localStroage is broken for the moment
+  const state = {}
+  //const state = fetchFromLocalStorage(localStorageKey)
+
+  const machineOpts = {
     actions: {
       persist: (context, event, { action, state }) => {
-        localStorage.setItem(localStorageKey, JSON.stringify({ state }))
+        localStorage.setItem(localStorageKey, JSON.stringify(state))
       },
     },
-  })
+  }
+
+  // If we have some state pass it to the machine options
+  // so that we rehydrate that state.
+  if (!isEmpty(state)) {
+    machineOpts.state = state
+  }
+
+  //console.log('Machine opts =', machineOpts)
+  const [current, send] = useMachine(createStepMachine(), machineOpts)
+
+  //console.log('Step container', current)
+  const { pubMachine } = current.context
+  //console.log('Step container', pubMachine)
 
   /*
   Event handler that sends a GOTO_<target> event to the machine.
@@ -74,7 +91,9 @@ function StepContainer() {
           flex-flow: column nowrap;
           align-items: center;
         `}>
-        {current.matches({ pending: 'pub' }) && <PubStep />}
+        {current.matches({ pending: 'pub' }) && (
+          <PubStep service={pubMachine} />
+        )}
         {current.matches({ pending: 'author' }) && <AuthorStep />}
         {current.matches({ pending: 'flags' }) && <FlagsStep />}
         {current.matches({ pending: 'genes' }) && <GenesStep />}

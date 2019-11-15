@@ -13,7 +13,11 @@ const StepIndicator = ({
   onChange = () => {},
 }) => {
   return (
-    <Steps progressDot size="small" current={currentStep} onChange={onChange}>
+    <Steps
+      size="small"
+      current={currentStep}
+      onChange={onChange}
+      type="navigation">
       {steps.map((s, i) => (
         /* Disable step indicator if it is the last step. */
         <Step key={s.name} title={s.label} disabled={i === steps.length - 1} />

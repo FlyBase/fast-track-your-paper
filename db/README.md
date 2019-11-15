@@ -42,6 +42,10 @@ gene data.  Pulling data from production Chado consists of the following steps
 To pull data, start the docker db service and execute the following script **outside of docker**.
 Replace all bracketed terms with their appropriate value.
 
+Please ensure that your connection details are valid or this step will not work.
+In other words, check that the database or tunnel that you are pointing to is up
+and working.
+
 ```bash
 cd fast-track-your-paper/db
 PGHOST=<hostname> PGUSER=<username> PGPORT=<port> PGDATABASE=<dbname> ./scripts/pull_chado_data.sh
@@ -56,4 +60,20 @@ cd fast-track-your-paper
 docker-compose up -d --build
 docker-compose exec -u postgres db /ftyp/scripts/load_chado_data.sh
 ```
+
+### Docker volumes
+
+This docker container defines a local disk volume in which it stores all the database
+files.  This ensures that your database sticks around in between start/stop operations.
+
+To remove this volume and rebuild the container use the following commands:
+
+```bash
+docker-compose down -v
+docker-compose up -d --build
+```
+
+
+
+
 

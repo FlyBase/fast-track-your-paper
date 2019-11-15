@@ -1,16 +1,24 @@
-import React, { useRef } from 'react'
+import React, { useRef, useContext } from 'react'
+import { useService } from '@xstate/react'
+
 import SearchPubs from '../SearchPubs'
 import IconHelp from '../IconHelp'
 
-import { pubStepMachine } from 'machines/PubStepMachine'
-import { useMachine } from '@xstate/react'
+import { ApolloContext } from 'contexts'
 
-const PubStep = () => {
-  const [current, send] = useMachine(pubStepMachine)
+const PubStep = ({ service }) => {
+  //console.log('PubStep', service)
+  const [current, send] = useService(service)
+  //console.log('PubStep', service)
+  //console.log('PubStep.current', current, send)
   // Initialize DOM references to the form and input elements.
   // https://reactjs.org/docs/hooks-reference.html#useref
   const formEl = useRef(null)
   const inputEl = useRef(null)
+
+  // Get the GraphQL client from the apollo context object.
+  // https://reactjs.org/docs/hooks-reference.html#usecontext
+  const client = useContext(ApolloContext)
 
   const { totalPubs, pubs = [] } = current.context
 
@@ -24,7 +32,7 @@ const PubStep = () => {
       (inputEl.current === currEl && e.key === 'Enter') ||
       formEl.current === e.target
     ) {
-      send('SUBMIT', { terms: inputEl.current.value })
+      send('SUBMIT', { terms: inputEl.current.value, client })
       e.preventDefault()
     }
   }
