@@ -6,7 +6,7 @@ import IconHelp from '../IconHelp'
 
 import { ApolloContext } from 'contexts'
 
-const PubStep = ({ service }) => {
+const PubStep = ({ service, selected = undefined }) => {
   //console.log('PubStep', service)
   const [current, send] = useService(service)
   //console.log('PubStep', service)
@@ -20,7 +20,7 @@ const PubStep = ({ service }) => {
   // https://reactjs.org/docs/hooks-reference.html#usecontext
   const client = useContext(ApolloContext)
 
-  const { terms, selected, totalPubs, pubs = [] } = current.context
+  const { terms, totalPubs, pubs = [] } = current.context
 
   /*
   Function to handle when a user hits enter in the input field
@@ -36,6 +36,9 @@ const PubStep = ({ service }) => {
       e.preventDefault()
     }
   }
+
+  // Send the event with the selected pub to the pub service.
+  const handlePubClick = pub => send('SELECT_PUB',{pub})
 
   return (
     <div className="col-xs-12">
@@ -80,13 +83,13 @@ const PubStep = ({ service }) => {
             </IconHelp>
           </form>
 
-          {selected && <ChosenPub />}
+          {selected && <ChosenPub pub={selected} />}
           {/*
            * Show search results if the user has entered some search terms
            * and the state machine is in the 'search.loaded' state.
            */}
           {terms && current.matches({ search: 'loaded' }) && (
-            <SearchPubs keywords={terms} pubs={pubs} totalPubs={totalPubs} />
+            <SearchPubs keywords={terms} pubs={pubs} totalPubs={totalPubs} onPubClick={handlePubClick} />
           )}
         </div>
         {/* end .panel-body */}

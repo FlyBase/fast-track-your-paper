@@ -1,4 +1,4 @@
-import { actions, Machine } from 'xstate'
+import { actions, Machine, sendParent } from 'xstate'
 import { loader } from 'graphql.macro'
 
 const { assign } = actions
@@ -16,7 +16,6 @@ export const createPubStepMachine = () => {
         terms: null,
         pubs: [],
         totalPubs: 0,
-        selected: null,
       },
       on: {
         SUBMIT: {
@@ -39,7 +38,13 @@ export const createPubStepMachine = () => {
                 onError: 'failed',
               },
             },
-            loaded: {},
+            loaded: {
+              on: {
+                SELECT_PUB: {
+                  actions: sendParent((context, event) => ({type: 'SET_PUB', pub: event.pub}))
+                }
+              }
+            },
             failed: {},
           },
         },

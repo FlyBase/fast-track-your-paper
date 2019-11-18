@@ -51,7 +51,7 @@ function StepContainer() {
   const [current, send] = useMachine(createStepMachine(), machineOpts)
 
   //console.log('Step container', current)
-  const { pubMachine } = current.context
+  const { pubMachine, submission: { publication = undefined } } = current.context
   //console.log('Step container', pubMachine)
 
   /*
@@ -64,7 +64,7 @@ function StepContainer() {
 
    */
   const handleOnStepClick = stepIdx =>
-    send(`GOTO_${steps[stepIdx].name.toLocaleUpperCase()}`, { hasPub: true })
+    send(`GOTO_${steps[stepIdx].name.toLocaleUpperCase()}`)
   /*
     Get the array index of the current step.
     This is required to show progress in the StepIndicator component.
@@ -92,7 +92,7 @@ function StepContainer() {
           align-items: center;
         `}>
         {current.matches({ pending: 'pub' }) && (
-          <PubStep service={pubMachine} />
+          <PubStep service={pubMachine} selected={publication}/>
         )}
         {current.matches({ pending: 'author' }) && <AuthorStep />}
         {current.matches({ pending: 'flags' }) && <FlagsStep />}
@@ -105,8 +105,8 @@ function StepContainer() {
               <button
                 type="button"
                 className="btn btn-primary navbar-btn"
-                onClick={() => send('PREV', { hasPub: true })}>
-                <i class="fa fa-long-arrow-left fa-lg"></i> Return to{' '}
+                onClick={() => send('PREV')}>
+                <i className="fa fa-long-arrow-left fa-lg"></i> Return to{' '}
                 {steps[currentStepIdx - 1].label} step
               </button>
             )}
@@ -114,10 +114,10 @@ function StepContainer() {
               <button
                 type="button"
                 className="btn btn-primary navbar-btn"
-                onClick={() => send('NEXT', { hasPub: true })}>
+                onClick={() => send('NEXT')}>
                 <b>Save</b> {steps[currentStepIdx].label} step and go to{' '}
                 {steps[currentStepIdx + 1].label} step&ensp;
-                <i class="fa fa-long-arrow-right fa-lg"></i>
+                <i className="fa fa-long-arrow-right fa-lg"></i>
               </button>
             )}
             {current.matches('submitted') && (
