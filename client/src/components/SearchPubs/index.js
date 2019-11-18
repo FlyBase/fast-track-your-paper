@@ -17,7 +17,12 @@ const ResultMsg = ({ numPubs = 0, totalPubs = 0, keywords = '' }) => {
   )
 }
 
-const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0, onPubClick = () => {} }) => {
+const SearchPubs = ({
+  keywords = '',
+  pubs = [],
+  totalPubs = 0,
+  onPubClick = () => {},
+}) => {
   return (
     <div style={{ paddingTop: '1em' }}>
       <div className="row" style={{ marginTop: '1em' }}>
@@ -59,14 +64,18 @@ const SearchPubs = ({ keywords = '', pubs = [], totalPubs = 0, onPubClick = () =
                   style={{ marginBottom: 0 }}>
                   <tbody>
                     {pubs.map((p, i) => (
-                      <tr key={`${p.uniquename}_${i}`} role="button" tabIndex="0" onClick={e => onPubClick(p, e)}>
+                      <tr
+                        key={`${p.uniquename}_${i}`}
+                        role="button"
+                        tabIndex="0"
+                        onClick={e => onPubClick(p, e)}>
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td
-                            className={
-                              p.cvtermByTypeId.name.match(/review|note/i)
-                                ? 'text-warning btn btn-link'
-                                : 'text-info btn btn-link'
-                            }>
+                          className={
+                            p.cvtermByTypeId.name.match(/review|note/i)
+                              ? 'text-warning btn btn-link'
+                              : 'text-info btn btn-link'
+                          }>
                           <b>{p.cvtermByTypeId.name}</b>: {p.miniref} <br />{' '}
                           <b>{p.title}</b>
                         </td>

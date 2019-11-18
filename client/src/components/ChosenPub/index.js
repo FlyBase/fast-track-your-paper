@@ -37,7 +37,7 @@ const ChosenPub = ({ pub }) => {
 }
 
 ChosenPub.propTypes = {
-  pub: PropTypes.object.isRequired
+  pub: PropTypes.object.isRequired,
 }
 
 export default ChosenPub

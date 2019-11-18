@@ -66,8 +66,8 @@ export const createStepMachine = () => {
                   cond: 'hasPublication',
                 },
                 SET_PUB: {
-                  actions: ['setPub','persist'],
-                }
+                  actions: ['setPub', 'persist'],
+                },
               },
             },
             // Author state
@@ -132,13 +132,13 @@ export const createStepMachine = () => {
             }
           }
         }),
-        setPub: assign( (context, event) => {
+        setPub: assign((context, event) => {
           const { submission } = context
           submission.publication = event.pub
           return {
-            submission
+            submission,
           }
-        })
+        }),
       },
       guards: {
         // Check that the submission has an associated publication or citation.

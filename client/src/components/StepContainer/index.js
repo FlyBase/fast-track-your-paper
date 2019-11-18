@@ -51,7 +51,10 @@ function StepContainer() {
   const [current, send] = useMachine(createStepMachine(), machineOpts)
 
   //console.log('Step container', current)
-  const { pubMachine, submission: { publication = undefined } } = current.context
+  const {
+    pubMachine,
+    submission: { publication = undefined },
+  } = current.context
   //console.log('Step container', pubMachine)
 
   /*
@@ -92,7 +95,7 @@ function StepContainer() {
           align-items: center;
         `}>
         {current.matches({ pending: 'pub' }) && (
-          <PubStep service={pubMachine} selected={publication}/>
+          <PubStep service={pubMachine} selected={publication} />
         )}
         {current.matches({ pending: 'author' }) && <AuthorStep />}
         {current.matches({ pending: 'flags' }) && <FlagsStep />}

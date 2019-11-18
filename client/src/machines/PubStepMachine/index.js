@@ -41,9 +41,12 @@ export const createPubStepMachine = () => {
             loaded: {
               on: {
                 SELECT_PUB: {
-                  actions: sendParent((context, event) => ({type: 'SET_PUB', pub: event.pub}))
-                }
-              }
+                  actions: sendParent((context, event) => ({
+                    type: 'SET_PUB',
+                    pub: event.pub,
+                  })),
+                },
+              },
             },
             failed: {},
           },

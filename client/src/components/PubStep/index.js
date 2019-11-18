@@ -38,7 +38,7 @@ const PubStep = ({ service, selected = undefined }) => {
   }
 
   // Send the event with the selected pub to the pub service.
-  const handlePubClick = pub => send('SELECT_PUB',{pub})
+  const handlePubClick = pub => send('SELECT_PUB', { pub })
 
   return (
     <div className="col-xs-12">
@@ -89,7 +89,12 @@ const PubStep = ({ service, selected = undefined }) => {
            * and the state machine is in the 'search.loaded' state.
            */}
           {terms && current.matches({ search: 'loaded' }) && (
-            <SearchPubs keywords={terms} pubs={pubs} totalPubs={totalPubs} onPubClick={handlePubClick} />
+            <SearchPubs
+              keywords={terms}
+              pubs={pubs}
+              totalPubs={totalPubs}
+              onPubClick={handlePubClick}
+            />
           )}
         </div>
         {/* end .panel-body */}
