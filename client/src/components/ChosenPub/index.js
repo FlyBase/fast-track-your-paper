@@ -1,14 +1,15 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
-const SearchPubs = ({ keywords = '', pubs = [] }) => {
+const ChosenPub = ({ pub }) => {
   return (
-    <div style={{ paddingTop: '1em' }}>
+    <div style={{ paddingTop: '1rem' }}>
       <div className="row">
         <div className="col-sm-12">
           <div className="well small">
             <p>
               <strong>The selected publication:</strong>
-              {/* miniref */}
+              {pub.miniref}
             </p>
             <p>
               <strong>Please note:</strong>
@@ -35,4 +36,8 @@ const SearchPubs = ({ keywords = '', pubs = [] }) => {
   )
 }
 
-export default SearchPubs
+ChosenPub.propTypes = {
+  pub: PropTypes.object.isRequired,
+}
+
+export default ChosenPub
