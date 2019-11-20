@@ -96,3 +96,45 @@ WHERE cvt.name IN ('paper', 'review', 'note')
 );
 $$ LANGUAGE SQL STABLE;
 
+/*
+ This function returns the curation status from a 'curated_by' pubprop in Chado.
+ */
+CREATE OR REPLACE FUNCTION public.status_from_curatedby(curated_by text) RETURNS text AS
+$$
+DECLARE
+    proforma text;
+BEGIN
+    SELECT (regexp_match(curated_by, 'Proforma: (.*?);'))[1] INTO proforma;
+
+    IF proforma ~ '(skim|\.thin$)' THEN
+        RETURN 'skim';
+    ELSIF proforma ~ '\.bibl$' THEN
+        RETURN 'bibl';
+    ELSIF proforma ~ '\.user$' THEN
+        RETURN 'user';
+    ELSIF proforma ~ '\.full$' THEN
+        RETURN 'full';
+    ELSIF proforma ~ '^\w+\d+$' THEN
+        RETURN 'full';
+    ELSE
+        RETURN NULL;
+    END IF;
+END
+$$ LANGUAGE plpgsql STABLE;
+
+CREATE OR REPLACE FUNCTION public.pub_curation_status(pub pub) RETURNS text AS
+$$
+DECLARE
+    curated_by text;
+BEGIN
+
+--    FOR curated_by IN
+--    LOOP
+--        RAISE NOTICE 'RECORD = %', curated_by;
+--    END LOOP;
+
+    /* bibl, full, skim, user */
+    RETURN 'bibl';
+END
+$$ LANGUAGE plpgsql STABLE;
+
