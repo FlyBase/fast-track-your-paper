@@ -12,7 +12,6 @@ export const createPubStepMachine = () => {
       id: 'pubsteps',
       initial: 'idle',
       context: {
-        client: null,
         terms: null,
         pubs: [],
         totalPubs: 0,
