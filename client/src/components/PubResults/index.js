@@ -17,12 +17,18 @@ const ResultMsg = ({ numPubs = 0, totalPubs = 0, keywords = '' }) => {
   )
 }
 
-const SearchPubs = ({
+const PubResults = ({
   keywords = '',
   pubs = [],
   totalPubs = 0,
   onPubClick = () => {},
+  onCitationClick = () => {},
 }) => {
+  const handleOnPubClick = e => {
+    const idx = e.currentTarget.getAttribute('data-pub-idx')
+    const pub = pubs[idx]
+    onPubClick(pub, e)
+  }
   return (
     <div style={{ paddingTop: '1em' }}>
       <div className="row" style={{ marginTop: '1em' }}>
@@ -68,7 +74,8 @@ const SearchPubs = ({
                         key={`${p.uniquename}_${i}`}
                         role="button"
                         tabIndex="0"
-                        onClick={e => onPubClick(p, e)}>
+                        data-pub-idx={i}
+                        onClick={handleOnPubClick}>
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td
                           className={
@@ -105,7 +112,14 @@ const SearchPubs = ({
               using the Fast-Track Your Paper tool.
               <br />
               If the above does not apply to you, you can still{' '}
-              <button className="btn btn-sm btn-link" style={{padding:0,borderWidth:0,verticalAlign:'initial'}}>
+              <button
+                className="btn btn-sm btn-link"
+                onClick={onCitationClick}
+                style={{
+                  padding: 0,
+                  borderWidth: 0,
+                  verticalAlign: 'initial',
+                }}>
                 make a submission with a publication unknown to FlyBase.
               </button>{' '}
             </div>
@@ -117,4 +131,4 @@ const SearchPubs = ({
   )
 }
 
-export default SearchPubs
+export default PubResults
