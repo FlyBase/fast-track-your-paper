@@ -3,8 +3,9 @@ import { useService } from '@xstate/react'
 import PubSearchForm from 'components/PubSearchForm'
 import ChosenPub from 'components/ChosenPub'
 import PubResults from 'components/PubResults'
+import Citation from 'components/Citation'
 
-const PubStep = ({ service, selected = undefined }) => {
+const PubStep = ({ service, selected = undefined, citation = undefined }) => {
   const [current, send] = useService(service)
 
   const { terms, totalPubs, pubs = [] } = current.context
@@ -20,13 +21,8 @@ const PubStep = ({ service, selected = undefined }) => {
         </div>
         <div className="panel-body">
           {!current.matches('citation') && <PubSearchForm send={send} />}
-          {current.matches('citation') && (
-            <>
-              <div>Manual citation box here</div>
-              <button onClick={() => send('GOTO.SEARCH')}>Cancel</button>
-            </>
-          )}
-          {selected && <ChosenPub pub={selected} />}
+          { current.matches('citation') && <Citation send={send} />}
+          { (selected || citation) && <ChosenPub pub={selected} citation={citation} />}
           {/*
            * Show search results if the user has entered some search terms
            * and the state machine is in the 'search.loaded' state.
@@ -40,8 +36,10 @@ const PubStep = ({ service, selected = undefined }) => {
               onCitationClick={() => send('CITATION')}
             />
           )}
-        </div> {/* end .panel-body */}
-      </div> {/* end .panel */}
+        </div>{' '}
+        {/* end .panel-body */}
+      </div>{' '}
+      {/* end .panel */}
     </div>
   )
 }
