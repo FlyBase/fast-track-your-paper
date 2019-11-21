@@ -96,11 +96,9 @@ const PubStep = ({ service, selected = undefined }) => {
               onPubClick={handlePubClick}
             />
           )}
-        </div>
-        {/* end .panel-body */}
-      </div>
-      {/* end .panel */}
-    </div> /* end .container */
+        </div> {/* end .panel-body */}
+      </div> {/* end .panel */}
+    </div>
   )
 }
 
