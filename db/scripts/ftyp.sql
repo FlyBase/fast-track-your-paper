@@ -109,15 +109,13 @@ BEGIN
     IF proforma ~ '(skim|\.thin$)' THEN
         RETURN 'skim';
     ELSIF proforma ~ '\.bibl$' THEN
-        RETURN 'bibl';
+        RETURN 'none';
     ELSIF proforma ~ '\.user$' THEN
         RETURN 'user';
     ELSIF proforma ~ '\.full$' THEN
         RETURN 'full';
-    ELSIF proforma ~ '^\w+\d+$' THEN
-        RETURN 'full';
     ELSE
-        RETURN NULL;
+        RETURN 'full';
     END IF;
 END
 $$ LANGUAGE plpgsql STABLE;
@@ -125,16 +123,20 @@ $$ LANGUAGE plpgsql STABLE;
 CREATE OR REPLACE FUNCTION public.pub_curation_status(pub pub) RETURNS text AS
 $$
 DECLARE
-    curated_by text;
+    curated_by text[];
 BEGIN
 
---    FOR curated_by IN
---    LOOP
---        RAISE NOTICE 'RECORD = %', curated_by;
---    END LOOP;
+    SELECT array_agg(status_from_curatedby(value)) FROM flybase.get_pubprop(pub.uniquename, 'curated_by') INTO curated_by;
 
-    /* bibl, full, skim, user */
-    RETURN 'bibl';
+    IF array_position(curated_by,'full') IS NOT NULL THEN
+      RETURN 'full';
+    ELSIF array_position(curated_by,'user') IS NOT NULL THEN
+      RETURN 'user';
+    ELSIF array_position(curated_by,'skim') IS NOT NULL THEN
+      RETURN 'user';
+    ELSE
+      RETURN 'none';
+    END IF;
 END
 $$ LANGUAGE plpgsql STABLE;
 
