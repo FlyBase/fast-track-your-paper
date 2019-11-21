@@ -96,3 +96,47 @@ WHERE cvt.name IN ('paper', 'review', 'note')
 );
 $$ LANGUAGE SQL STABLE;
 
+/*
+ This function returns the curation status from a 'curated_by' pubprop in Chado.
+ */
+CREATE OR REPLACE FUNCTION public.status_from_curatedby(curated_by text) RETURNS text AS
+$$
+DECLARE
+    proforma text;
+BEGIN
+    SELECT (regexp_match(curated_by, 'Proforma: (.*?);'))[1] INTO proforma;
+
+    IF proforma ~ '(skim|\.thin$)' THEN
+        RETURN 'skim';
+    ELSIF proforma ~ '\.bibl$' THEN
+        RETURN 'none';
+    ELSIF proforma ~ '\.user$' THEN
+        RETURN 'user';
+    ELSIF proforma ~ '\.full$' THEN
+        RETURN 'full';
+    ELSE
+        RETURN 'full';
+    END IF;
+END
+$$ LANGUAGE plpgsql STABLE;
+
+CREATE OR REPLACE FUNCTION public.pub_curation_status(pub pub) RETURNS text AS
+$$
+DECLARE
+    curated_by text[];
+BEGIN
+
+    SELECT array_agg(status_from_curatedby(value)) FROM flybase.get_pubprop(pub.uniquename, 'curated_by') INTO curated_by;
+
+    IF array_position(curated_by,'full') IS NOT NULL THEN
+      RETURN 'full';
+    ELSIF array_position(curated_by,'user') IS NOT NULL THEN
+      RETURN 'user';
+    ELSIF array_position(curated_by,'skim') IS NOT NULL THEN
+      RETURN 'user';
+    ELSE
+      RETURN 'none';
+    END IF;
+END
+$$ LANGUAGE plpgsql STABLE;
+
