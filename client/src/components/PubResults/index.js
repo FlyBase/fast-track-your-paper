@@ -87,7 +87,7 @@ const PubResults = ({
                           <b>{p.title}</b>
                         </td>
                         <td>
-                          {p.curationstatus ? (
+                          {p.curationStatus ? (
                             <i className="fa fa-check"></i>
                           ) : (
                             <i className="fa fa-times"></i>
@@ -111,11 +111,17 @@ const PubResults = ({
               your paper is fully published before submitting it to FlyBase
               using the Fast-Track Your Paper tool.
               <br />
-              If the above does not apply to you, you can{' '}
-              <button className="btn btn-link" onClick={onCitationClick}>
-                still make a submission
+              If the above does not apply to you, you can still{' '}
+              <button
+                className="btn btn-sm btn-link"
+                onClick={onCitationClick}
+                style={{
+                  padding: 0,
+                  borderWidth: 0,
+                  verticalAlign: 'initial',
+                }}>
+                make a submission with a publication unknown to FlyBase.
               </button>{' '}
-              with a publication unknown to FlyBase.
             </div>
           </div>{' '}
           {/* end .panel */}

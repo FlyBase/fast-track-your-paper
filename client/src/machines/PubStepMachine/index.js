@@ -41,18 +41,11 @@ export const createPubStepMachine = () => {
         idle: {},
         // State for capturing manually entered citations.
         citation: {
-          // Reset the pub and the parent machine on entry.
-          entry: ['resetPubStep', 'resetParent'],
           on: {
             /* Send the manually entered citation to the parent on the
              * 'CITATION.SUBMIT' event.
              */
-            'CITATION.SUBMIT': {
-              actions: sendParent((context, event) => ({
-                type: 'SET_CITATION',
-                citation: event.citation,
-              })),
-            },
+            'CITATION.SUBMIT': { actions: ['resetPubStep','resetParent','submitCitation'], target: 'idle' },
             // Allow users to go back to the idle state.
             'GOTO.SEARCH': {
               target: 'idle',
@@ -102,11 +95,18 @@ export const createPubStepMachine = () => {
     {
       // Function definitions for actions.
       actions: {
-        // Send reset event to parent.
         resetParent: sendParent('RESET'),
         // Reset the context of this machine.
         resetPubStep: assign({ ...initialContext }),
         // Set the search terms typed into the search field.
+        submitCitation: sendParent(
+          (context, event) => {
+          console.log(event.citation)
+          return {
+            type: 'SET_CITATION',
+            citation: event.citation,
+          }}
+        ),
         setSearchTerms: assign({ terms: (context, event) => event.terms }),
         // Set search results.
         setPubResults: assign((context, event) => {
