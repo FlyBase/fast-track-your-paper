@@ -15,20 +15,22 @@ const ChosenPub = ({ pub, citation }) => {
         <div className="col-sm-12">
           <div className="well small">
             <p>
-            { citation
-              ? <>
+              {citation ? (
+                <>
                   <strong>Publication citation entered:</strong>&emsp;
                   {citation}
                   <br />
-                  You did not find this publication when you searched our bibliography.
+                  You did not find this publication when you searched our
+                  bibliography.
                 </>
-              : <>
+              ) : (
+                <>
                   <strong>Publication selected:</strong>&emsp;
                   {pub.miniref}
                   <br />
                   {cur_status_phrase_for[pub.curationStatus]}.
                 </>
-            }
+              )}
             </p>
             <p>
               <strong>Please note:</strong>&ensp; The Fast-Track Your Paper tool

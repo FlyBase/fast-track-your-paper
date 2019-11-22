@@ -95,7 +95,11 @@ function StepContainer() {
           align-items: center;
         `}>
         {current.matches({ pending: 'pub' }) && (
-          <PubStep service={pubMachine} selected={publication} citation={citation} />
+          <PubStep
+            service={pubMachine}
+            selected={publication}
+            citation={citation}
+          />
         )}
         {current.matches({ pending: 'author' }) && <AuthorStep />}
         {current.matches({ pending: 'flags' }) && <FlagsStep />}

@@ -45,7 +45,10 @@ export const createPubStepMachine = () => {
             /* Send the manually entered citation to the parent on the
              * 'CITATION.SUBMIT' event.
              */
-            'CITATION.SUBMIT': { actions: ['resetPubStep','resetParent','submitCitation'], target: 'idle' },
+            'CITATION.SUBMIT': {
+              actions: ['resetPubStep', 'resetParent', 'submitCitation'],
+              target: 'idle',
+            },
             // Allow users to go back to the idle state.
             'GOTO.SEARCH': {
               target: 'idle',
@@ -99,14 +102,13 @@ export const createPubStepMachine = () => {
         // Reset the context of this machine.
         resetPubStep: assign({ ...initialContext }),
         // Set the search terms typed into the search field.
-        submitCitation: sendParent(
-          (context, event) => {
+        submitCitation: sendParent((context, event) => {
           console.log(event.citation)
           return {
             type: 'SET_CITATION',
             citation: event.citation,
-          }}
-        ),
+          }
+        }),
         setSearchTerms: assign({ terms: (context, event) => event.terms }),
         // Set search results.
         setPubResults: assign((context, event) => {
