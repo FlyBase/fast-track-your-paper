@@ -133,44 +133,47 @@ CREATE OR REPLACE FUNCTION public.pub_curation_status(pub pub) RETURNS text AS
 $$
 DECLARE
     curated_by text[];
-    cam_flag text[];
+    cam_flag   text[];
     gene_count integer = 0;
 BEGIN
 
     -- Select all 'curated_by' derived statuses for an FBrf into an array of values.
-    SELECT array_agg(status_from_curatedby(value)) FROM flybase.get_pubprop(pub.uniquename, 'curated_by') INTO curated_by;
+    SELECT array_agg(status_from_curatedby(value))
+    FROM flybase.get_pubprop(pub.uniquename, 'curated_by')
+    INTO curated_by;
 
     -- If any curated_by props for this FBrf have 'user', return 'user'.
-    IF array_position(curated_by,'user') IS NOT NULL THEN
-      RETURN 'user';
-    -- If any curated_by props for this FBrf have 'skim', return 'skim'.
-    ELSIF array_position(curated_by,'skim') IS NOT NULL THEN
-      RETURN 'skim';
-    -- Check cam_flag and gene counts.
-    ELSE
-      -- Select all 'cam_flag' derived statuses for an FBrf into an array of values.
-      SELECT array_agg(value) FROM flybase.get_pubprop(pub.uniquename, 'cam_flag') INTO cam_flag;
-
-      -- Calculate the number of genes attached to this FBrf.
-      SELECT count(*)
-      FROM pub p JOIN feature_pub fp on (p.pub_id=fp.pub_id)
-                 JOIN feature f on (fp.feature_id=f.feature_id)
-      -- Join query to the pub table entry that was passed to this function.
-      WHERE p.pub_id = pub.pub_id
-        AND flybase.data_class(f.uniquename) = 'FBgn'
-        AND f.is_obsolete = false
-        AND f.is_analysis = false
-      INTO gene_count;
-
-      -- If any cam_flag props for this FBrf have 'nocur', return 'skim'.
-      IF array_position(cam_flag,'nocur') IS NOT NULL THEN
+    IF array_position(curated_by, 'user') IS NOT NULL THEN
+        RETURN 'user';
+        -- If any curated_by props for this FBrf have 'skim', return 'skim'.
+    ELSIF array_position(curated_by, 'skim') IS NOT NULL THEN
         RETURN 'skim';
-      -- If the FBrf has genes attached, return 'skim'.
-      ELSIF gene_count > 0 THEN
-          RETURN 'skim';
-      ELSE
-        RETURN NULL;
-      END IF;
+        -- Check cam_flag and gene counts.
+    ELSE
+        -- Select all 'cam_flag' derived statuses for an FBrf into an array of values.
+        SELECT array_agg(value) FROM flybase.get_pubprop(pub.uniquename, 'cam_flag') INTO cam_flag;
+
+        -- Calculate the number of genes attached to this FBrf.
+        SELECT count(*)
+        FROM pub p
+                 JOIN feature_pub fp on (p.pub_id = fp.pub_id)
+                 JOIN feature f on (fp.feature_id = f.feature_id)
+             -- Join query to the pub table entry that was passed to this function.
+        WHERE p.pub_id = pub.pub_id
+          AND flybase.data_class(f.uniquename) = 'FBgn'
+          AND f.is_obsolete = false
+          AND f.is_analysis = false
+        INTO gene_count;
+
+        -- If any cam_flag props for this FBrf have 'nocur', return 'skim'.
+        IF array_position(cam_flag, 'nocur') IS NOT NULL THEN
+            RETURN 'skim';
+            -- If the FBrf has genes attached, return 'skim'.
+        ELSIF gene_count > 0 THEN
+            RETURN 'skim';
+        ELSE
+            RETURN NULL;
+        END IF;
     END IF;
 END
 $$ LANGUAGE plpgsql STABLE;
