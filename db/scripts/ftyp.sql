@@ -133,8 +133,8 @@ CREATE OR REPLACE FUNCTION public.pub_curation_status(pub pub) RETURNS text AS
 $$
 DECLARE
     curated_by text[];
-    has_nocur boolean = false;
-    has_genes boolean = false;
+    has_nocur  boolean = false;
+    has_genes  boolean = false;
 BEGIN
 
     -- Select all 'curated_by' derived statuses for an FBrf into an array of values.
