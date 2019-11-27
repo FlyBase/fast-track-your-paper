@@ -134,7 +134,7 @@ $$
 DECLARE
     curated_by text[];
     has_nocur  boolean = false;
-    has_genes  boolean = false;
+    has_features  boolean = false;
 BEGIN
 
     -- Select all 'curated_by' derived statuses for an FBrf into an array of values.
@@ -163,14 +163,14 @@ BEGIN
                  JOIN feature f on (fp.feature_id = f.feature_id)
              -- Join query to the pub table entry that was passed to this function.
         WHERE p.pub_id = pub.pub_id
-          AND flybase.data_class(f.uniquename) = 'FBgn'
+          AND flybase.data_class(f.uniquename) IN ('FBgn', 'FBal', 'FBab', 'FBba', 'FBtp', 'FBti', 'FBte')
           AND f.is_obsolete = false
           AND f.is_analysis = false
-        INTO has_genes;
+        INTO has_features;
 
         -- If any cam_flag props for this FBrf have 'nocur', return 'skim'.
         -- If the FBrf has genes attached, return 'skim'.
-        IF has_nocur OR has_genes THEN
+        IF has_nocur OR has_features THEN
             RETURN 'skim';
         END IF;
     END IF;
