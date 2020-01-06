@@ -21,8 +21,10 @@ const PubStep = ({ service, selected = undefined, citation = undefined }) => {
         </div>
         <div className="panel-body">
           {!current.matches('citation') && <PubSearchForm send={send} />}
-          { current.matches('citation') && <Citation send={send} />}
-          { (selected || citation) && <ChosenPub pub={selected} citation={citation} />}
+          {current.matches('citation') && <Citation send={send} />}
+          {(selected || citation) && (
+            <ChosenPub pub={selected} citation={citation} />
+          )}
           {/*
            * Show search results if the user has entered some search terms
            * and the state machine is in the 'search.loaded' state.
