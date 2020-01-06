@@ -97,7 +97,11 @@ WHERE cvt.name IN ('paper', 'review', 'note')
 $$ LANGUAGE SQL STABLE;
 
 /*
- This function returns the curation status from a 'curated_by' pubprop in Chado.
+ * This function returns the curation status from a 'curated_by' pubprop in Chado.
+ * Cambridge curators have requested three curation status types.
+ * 1. user
+ * 2. skim
+ * 3. uncurated
  */
 CREATE OR REPLACE FUNCTION public.status_from_curatedby(curated_by text) RETURNS text AS
 $$
@@ -108,35 +112,71 @@ BEGIN
 
     IF proforma ~ '(skim|\.thin$)' THEN
         RETURN 'skim';
-    ELSIF proforma ~ '\.bibl$' THEN
-        RETURN 'none';
     ELSIF proforma ~ '\.user$' THEN
         RETURN 'user';
-    ELSIF proforma ~ '\.full$' THEN
-        RETURN 'full';
     ELSE
-        RETURN 'full';
+        RETURN NULL;
     END IF;
 END
 $$ LANGUAGE plpgsql STABLE;
 
+/*
+ * Postgraphile computed field: pub.curation_status or pub.curationStatus in GraphQL
+ *
+ * This function is use by Postgraphile to autogenerate a computed field for the pub table.
+ * The GraphQL API exposes this function as a field along with all the
+ * other fields of the pub table.
+ *
+ * The logic for this field comes from Cambridge Curators (Aoife and Gillian, 11/26/2019).
+ */
 CREATE OR REPLACE FUNCTION public.pub_curation_status(pub pub) RETURNS text AS
 $$
 DECLARE
     curated_by text[];
+    has_nocur  boolean = false;
+    has_features  boolean = false;
 BEGIN
 
-    SELECT array_agg(status_from_curatedby(value)) FROM flybase.get_pubprop(pub.uniquename, 'curated_by') INTO curated_by;
+    -- Select all 'curated_by' derived statuses for an FBrf into an array of values.
+    SELECT array_agg(status_from_curatedby(value))
+    FROM flybase.get_pubprop(pub.uniquename, 'curated_by')
+    INTO curated_by;
 
-    IF array_position(curated_by,'full') IS NOT NULL THEN
-      RETURN 'full';
-    ELSIF array_position(curated_by,'user') IS NOT NULL THEN
-      RETURN 'user';
-    ELSIF array_position(curated_by,'skim') IS NOT NULL THEN
-      RETURN 'user';
+    -- If any curated_by props for this FBrf have 'user', return 'user'.
+    IF array_position(curated_by, 'user') IS NOT NULL THEN
+        RETURN 'user';
+        -- If any curated_by props for this FBrf have 'skim', return 'skim'.
+    ELSIF array_position(curated_by, 'skim') IS NOT NULL THEN
+        RETURN 'skim';
+        -- Check cam_flag and gene counts.
     ELSE
-      RETURN 'none';
+        -- Check for presence of 'cam_flag' with 'nocur'
+        SELECT count(*) > 0
+        FROM flybase.get_pubprop(pub.uniquename, 'cam_flag')
+        WHERE value = 'nocur'
+        INTO has_nocur;
+
+        -- See if pub has any genes attached.
+        SELECT count(*) > 0
+        FROM pub p
+                 JOIN feature_pub fp on (p.pub_id = fp.pub_id)
+                 JOIN feature f on (fp.feature_id = f.feature_id)
+             -- Join query to the pub table entry that was passed to this function.
+        WHERE p.pub_id = pub.pub_id
+          AND flybase.data_class(f.uniquename) IN ('FBgn', 'FBal', 'FBab', 'FBba', 'FBtp', 'FBti', 'FBte')
+          AND f.is_obsolete = false
+          AND f.is_analysis = false
+        INTO has_features;
+
+        -- If any cam_flag props for this FBrf have 'nocur', return 'skim'.
+        -- If the FBrf has genes attached, return 'skim'.
+        IF has_nocur OR has_features THEN
+            RETURN 'skim';
+        END IF;
     END IF;
+
+    -- Return null if all else fails.
+    RETURN NULL;
 END
 $$ LANGUAGE plpgsql STABLE;
 

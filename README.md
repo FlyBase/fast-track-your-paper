@@ -15,13 +15,16 @@ A tool for expediting curation of published research in genetic databases.
 git clone https://github.com/FlyBase/fast-track-your-paper.git
 ```
 
-2. Start docker containers
+2. Pull data and start docker containers
+
+Replace all values in between '<>' with their appropriate values for your situation.
+
 ```bash
 cd fast-track-your-paper
-docker-compose up -d
+make PGHOST=<HOSTNAME> PGDATABASE=<DBNAME> PGPORT=<PORT> PGUSER=<USER>
 ```
 
-3. Load data, see [README](./db/README.md) for details.
+For full details see the db [README](./db/README.md).
 
 ## Docker containers
 

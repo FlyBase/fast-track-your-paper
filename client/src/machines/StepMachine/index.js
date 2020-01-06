@@ -164,6 +164,7 @@ export const createStepMachine = () => {
         setCitation: assign((context, event) => {
           const { submission } = context
           submission.citation = event.citation
+          submission.publication = null
           return {
             submission,
           }
@@ -171,6 +172,7 @@ export const createStepMachine = () => {
         // Set the publication in the submission object.
         setPub: assign((context, event) => {
           const { submission } = context
+          submission.citation = null
           submission.publication = event.pub
           return {
             submission,

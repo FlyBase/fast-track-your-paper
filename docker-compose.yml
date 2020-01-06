@@ -19,9 +19,7 @@ services:
   # See https://hub.docker.com/_/postgres for details on using
   # the postgres docker container.
   db:
-    build:
-      context: ./db
-      dockerfile: Dockerfile
+    image: docker.pkg.github.com/flybase/fast-track-your-paper/db:${TAG:-develop}
     restart: always
     environment:
       POSTGRES_DB: ftyp
@@ -34,9 +32,7 @@ services:
     networks:
       - internal
   client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+    image: docker.pkg.github.com/flybase/fast-track-your-paper/client:${TAG:-develop}
     working_dir: "/home/node/app"
     command: "serve -s build"
     volumes:

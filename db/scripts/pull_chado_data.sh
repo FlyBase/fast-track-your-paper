@@ -28,6 +28,7 @@ pg_dump -x -O -n public -c --if-exists --disable-triggers \
         -t pubauthor \
         -t pubprop \
         -t pub_dbxref \
+        -t feature_pub \
         -t organism \
         -T audit \
         -F d -j ${JOBS} -d production_chado -f data/chado
