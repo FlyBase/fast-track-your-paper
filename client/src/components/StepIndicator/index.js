@@ -10,17 +10,17 @@ const { Step } = Steps
 const StepIndicator = ({
   steps = [],
   currentStep = 0,
-  onChange = () => {},
+  onChange = null,
 }) => {
   return (
-    <Steps
-      size="small"
-      current={currentStep}
-      onChange={onChange}
-      type="navigation">
+    <Steps size="small" current={currentStep} onChange={onChange}>
       {steps.map((s, i) => (
         /* Disable step indicator if it is the last step. */
-        <Step key={s.name} title={s.label} disabled={i === steps.length - 1} />
+        <Step
+          key={s.name}
+          title={s.label}
+          status={null}
+        />
       ))}
     </Steps>
   )
@@ -29,5 +29,6 @@ const StepIndicator = ({
 StepIndicator.propTypes = {
   steps: PropTypes.array.isRequired,
   currentStep: PropTypes.number,
+  onChange: PropTypes.func,
 }
 export default StepIndicator

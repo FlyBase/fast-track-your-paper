@@ -5,8 +5,33 @@ import ChosenPub from 'components/ChosenPub'
 import PubResults from 'components/PubResults'
 import Citation from 'components/Citation'
 
+const NoPubWarning = () => (
+  <h4 className="text-danger">
+    Please select a publication to continue.
+  </h4>
+)
+
+
 const PubStep = ({ service, selected = undefined, citation = undefined }) => {
+  /**
+   * Get the step machine service.
+   *
+   * States:
+   * See src/machines/PubStepMachine/index.js for possible states.
+   *
+   * Actions:
+   * See machine definition for valid
+   * SUBMIT - Set search terms and fire off search.
+   * CITATION - Switch to citation mode.
+   * NOPUB_ERROR - Switch to state that indicates that no publication was
+   * selected
+   * CITATION.SUBMIT - Submit the citation to the parent machine.
+   * GOTO.SEARCH - Go back to the pub search state.
+   * SELECT_PUB - Select the pub, takes a pub object.
+   */
   const [current, send] = useService(service)
+
+  console.log(current)
 
   const { terms, totalPubs, pubs = [] } = current.context
 
@@ -20,6 +45,7 @@ const PubStep = ({ service, selected = undefined, citation = undefined }) => {
           <h3 className="panel-title">Choose a Publication to Annotate</h3>
         </div>
         <div className="panel-body">
+          {current.matches('nopub') && <NoPubWarning/> }
           {!current.matches('citation') && <PubSearchForm send={send} />}
           {current.matches('citation') && <Citation send={send} />}
           {(selected || citation) && (

@@ -58,17 +58,6 @@ function StepContainer() {
   //console.log('Step container', pubMachine)
 
   /*
-  Event handler that sends a GOTO_<target> event to the machine.
-  e.g. GOTO_PUB to jump to the pub step.
-       GOTO_GENES to jump to the genes step.
-       etc...
-
-  This allows for a user to jump around to various allowable steps.
-
-   */
-  const handleOnStepClick = stepIdx =>
-    send(`GOTO_${steps[stepIdx].name.toLocaleUpperCase()}`)
-  /*
     Get the array index of the current step.
     This is required to show progress in the StepIndicator component.
    */
@@ -82,11 +71,7 @@ function StepContainer() {
 
   return (
     <div>
-      <StepIndicator
-        steps={steps}
-        currentStep={currentStepIdx}
-        onChange={handleOnStepClick}
-      />
+      <StepIndicator steps={steps} currentStep={currentStepIdx} />
       <Divider />
       <div
         css={`
@@ -138,11 +123,7 @@ function StepContainer() {
           </div>
         </nav>
         <Divider />
-        <StepIndicator
-          steps={steps}
-          currentStep={currentStepIdx}
-          onChange={handleOnStepClick}
-        />
+        <StepIndicator steps={steps} currentStep={currentStepIdx} />
       </div>
     </div>
   )

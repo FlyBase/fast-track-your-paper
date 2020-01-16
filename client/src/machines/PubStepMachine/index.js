@@ -34,11 +34,15 @@ export const createPubStepMachine = () => {
         CITATION: {
           target: 'citation',
         },
+        NOPUB_ERROR: {
+          target: 'nopub',
+        },
       },
       // All states for the pub steps.
       states: {
         // Initial state.
         idle: {},
+        nopub: {},
         // State for capturing manually entered citations.
         citation: {
           on: {
@@ -83,10 +87,7 @@ export const createPubStepMachine = () => {
                */
               on: {
                 SELECT_PUB: {
-                  actions: sendParent((context, event) => ({
-                    type: 'SET_PUB',
-                    pub: event.pub,
-                  })),
+                  actions: ['selectPub'],
                 },
               },
             },
@@ -101,9 +102,12 @@ export const createPubStepMachine = () => {
         resetParent: sendParent('RESET'),
         // Reset the context of this machine.
         resetPubStep: assign({ ...initialContext }),
+        selectPub: sendParent((context, event) => ({
+          type: 'SET_PUB',
+          pub: event.pub,
+        })),
         // Set the search terms typed into the search field.
         submitCitation: sendParent((context, event) => {
-          console.log(event.citation)
           return {
             type: 'SET_CITATION',
             citation: event.citation,

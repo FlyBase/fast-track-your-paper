@@ -1,4 +1,4 @@
-import { Machine, actions, spawn } from 'xstate'
+import { Machine, actions, spawn, send } from 'xstate'
 import { createPubStepMachine } from '../PubStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 
@@ -9,9 +9,11 @@ const { assign } = actions
 // * https://xstate.js.org/docs/tutorials/reddit.html
 // * https://xstate.js.org/docs/guides/actors.html#actor-api
 
+// Initial structure of the context of the state machine.
 const initialContext = {
   // References to the substep actors
   pubMachine: undefined,
+  error: null,
   // The FTYP submission object.
   submission: {
     publication: null,
@@ -30,8 +32,6 @@ const initialContext = {
 }
 
 export const createStepMachine = () => {
-  // Initial structure of the context of the state machine.
-
   // Main FTYP machine configuration.
   return Machine(
     {
@@ -55,14 +55,9 @@ export const createStepMachine = () => {
           id: 'pending',
           initial: 'pub',
           /* Global event handlers for the machine.
-           * Handles jumping around steps and resetting the machine state.
+           * Handles resetting the machine state.
            */
           on: {
-            GOTO_PUB: { target: '.pub' },
-            GOTO_AUTHOR: { target: '.author', cond: 'hasPublication' },
-            GOTO_FLAGS: { target: '.flags', cond: 'hasPublication' },
-            GOTO_GENES: { target: '.genes', cond: 'hasPublication' },
-            GOTO_CONFIRM: { target: '.confirm', cond: 'hasPublication' },
             RESET: { target: '.pub', actions: ['resetContext', 'persist'] },
           },
           // Sub states of the top level pending state.
@@ -75,10 +70,19 @@ export const createStepMachine = () => {
               on: {
                 // Advance to next step if the user has selected a publication.
                 // See 'guards' section for the hasPublication function.
-                NEXT: {
-                  target: 'author',
-                  cond: 'hasPublication',
-                },
+                NEXT: [
+                  {
+                    target: 'author',
+                    actions: ['setStatus', 'persist'],
+                    cond: 'hasPublication',
+                  },
+                  // Fall through to here if guard conditions fail.
+                  {
+                    entry: [assign({ error: 'No publication selected.' })],
+                    actions: ['sendPubError'],
+                    exit: [assign({ error: null })],
+                  },
+                ],
                 // Event for selecting a publication.
                 SET_PUB: {
                   actions: ['setPub', 'persist'],
@@ -94,24 +98,24 @@ export const createStepMachine = () => {
               entry: ['persist'],
               on: {
                 // Valid transition targets for author step.
-                NEXT: { target: 'flags', cond: 'hasPublication' },
-                PREV: { target: 'pub', cond: 'hasPublication' },
+                NEXT: { target: 'flags' },
+                PREV: { target: 'pub' },
               },
             },
             // Data flags step
             flags: {
               entry: ['persist'],
               on: {
-                NEXT: { target: 'genes', cond: 'hasPublication' },
-                PREV: { target: 'author', cond: 'hasPublication' },
+                NEXT: { target: 'genes' },
+                PREV: { target: 'author' },
               },
             },
             // Genes step
             genes: {
               entry: ['persist'],
               on: {
-                NEXT: { target: 'confirm', cond: 'hasPublication' },
-                PREV: { target: 'flags', cond: 'hasPublication' },
+                NEXT: { target: 'confirm' },
+                PREV: { target: 'flags' },
               },
             },
             // Confirmation step
@@ -120,9 +124,8 @@ export const createStepMachine = () => {
               on: {
                 NEXT: {
                   target: '#ftyp.submitted',
-                  cond: 'hasPublication',
                 },
-                PREV: { target: 'genes', cond: 'hasPublication' },
+                PREV: { target: 'genes' },
               },
             },
           },
@@ -178,6 +181,10 @@ export const createStepMachine = () => {
             submission,
           }
         }),
+        /*
+        Lets the pub step machine know that an error occurred.
+         */
+        sendPubError: send('NOPUB_ERROR', {to: 'pubStepMachine'}),
       },
       guards: {
         // Check that the submission has an associated publication or citation.
@@ -185,8 +192,8 @@ export const createStepMachine = () => {
           const { submission } = context
           return (
             event.hasPub ||
-            ((submission.publication && submission.publication.uniquename) ||
-              submission.citation)
+            (submission.publication && submission.publication.uniquename) ||
+            submission.citation
           )
         },
         isConfirmed: context => context.confirmed,
