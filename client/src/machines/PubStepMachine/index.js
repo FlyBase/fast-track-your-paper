@@ -107,12 +107,10 @@ export const createPubStepMachine = () => {
           pub: event.pub,
         })),
         // Set the search terms typed into the search field.
-        submitCitation: sendParent((context, event) => {
-          return {
-            type: 'SET_CITATION',
-            citation: event.citation,
-          }
-        }),
+        submitCitation: sendParent((context, event) => ({
+          type: 'SET_CITATION',
+          citation: event.citation,
+        })),
         setSearchTerms: assign({ terms: (context, event) => event.terms }),
         // Set search results.
         setPubResults: assign((context, event) => {

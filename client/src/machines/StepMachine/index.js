@@ -98,7 +98,11 @@ export const createStepMachine = () => {
               entry: ['persist'],
               on: {
                 // Valid transition targets for author step.
-                NEXT: { target: 'flags' },
+                // Event for selecting a publication.
+                SET_SUBMITTER: {
+                  actions: ['setSubmitter', 'persist'],
+                },
+                NEXT: { target: 'flags', cond: 'hasContact' },
                 PREV: { target: 'pub' },
               },
             },
@@ -175,16 +179,38 @@ export const createStepMachine = () => {
         // Set the publication in the submission object.
         setPub: assign((context, event) => {
           const { submission } = context
-          submission.citation = null
-          submission.publication = event.pub
           return {
-            submission,
+            submission: {
+              ...submission,
+              citation: null,
+              publication: event.pub,
+            },
+          }
+        }),
+        // Set the submitter contact info.
+        setSubmitter: assign((context, event) => {
+          const { submission, submission: { submitter } } = context
+          let {
+            contact: { name, email, isAuthor = false },
+          } = event
+          if (typeof isAuthor !== 'boolean') isAuthor = false
+
+          return {
+            submission: {
+              ...submission,
+              submitter: {
+                ...submitter,
+                name,
+                email,
+                isAuthor,
+              }
+            }
           }
         }),
         /*
         Lets the pub step machine know that an error occurred.
          */
-        sendPubError: send('NOPUB_ERROR', {to: 'pubStepMachine'}),
+        sendPubError: send('NOPUB_ERROR', { to: 'pubStepMachine' }),
       },
       guards: {
         // Check that the submission has an associated publication or citation.
@@ -195,6 +221,10 @@ export const createStepMachine = () => {
             (submission.publication && submission.publication.uniquename) ||
             submission.citation
           )
+        },
+        hasContact: (context, event) => {
+          const { submission: { submitter: { name, email }}} = context
+          return name && email
         },
         isConfirmed: context => context.confirmed,
       },

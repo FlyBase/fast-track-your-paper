@@ -6,11 +6,8 @@ import PubResults from 'components/PubResults'
 import Citation from 'components/Citation'
 
 const NoPubWarning = () => (
-  <h4 className="text-danger">
-    Please select a publication to continue.
-  </h4>
+  <h4 className="text-danger">Please select a publication to continue.</h4>
 )
-
 
 const PubStep = ({ service, selected = undefined, citation = undefined }) => {
   /**
@@ -31,8 +28,6 @@ const PubStep = ({ service, selected = undefined, citation = undefined }) => {
    */
   const [current, send] = useService(service)
 
-  console.log(current)
-
   const { terms, totalPubs, pubs = [] } = current.context
 
   // Send the event with the selected pub to the pub service.
@@ -45,7 +40,7 @@ const PubStep = ({ service, selected = undefined, citation = undefined }) => {
           <h3 className="panel-title">Choose a Publication to Annotate</h3>
         </div>
         <div className="panel-body">
-          {current.matches('nopub') && <NoPubWarning/> }
+          {current.matches('nopub') && <NoPubWarning />}
           {!current.matches('citation') && <PubSearchForm send={send} />}
           {current.matches('citation') && <Citation send={send} />}
           {(selected || citation) && (
