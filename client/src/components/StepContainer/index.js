@@ -53,6 +53,7 @@ function StepContainer() {
   //console.log('Step container', current)
   const {
     pubMachine,
+    contactMachine,
     submission: { publication = undefined, citation = undefined },
   } = current.context
   //console.log('Step container', pubMachine)
@@ -86,7 +87,7 @@ function StepContainer() {
             citation={citation}
           />
         )}
-        {current.matches({ pending: 'author' }) && <AuthorStep />}
+        {current.matches({ pending: 'author' }) && <AuthorStep service={contactMachine}/> }
         {current.matches({ pending: 'flags' }) && <FlagsStep />}
         {current.matches({ pending: 'genes' }) && <GenesStep />}
         {current.matches({ pending: 'confirm' }) && <ConfirmStep />}

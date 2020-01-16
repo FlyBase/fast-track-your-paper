@@ -1,5 +1,6 @@
 import { Machine, actions, spawn, send } from 'xstate'
 import { createPubStepMachine } from '../PubStepMachine'
+import { createContactStepMachine } from '../ContactStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 
 const { assign } = actions
@@ -13,6 +14,7 @@ const { assign } = actions
 const initialContext = {
   // References to the substep actors
   pubMachine: undefined,
+  contactMachine: undefined,
   error: null,
   // The FTYP submission object.
   submission: {
@@ -41,7 +43,7 @@ export const createStepMachine = () => {
       context: cloneDeep(initialContext),
       // When the page loads, spawn the pub machine and save
       // the machine state to localStorage.
-      entry: ['spawnPubMachine', 'persist'],
+      entry: ['spawnPubMachine','spawnContactMachine', 'persist'],
       /*
        * All states of the step machine.
        * The following describes all possible states of the machine
@@ -164,6 +166,13 @@ export const createStepMachine = () => {
           if (!context.pubMachine) {
             return {
               pubMachine: spawn(createPubStepMachine(), 'pubStepMachine'),
+            }
+          }
+        }),
+        spawnContactMachine: assign((context, event) => {
+          if (!context.contactMachine) {
+            return {
+              contactMachine: spawn(createContactStepMachine(), 'contactStepMachine'),
             }
           }
         }),
