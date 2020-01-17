@@ -4,11 +4,11 @@ const { assign } = actions
 
 const initialContext = {}
 
-export const createContactStepMachine = () => {
+export const createAuthorStepMachine = () => {
   // State machine for the contact info step.
   return Machine(
     {
-      id: 'contactsteps',
+      id: 'authorsteps',
       initial: 'idle',
       context: initialContext,
       // Global events to watch for.
@@ -30,7 +30,7 @@ export const createContactStepMachine = () => {
       // Function definitions for actions.
       actions: {
         submitContact: sendParent((context, event) => ({
-          type: 'SET_SUBMITTER',
+          type: 'SET_CONTACT',
           contact: event.contact,
         })),
       },

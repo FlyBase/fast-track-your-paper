@@ -14,6 +14,7 @@ import GenesStep from 'components/GenesStep'
 import ConfirmStep from 'components/ConfirmStep'
 import SubmitStep from 'components/SubmitStep'
 import StepIndicator from 'components/StepIndicator'
+import StepNavigation, { Prev, Next } from 'components/StepNavigation'
 
 //import { fetchFromLocalStorage, replacer } from 'utils/storage'
 
@@ -26,6 +27,72 @@ const steps = [
   { name: 'confirm', label: 'Confirmation' },
   { name: 'submitted', label: 'Finished' },
 ]
+
+const PubStepWrapper = ({ nextClick, ...props }) => (
+  <PubStep {...props}>
+    <StepNavigation>
+      <Next onClick={nextClick} aria-labelledby="authorstep">
+        <span id="authorstep"><b>Save</b> Publication step and go to Contact step</span>
+      </Next>
+    </StepNavigation>
+  </PubStep>
+)
+
+const AuthorStepWrapper = ({ prevClick, nextClick, ...props }) => (
+  <AuthorStep {...props}>
+    <StepNavigation>
+      <Prev onClick={prevClick} type="submit" aria-labelledby="pubstep">
+        <span id="pubstep">Return to Publication step</span>
+      </Prev>
+      <Next onClick={nextClick} type="submit" aria-labelledby="datastep">
+        <span id="datastep"><b>Save</b> Contact step and go to Data step</span>
+      </Next>
+    </StepNavigation>
+  </AuthorStep>
+)
+
+const FlagsStepWrapper = ({ prevClick, nextClick, ...props }) => (
+  <FlagsStep {...props}>
+    <StepNavigation>
+      <Prev onClick={prevClick}>Return to Author step</Prev>
+      <Next onClick={nextClick} type="button">
+        <b>Save</b> Data step and go to Genes step
+      </Next>
+    </StepNavigation>
+  </FlagsStep>
+)
+
+const GenesStepWrapper = ({ prevClick, nextClick, ...props }) => (
+  <GenesStep {...props}>
+    <StepNavigation>
+      <Prev onClick={prevClick}>Return to Data step</Prev>
+      <Next onClick={nextClick} type="button">
+        <b>Save</b> Genes step and go to Confirmation step
+      </Next>
+    </StepNavigation>
+  </GenesStep>
+)
+
+const ConfirmStepWrapper = ({ prevClick, nextClick, ...props }) => (
+  <ConfirmStep {...props}>
+    <StepNavigation>
+      <Prev onClick={prevClick}>Return to Genes step</Prev>
+      <Next onClick={nextClick} type="button">
+        Submit your paper
+      </Next>
+    </StepNavigation>
+  </ConfirmStep>
+)
+
+const SubmitStepWrapper = ({ nextClick, ...props }) => (
+  <SubmitStep {...props}>
+    <StepNavigation>
+      <Next onClick={nextClick} type="button">
+        Submit another paper
+      </Next>
+    </StepNavigation>
+  </SubmitStep>
+)
 
 function StepContainer() {
   const localStorageKey = 'ftyp-state'
@@ -53,8 +120,8 @@ function StepContainer() {
   //console.log('Step container', current)
   const {
     pubMachine,
-    contactMachine,
-    submission: { publication = undefined, citation = undefined },
+    authorMachine,
+    submission: { publication, citation, contact },
   } = current.context
   //console.log('Step container', pubMachine)
 
@@ -69,6 +136,35 @@ function StepContainer() {
     }
     return s.name === current.value
   })
+  let step
+
+  if (current.matches({ pending: 'pub' })) {
+    step = (
+      <PubStepWrapper
+        service={pubMachine}
+        selected={publication}
+        citation={citation}
+        nextClick={() => send('NEXT')}
+      />
+    )
+  } else if (current.matches({ pending: 'author' })) {
+    step = (
+      <AuthorStepWrapper
+        service={authorMachine}
+        contact={contact}
+        prevClick={() => send('PREV')}
+        nextClick={() => send('NEXT')}
+      />
+    )
+  } else if (current.matches({ pending: 'flags' })) {
+    step = <FlagsStepWrapper />
+  } else if (current.matches({ pending: 'genes' })) {
+    step = <GenesStepWrapper />
+  } else if (current.matches({ pending: 'confirm' })) {
+    step = <ConfirmStepWrapper />
+  } else if (current.matches({ pending: 'submitted' })) {
+    step = <SubmitStepWrapper />
+  }
 
   return (
     <div>
@@ -80,49 +176,7 @@ function StepContainer() {
           flex-flow: column nowrap;
           align-items: center;
         `}>
-        {current.matches({ pending: 'pub' }) && (
-          <PubStep
-            service={pubMachine}
-            selected={publication}
-            citation={citation}
-          />
-        )}
-        {current.matches({ pending: 'author' }) && <AuthorStep service={contactMachine}/> }
-        {current.matches({ pending: 'flags' }) && <FlagsStep />}
-        {current.matches({ pending: 'genes' }) && <GenesStep />}
-        {current.matches({ pending: 'confirm' }) && <ConfirmStep />}
-        {current.matches('submitted') && <SubmitStep />}
-        <nav className="navbar">
-          <div className="container-fluid">
-            {!current.matches('submitted') && currentStepIdx > 0 && (
-              <button
-                type="button"
-                className="btn btn-primary navbar-btn"
-                onClick={() => send('PREV')}>
-                <i className="fa fa-long-arrow-left fa-lg"></i> Return to{' '}
-                {steps[currentStepIdx - 1].label} step
-              </button>
-            )}
-            {!current.matches('submitted') && (
-              <button
-                type="button"
-                className="btn btn-primary navbar-btn"
-                onClick={() => send('NEXT')}>
-                <b>Save</b> {steps[currentStepIdx].label} step and go to{' '}
-                {steps[currentStepIdx + 1].label} step&ensp;
-                <i className="fa fa-long-arrow-right fa-lg"></i>
-              </button>
-            )}
-            {current.matches('submitted') && (
-              <button
-                className="btn btn-primary navbar-btn"
-                type="button"
-                onClick={() => send('START_OVER')}>
-                Start Over
-              </button>
-            )}
-          </div>
-        </nav>
+        {step}
         <Divider />
         <StepIndicator steps={steps} currentStep={currentStepIdx} />
       </div>

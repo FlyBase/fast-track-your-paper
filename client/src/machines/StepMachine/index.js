@@ -1,6 +1,6 @@
 import { Machine, actions, spawn, send } from 'xstate'
 import { createPubStepMachine } from '../PubStepMachine'
-import { createContactStepMachine } from '../ContactStepMachine'
+import { createAuthorStepMachine } from '../AuthorStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 
 const { assign } = actions
@@ -14,13 +14,13 @@ const { assign } = actions
 const initialContext = {
   // References to the substep actors
   pubMachine: undefined,
-  contactMachine: undefined,
+  authorMachine: undefined,
   error: null,
   // The FTYP submission object.
   submission: {
     publication: null,
     citation: null,
-    submitter: {
+    contact: {
       name: null,
       email: null,
       isAuthor: false,
@@ -43,7 +43,7 @@ export const createStepMachine = () => {
       context: cloneDeep(initialContext),
       // When the page loads, spawn the pub machine and save
       // the machine state to localStorage.
-      entry: ['spawnPubMachine','spawnContactMachine', 'persist'],
+      entry: ['spawnPubMachine', 'spawnAuthorMachine', 'persist'],
       /*
        * All states of the step machine.
        * The following describes all possible states of the machine
@@ -101,8 +101,8 @@ export const createStepMachine = () => {
               on: {
                 // Valid transition targets for author step.
                 // Event for selecting a publication.
-                SET_SUBMITTER: {
-                  actions: ['setSubmitter', 'persist'],
+                SET_CONTACT: {
+                  actions: ['setContact', 'persist'],
                 },
                 NEXT: { target: 'flags', cond: 'hasContact' },
                 PREV: { target: 'pub' },
@@ -169,10 +169,13 @@ export const createStepMachine = () => {
             }
           }
         }),
-        spawnContactMachine: assign((context, event) => {
-          if (!context.contactMachine) {
+        spawnAuthorMachine: assign((context, event) => {
+          if (!context.authorMachine) {
             return {
-              contactMachine: spawn(createContactStepMachine(), 'contactStepMachine'),
+              authorMachine: spawn(
+                createAuthorStepMachine(),
+                'authorStepMachine'
+              ),
             }
           }
         }),
@@ -197,8 +200,11 @@ export const createStepMachine = () => {
           }
         }),
         // Set the submitter contact info.
-        setSubmitter: assign((context, event) => {
-          const { submission, submission: { submitter } } = context
+        setContact: assign((context, event) => {
+          const {
+            submission,
+            submission: { contact },
+          } = context
           let {
             contact: { name, email, isAuthor = false },
           } = event
@@ -207,13 +213,13 @@ export const createStepMachine = () => {
           return {
             submission: {
               ...submission,
-              submitter: {
-                ...submitter,
+              contact: {
+                ...contact,
                 name,
                 email,
                 isAuthor,
-              }
-            }
+              },
+            },
           }
         }),
         /*
@@ -232,7 +238,11 @@ export const createStepMachine = () => {
           )
         },
         hasContact: (context, event) => {
-          const { submission: { submitter: { name, email }}} = context
+          const {
+            submission: {
+              contact: { name, email },
+            },
+          } = context
           return name && email
         },
         isConfirmed: context => context.confirmed,

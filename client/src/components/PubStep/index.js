@@ -9,7 +9,12 @@ const NoPubWarning = () => (
   <h4 className="text-danger">Please select a publication to continue.</h4>
 )
 
-const PubStep = ({ service, selected = undefined, citation = undefined }) => {
+const PubStep = ({
+  service,
+  selected = undefined,
+  citation = undefined,
+  children,
+}) => {
   /**
    * Get the step machine service.
    *
@@ -34,36 +39,42 @@ const PubStep = ({ service, selected = undefined, citation = undefined }) => {
   const handlePubClick = pub => send('SELECT_PUB', { pub })
 
   return (
-    <div className="col-xs-12">
-      <div className="panel panel-primary">
-        <div className="panel-heading">
-          <h3 className="panel-title">Choose a Publication to Annotate</h3>
-        </div>
-        <div className="panel-body">
-          {current.matches('nopub') && <NoPubWarning />}
-          {!current.matches('citation') && <PubSearchForm send={send} />}
-          {current.matches('citation') && <Citation send={send} />}
-          {(selected || citation) && (
-            <ChosenPub pub={selected} citation={citation} />
-          )}
-          {/*
-           * Show search results if the user has entered some search terms
-           * and the state machine is in the 'search.loaded' state.
-           */}
-          {terms && current.matches({ search: 'loaded' }) && (
-            <PubResults
-              keywords={terms}
-              pubs={pubs}
-              totalPubs={totalPubs}
-              onPubClick={handlePubClick}
-              onCitationClick={() => send('CITATION')}
-            />
-          )}
+    <>
+      <div className="col-xs-12">
+        <div className="panel panel-primary">
+          <div className="panel-heading">
+            <h3 className="panel-title">Choose a Publication to Annotate</h3>
+          </div>
+          <div className="panel-body">
+            {current.matches('nopub') && <NoPubWarning />}
+            {!current.matches('citation') && <PubSearchForm send={send} />}
+            {current.matches('citation') && <Citation send={send} />}
+            {(selected || citation) && (
+              <>
+                <ChosenPub pub={selected} citation={citation} />
+                {children}
+              </>
+            )}
+            {/*
+             * Show search results if the user has entered some search terms
+             * and the state machine is in the 'search.loaded' state.
+             */}
+            {terms && current.matches({ search: 'loaded' }) && (
+              <PubResults
+                keywords={terms}
+                pubs={pubs}
+                totalPubs={totalPubs}
+                onPubClick={handlePubClick}
+                onCitationClick={() => send('CITATION')}
+              />
+            )}
+          </div>{' '}
+          {/* end .panel-body */}
         </div>{' '}
-        {/* end .panel-body */}
-      </div>{' '}
-      {/* end .panel */}
-    </div>
+        {/* end .panel */}
+      </div>
+      {children}
+    </>
   )
 }
 
