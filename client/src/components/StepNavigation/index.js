@@ -43,7 +43,7 @@ const Button = ({
   children,
   ...props
 }) => (
-  <button role="button" type={type} onClick={onClick} className={className} {...props}>
+  <button type={type} onClick={onClick} className={className} {...props}>
     {direction === 'right' && children}
     <StyledArrow direction={direction} />
     {direction === 'left' && children}

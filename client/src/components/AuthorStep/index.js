@@ -3,7 +3,7 @@ import { useService } from '@xstate/react'
 import { ErrorMessage, Field, Formik, Form } from 'formik'
 import { AuthorSchema } from './validation'
 
-const AuthorStep = ({ service, contact, children }) => {
+const AuthorStep = ({ service, contact, bagRef, children }) => {
   const [current, send] = useService(service)
   return (
     <Formik
@@ -17,6 +17,7 @@ const AuthorStep = ({ service, contact, children }) => {
         // onSubmit handler or as needed.
         isAuthor: (contact?.isAuthor ?? true) ? 'yes' : 'no',
       }}
+      innerRef={bagRef}
       validationSchema={AuthorSchema}
       onSubmit={(values, actions) => {
         const { name, email, isAuthor } = values

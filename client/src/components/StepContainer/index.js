@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useMachine } from '@xstate/react'
 import { Divider } from 'antd'
 import isEmpty from 'lodash.isempty'
@@ -41,10 +41,10 @@ const PubStepWrapper = ({ nextClick, ...props }) => (
 const AuthorStepWrapper = ({ prevClick, nextClick, ...props }) => (
   <AuthorStep {...props}>
     <StepNavigation>
-      <Prev onClick={prevClick} type="submit" aria-labelledby="pubstep">
+      <Prev onClick={prevClick} aria-labelledby="pubstep">
         <span id="pubstep">Return to Publication step</span>
       </Prev>
-      <Next onClick={nextClick} type="submit" aria-labelledby="datastep">
+      <Next onClick={nextClick} aria-labelledby="datastep">
         <span id="datastep"><b>Save</b> Contact step and go to Data step</span>
       </Next>
     </StepNavigation>
@@ -117,6 +117,11 @@ function StepContainer() {
   //console.log('Machine opts =', machineOpts)
   const [current, send] = useMachine(createStepMachine(), machineOpts)
 
+  // Reference to the Formik bag object.
+  // This lets us trigger a submit from outside the form, which is needed
+  // for some of the next/prev steps.
+  const formikBagRef = useRef()
+
   //console.log('Step container', current)
   const {
     pubMachine,
@@ -148,12 +153,30 @@ function StepContainer() {
       />
     )
   } else if (current.matches({ pending: 'author' })) {
+    /**
+     * The bagRef parameter passes our reference down to the <Formik />
+     * component inside the <AuthorStepWrapper />.  Formik then sets
+     * it to reference its Formik bag object.
+     *
+     * That can then be used to trigger a form submit programmatically via
+     * formikBagRef.current.submitForm().
+     */
     step = (
       <AuthorStepWrapper
         service={authorMachine}
         contact={contact}
-        prevClick={() => send('PREV')}
-        nextClick={() => send('NEXT')}
+        bagRef={formikBagRef}
+        prevClick={async () => {
+          /**
+           * submitForm() returns a promise so we need to await it.
+           */
+          await formikBagRef.current.submitForm()
+          send('PREV')
+        }}
+        nextClick={async () => {
+          await formikBagRef.current.submitForm()
+          send('NEXT')
+        }}
       />
     )
   } else if (current.matches({ pending: 'flags' })) {
