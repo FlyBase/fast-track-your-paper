@@ -160,6 +160,8 @@ function StepContainer() {
      *
      * That can then be used to trigger a form submit programmatically via
      * formikBagRef.current.submitForm().
+     *
+     * see https://github.com/jaredpalmer/formik/issues/1603#issuecomment-575669249
      */
     step = (
       <AuthorStepWrapper

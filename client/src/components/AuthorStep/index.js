@@ -17,6 +17,10 @@ const AuthorStep = ({ service, contact, bagRef, children }) => {
         // onSubmit handler or as needed.
         isAuthor: (contact?.isAuthor ?? true) ? 'yes' : 'no',
       }}
+      /**
+      * See https://github.com/jaredpalmer/formik/issues/1603#issuecomment-575669249
+      * for details
+      */
       innerRef={bagRef}
       validationSchema={AuthorSchema}
       onSubmit={(values, actions) => {
