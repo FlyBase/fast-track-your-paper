@@ -45,7 +45,12 @@ const PubResults = ({
                     totalPubs={totalPubs}
                     keywords={keywords}
                   />
-                  <div style={{ float: 'right' }}> curation<br />status </div>
+                  <div style={{ float: 'right' }}>
+                    {' '}
+                    curation
+                    <br />
+                    status{' '}
+                  </div>
                 </>
               )}
               <IconHelp initial={false}>

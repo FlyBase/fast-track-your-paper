@@ -32,7 +32,9 @@ const PubStepWrapper = ({ nextClick, ...props }) => (
   <PubStep {...props}>
     <StepNavigation>
       <Next onClick={nextClick} aria-labelledby="authorstep">
-        <span id="authorstep"><b>Save</b> Publication step and go to Contact step</span>
+        <span id="authorstep">
+          <b>Save</b> Publication step and go to Contact step
+        </span>
       </Next>
     </StepNavigation>
   </PubStep>
@@ -45,7 +47,9 @@ const AuthorStepWrapper = ({ prevClick, nextClick, ...props }) => (
         <span id="pubstep">Return to Publication step</span>
       </Prev>
       <Next onClick={nextClick} aria-labelledby="datastep">
-        <span id="datastep"><b>Save</b> Contact step and go to Data step</span>
+        <span id="datastep">
+          <b>Save</b> Contact step and go to Data step
+        </span>
       </Next>
     </StepNavigation>
   </AuthorStep>

@@ -15,22 +15,26 @@ const AuthorStep = ({ service, contact, bagRef, children }) => {
         // Formik only supports string values for radio buttons, not
         // booleans/numbers because of DOM limitations.  Convert in your
         // onSubmit handler or as needed.
-        isAuthor: (contact?.isAuthor ?? true) ? 'yes' : 'no',
+        isAuthor: contact?.isAuthor ?? true ? 'yes' : 'no',
       }}
       /**
-      * See https://github.com/jaredpalmer/formik/issues/1603#issuecomment-575669249
-      * for details
-      */
+       * See https://github.com/jaredpalmer/formik/issues/1603#issuecomment-575669249
+       * for details
+       */
       innerRef={bagRef}
       validationSchema={AuthorSchema}
       onSubmit={(values, actions) => {
         const { name, email, isAuthor } = values
-        send('SUBMIT', { contact: { name, email, isAuthor: isAuthor === 'yes'}})
+        send('SUBMIT', {
+          contact: { name, email, isAuthor: isAuthor === 'yes' },
+        })
       }}
       render={props => (
         <Form className="form-horizontal">
           <div className="container">
-            {current.matches('invalid') && <div className="text-danger">Invalid submission</div>}
+            {current.matches('invalid') && (
+              <div className="text-danger">Invalid submission</div>
+            )}
             <div className="panel panel-primary">
               <div className="panel-heading">
                 <h3 className="panel-title">Contact Information</h3>
