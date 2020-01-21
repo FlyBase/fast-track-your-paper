@@ -45,7 +45,7 @@ const PubResults = ({
                     totalPubs={totalPubs}
                     keywords={keywords}
                   />
-                  <div style={{ float: 'right' }}> curated? </div>
+                  <div style={{ float: 'right' }}> curation<br />status </div>
                 </>
               )}
               <IconHelp initial={false}>
@@ -88,7 +88,8 @@ const PubResults = ({
                         </td>
                         <td>
                           {p.curationStatus ? (
-                            <i className="fa fa-check"></i>
+                            // <i className="fa fa-check"></i>
+                            <span>{p.curationStatus}</span>
                           ) : (
                             <i className="fa fa-times"></i>
                           )}
