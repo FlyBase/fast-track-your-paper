@@ -130,7 +130,7 @@ function StepContainer() {
   const {
     pubMachine,
     authorMachine,
-    submission: { publication, citation, contact },
+    submission: { publication, citation, contact, flags },
   } = current.context
   //console.log('Step container', pubMachine)
 
@@ -186,7 +186,7 @@ function StepContainer() {
       />
     )
   } else if (current.matches({ pending: 'flags' })) {
-    step = <FlagsStepWrapper />
+    step = <FlagsStepWrapper flags={flags} prevClick={() => send('PREV')} nextClick={() => send('PREV')}/>
   } else if (current.matches({ pending: 'genes' })) {
     step = <GenesStepWrapper />
   } else if (current.matches({ pending: 'confirm' })) {

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import IconHelp from '../IconHelp'
 import OptForm from '../OptForm'
 
-const FlagsStep = () => {
+const FlagsStep = ({ service, flags, bagRef, children }) => {
   const [showAllHelp, setShowAllHelp] = useState(false)
   const [showDiseaseSubform, setShowDiseaseSubform] = useState(false)
   const [showCellLineSubform, setShowCellLineSubform] = useState(false)
@@ -453,6 +453,7 @@ const FlagsStep = () => {
                 />
               </div>
             </div>
+            {children}
           </form>
         </div>
       </div>
