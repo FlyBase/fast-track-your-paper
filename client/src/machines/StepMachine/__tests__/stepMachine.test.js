@@ -39,7 +39,6 @@ describe('stepMachine', () => {
 
   it('Should leave because hasPublication is true', () => {
     let stepService = interpret(ftypStepsWithPub).start()
-    console.log(ftypStepsWithPub.context)
     expect(stepService.state.value).toEqual('pub')
     stepService.send('NEXT')
     expect(stepService.state.value).toEqual('author')

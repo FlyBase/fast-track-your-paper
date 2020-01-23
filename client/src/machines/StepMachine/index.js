@@ -1,5 +1,8 @@
 import { Machine, actions, spawn, send } from 'xstate'
-import { createPubStepMachine } from '../PubStepMachine'
+import {
+  createPubStepMachine,
+  initialContext as pubContext,
+} from '../PubStepMachine'
 import { createAuthorStepMachine } from '../AuthorStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 
@@ -33,17 +36,16 @@ const initialContext = {
   },
 }
 
+export const getInitialContext = () => cloneDeep(initialContext)
+
 export const createStepMachine = () => {
   // Main FTYP machine configuration.
   return Machine(
     {
       id: 'ftyp',
-      initial: 'pending',
+      initial: 'initializing',
       // Set initial context
-      context: cloneDeep(initialContext),
-      // When the page loads, spawn the pub machine and save
-      // the machine state to localStorage.
-      entry: ['spawnPubMachine', 'spawnAuthorMachine', 'persist'],
+      context: initialContext,
       /*
        * All states of the step machine.
        * The following describes all possible states of the machine
@@ -53,6 +55,14 @@ export const createStepMachine = () => {
        * The main states are two top levels of 'pending' and 'submitted'.
        */
       states: {
+        initializing: {
+          // Initialize step machine when machine is started.
+          entry: ['initStepMachine'],
+          on: {
+            // Machine initialized, go to pending state.
+            '': 'pending',
+          },
+        },
         pending: {
           id: 'pending',
           initial: 'pub',
@@ -151,6 +161,31 @@ export const createStepMachine = () => {
     {
       // Function definitions for actions defined in states above.
       actions: {
+        initStepMachine: assign((context, event) => {
+          return {
+            /**
+             * This spread only copies values on level deep so anything
+             * more complicated than that has to be handled in a different
+             * manner.
+             */
+            ...context,
+            flags: cloneDeep(context.flags),
+            genes: cloneDeep(context.genes),
+            submission: cloneDeep(context.submission),
+            /**
+             * Spawn new machines with the previous context from each
+             * machine.
+             */
+            pubMachine: spawn(
+              createPubStepMachine().withContext(
+                context.pubMachine ?? pubContext
+              )
+            ),
+            authorMachine: spawn(
+              createAuthorStepMachine().withContext(context.authorMachine ?? {})
+            ),
+          }
+        }),
         // This action resets the application context to its initial state.
         resetContext: assign((context, event) => {
           const { pubMachine } = context

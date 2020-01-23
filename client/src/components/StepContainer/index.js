@@ -1,11 +1,10 @@
 import React, { useRef } from 'react'
 import { useMachine } from '@xstate/react'
 import { Divider } from 'antd'
-import isEmpty from 'lodash.isempty'
 // eslint-disable-next-line
 import styled from 'styled-components/macro'
 
-import { createStepMachine } from 'machines/StepMachine'
+import { getInitialContext, createStepMachine } from 'machines/StepMachine'
 
 import PubStep from 'components/PubStep'
 import AuthorStep from 'components/AuthorStep'
@@ -16,7 +15,7 @@ import SubmitStep from 'components/SubmitStep'
 import StepIndicator from 'components/StepIndicator'
 import StepNavigation, { Prev, Next } from 'components/StepNavigation'
 
-//import { fetchFromLocalStorage, replacer } from 'utils/storage'
+import { fetchFromLocalStorage, storeToLocalStorage } from 'utils/storage'
 
 // An array to map the step machine state names to user friendly labels.
 const steps = [
@@ -98,41 +97,36 @@ const SubmitStepWrapper = ({ nextClick, ...props }) => (
   </SubmitStep>
 )
 
-function StepContainer() {
-  const localStorageKey = 'ftyp-state'
-  // TODO reading state from localStroage is broken for the moment
-  const state = {}
-  //const state = fetchFromLocalStorage(localStorageKey)
+const localStorageKey = 'ftyp-state'
+const localStorageState = fetchFromLocalStorage(
+  localStorageKey,
+  getInitialContext()
+)
 
-  const machineOpts = {
+const hydratedMachine = createStepMachine().withConfig(
+  {
     actions: {
-      persist: (context, event, { action, state }) => {
-        localStorage.setItem(localStorageKey, JSON.stringify(state))
+      persist: context => {
+        storeToLocalStorage(localStorageKey, context)
       },
     },
-  }
+  },
+  localStorageState
+)
 
-  // If we have some state pass it to the machine options
-  // so that we rehydrate that state.
-  if (!isEmpty(state)) {
-    machineOpts.state = state
-  }
-
-  //console.log('Machine opts =', machineOpts)
-  const [current, send] = useMachine(createStepMachine(), machineOpts)
+function StepContainer() {
+  const [current, send] = useMachine(hydratedMachine)
 
   // Reference to the Formik bag object.
   // This lets us trigger a submit from outside the form, which is needed
   // for some of the next/prev steps.
   const formikBagRef = useRef()
 
-  //console.log('Step container', current)
   const {
     pubMachine,
     authorMachine,
-    submission: { publication, citation, contact, flags },
+    submission: { publication, citation, contact, flags, genes },
   } = current.context
-  //console.log('Step container', pubMachine)
 
   /*
     Get the array index of the current step.
@@ -186,9 +180,21 @@ function StepContainer() {
       />
     )
   } else if (current.matches({ pending: 'flags' })) {
-    step = <FlagsStepWrapper flags={flags} prevClick={() => send('PREV')} nextClick={() => send('PREV')}/>
+    step = (
+      <FlagsStepWrapper
+        flags={flags}
+        prevClick={() => send('PREV')}
+        nextClick={() => send('NEXT')}
+      />
+    )
   } else if (current.matches({ pending: 'genes' })) {
-    step = <GenesStepWrapper />
+    step = (
+      <GenesStepWrapper
+        genes={genes}
+        prevClick={() => send('PREV')}
+        nextClick={() => send('NEXT')}
+      />
+    )
   } else if (current.matches({ pending: 'confirm' })) {
     step = <ConfirmStepWrapper />
   } else if (current.matches({ pending: 'submitted' })) {

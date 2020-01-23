@@ -2,7 +2,7 @@ import { actions, Machine, sendParent } from 'xstate'
 
 const { assign } = actions
 
-const initialContext = {}
+export const initialContext = {}
 
 export const createAuthorStepMachine = () => {
   // State machine for the contact info step.

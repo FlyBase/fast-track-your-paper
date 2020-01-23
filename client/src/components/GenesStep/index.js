@@ -1,6 +1,6 @@
 import React from 'react'
 
-const GenesStep = () => (
+const GenesStep = ({ service, geens, children }) => (
   <>
     <div className="container">
       <div className="panel panel-primary">
@@ -8,7 +8,7 @@ const GenesStep = () => (
           <h3 className="panel-title">Associate Genes</h3>
         </div>
         <div className="panel-body">
-          <form></form>
+          <form>{children}</form>
         </div>
       </div>
     </div>

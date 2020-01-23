@@ -6,7 +6,7 @@ const { assign } = actions
 // The GraphQL query to search all publication data.
 const pubQuery = loader('graphql/pubQuery.gql')
 
-const initialContext = {
+export const initialContext = {
   terms: null,
   pubs: [],
   totalPubs: 0,

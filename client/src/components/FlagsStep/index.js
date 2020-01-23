@@ -8,6 +8,7 @@ const FlagsStep = ({ service, flags, bagRef, children }) => {
   const [showCellLineSubform, setShowCellLineSubform] = useState(false)
   const [showDatasetSubform, setShowDatasetSubform] = useState(false)
   const [showAccessionsSubform, setShowAccessionsSubform] = useState(false)
+  const [noneApply, setNoneApply] = useState(false)
   return (
     <div className="container">
       <div className="panel panel-primary">
@@ -82,7 +83,6 @@ const FlagsStep = ({ service, flags, bagRef, children }) => {
                     <label>
                       <input
                         type="checkbox"
-                        id=""
                         onClick={() =>
                           setShowDiseaseSubform(!showDiseaseSubform)
                         }
@@ -430,7 +430,7 @@ const FlagsStep = ({ service, flags, bagRef, children }) => {
             <div className="form-group" id="pathway_member">
               <div className="checkbox">
                 <label>
-                  <input type="checkbox" id="" />
+                  <input type="checkbox" id="" disabled={noneApply} />
                   New member of receptor signaling pathway
                 </label>
                 <IconHelp
@@ -441,10 +441,14 @@ const FlagsStep = ({ service, flags, bagRef, children }) => {
             </div>
 
             <label>None</label>
-            <div className="form-group" id="">
+            <div className="form-group">
               <div className="checkbox">
                 <label>
-                  <input type="checkbox" id="no_flag" />
+                  <input
+                    type="checkbox"
+                    id="no_flag"
+                    onClick={() => setNoneApply(!noneApply)}
+                  />
                   None of the above data-types apply
                 </label>
                 <IconHelp
