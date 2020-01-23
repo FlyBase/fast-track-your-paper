@@ -66,6 +66,7 @@ export const createStepMachine = () => {
         pending: {
           id: 'pending',
           initial: 'pub',
+          entry: ['initStepMachine'],
           /* Global event handlers for the machine.
            * Handles resetting the machine state.
            */
@@ -179,10 +180,11 @@ export const createStepMachine = () => {
             pubMachine: spawn(
               createPubStepMachine().withContext(
                 context.pubMachine ?? pubContext
-              )
+              ), 'pubMachine'
             ),
             authorMachine: spawn(
-              createAuthorStepMachine().withContext(context.authorMachine ?? {})
+              createAuthorStepMachine().withContext(context.authorMachine ?? {}),
+              'authorStepMachine'
             ),
           }
         }),

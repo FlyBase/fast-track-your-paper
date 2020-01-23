@@ -97,25 +97,35 @@ const SubmitStepWrapper = ({ nextClick, ...props }) => (
   </SubmitStep>
 )
 
-const localStorageKey = 'ftyp-state'
-const localStorageState = fetchFromLocalStorage(
-  localStorageKey,
-  getInitialContext()
-)
+const localStorageKeys = {
+  state: 'ftyp-state',
+  context: 'ftyp-context',
+}
+
+const persistedState = fetchFromLocalStorage(localStorageKeys.state, null)
+const localStorageData = {
+  context: persistedState?.context ?? getInitialContext(),
+  state: persistedState,
+}
 
 const hydratedMachine = createStepMachine().withConfig(
   {
     actions: {
-      persist: context => {
-        storeToLocalStorage(localStorageKey, context)
+      persist: (context, event, { state }) => {
+        //storeToLocalStorage(localStorageKeys.context, context)
+        storeToLocalStorage(localStorageKeys.state, state)
       },
     },
   },
-  localStorageState
+  localStorageData.context
 )
 
 function StepContainer() {
-  const [current, send] = useMachine(hydratedMachine)
+  const [current, send] = useMachine(hydratedMachine, {
+    state: localStorageData.state,
+  })
+
+  storeToLocalStorage(localStorageKeys.state, current)
 
   // Reference to the Formik bag object.
   // This lets us trigger a submit from outside the form, which is needed
@@ -142,6 +152,7 @@ function StepContainer() {
   let step
 
   if (current.matches({ pending: 'pub' })) {
+    console.log(pubMachine)
     step = (
       <PubStepWrapper
         service={pubMachine}
