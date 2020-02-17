@@ -29,9 +29,11 @@ $(DATA_DIR)/chado_feature.tsv $(DATA_DIR)/chado $(DATA_DIR)/feature:
 build-images:
 	cd db; docker build -t docker.pkg.github.com/flybase/fast-track-your-paper/db:$(IMAGE_TAG) .
 	cd client; docker build -t docker.pkg.github.com/flybase/fast-track-your-paper/client:$(IMAGE_TAG) .
+	cd api; docker build -t docker.pkg.github.com/flybase/fast-track-your-paper/api:$(IMAGE_TAG) .
 
 push-images:
 	cd db; docker push docker.pkg.github.com/flybase/fast-track-your-paper/db:$(IMAGE_TAG)
 	cd client; docker push docker.pkg.github.com/flybase/fast-track-your-paper/client:$(IMAGE_TAG)
+	cd api; docker push docker.pkg.github.com/flybase/fast-track-your-paper/api:$(IMAGE_TAG)
 
 .PHONY: up down clean load-data build-images push-images

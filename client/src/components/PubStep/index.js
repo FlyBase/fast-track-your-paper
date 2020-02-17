@@ -73,7 +73,7 @@ const PubStep = ({
         </div>{' '}
         {/* end .panel */}
       </div>
-      {children}
+      {pubs.length !== 0 && children}
     </>
   )
 }
