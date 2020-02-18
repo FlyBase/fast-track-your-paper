@@ -31,7 +31,7 @@ SELECT p.pub_id,
                      setweight(to_tsvector('simple', p.publisher), 'D'),
                      setweight(to_tsvector('simple', p.pubplace), 'D')
                )
-           )::tsvector as text_index_col
+           )::tsvector AS text_index_col
 FROM pub p
          -- Pull in all pub authors.
          LEFT JOIN (
@@ -180,3 +180,88 @@ BEGIN
 END
 $$ LANGUAGE plpgsql STABLE;
 
+
+/**
+  This function creates an edge N-gram tsvector for tokens that are fed into it.
+
+  e.g. cnn -> c, cn, cnn
+       park -> p, pa, par, park
+
+  This is used to generate a text index that can be used to quickly find genes
+  using a prefix search technique across many fields.
+ */
+CREATE OR REPLACE FUNCTION ftyp_hidden.edge_gram_tsvector(text text) RETURNS tsvector AS
+$$
+BEGIN
+    RETURN (
+        SELECT array_to_tsvector((SELECT array_agg(DISTINCT substring(lexeme for len))
+                                  FROM unnest(to_tsvector(text)), generate_series(1, length(lexeme)) len))
+    );
+END;
+$$ IMMUTABLE LANGUAGE plpgsql;
+
+
+/**
+  This materialized view powers the gene search of FTYP.
+  The columns are FBgn ID, current symbol, and
+ */
+DROP MATERIALIZED VIEW IF EXISTS ftyp_hidden.gene_search;
+CREATE MATERIALIZED VIEW
+    ftyp_hidden.gene_search AS
+SELECT f.feature_id,
+       f.uniquename                            fbgn,
+       flybase.current_symbol(f.uniquename) AS symbol,
+       (
+           -- Weights can be A-D in Postgres v10
+           concat_ws(' ',
+                     setweight(ftyp_hidden.edge_gram_tsvector(f.uniquename), 'A'), -- FlyBase ID
+                     setweight(ftyp_hidden.edge_gram_tsvector(flybase.current_symbol(f.uniquename)), 'A'), -- Current symbol
+                     setweight(ftyp_hidden.edge_gram_tsvector(flybase.current_fullname(f.uniquename)), 'B'),-- Current fullname
+                     setweight(ftyp_hidden.edge_gram_tsvector(f.name), 'B'), -- Plain symbol
+                     setweight(ftyp_hidden.edge_gram_tsvector(s.synonyms), 'D') -- Synonyms
+               )
+           )::tsvector                      AS text_index_col
+FROM feature f
+         JOIN cvterm ON f.type_id = cvterm.cvterm_id
+         JOIN organism o ON f.organism_id = o.organism_id
+         LEFT JOIN LATERAL (
+    SELECT fs.feature_id,
+           string_agg(
+                   DISTINCT
+                   (
+                       CASE
+                           WHEN synonym.name = synonym.synonym_sgml THEN synonym.synonym_sgml
+                           ELSE concat_ws(' ', synonym.synonym_sgml, synonym.name)
+                           END
+                       ),
+                   ' '
+               ) AS synonyms
+    FROM feature_synonym fs
+             JOIN synonym ON fs.synonym_id = synonym.synonym_id
+             JOIN cvterm stype ON synonym.type_id = stype.cvterm_id
+    WHERE stype.name = 'symbol'
+      AND fs.is_current = false
+      AND f.feature_id = fs.feature_id
+    GROUP BY fs.feature_id
+    ) AS s ON TRUE
+WHERE f.uniquename ~ '^FBgn\d+$'
+  AND f.is_obsolete = false
+  AND (o.genus = 'Drosophila' AND o.species = 'melanogaster')
+;
+
+CREATE INDEX ON ftyp_hidden.gene_search USING gin(text_index_col);
+
+CREATE OR REPLACE FUNCTION ftyp.search_genes(terms text) RETURNS SETOF feature AS
+$$
+SELECT f.*
+FROM feature f
+WHERE f.feature_id IN (
+    SELECT feature_id
+    FROM ftyp_hidden.gene_search
+    WHERE text_index_col @@ plainto_tsquery('simple', terms)
+    ORDER BY ts_rank_cd(text_index_col, plainto_tsquery('simple', terms)) DESC
+    LIMIT 10
+);
+$$ LANGUAGE SQL STABLE;
+
+CREATE EXTENSION pg_trgm;

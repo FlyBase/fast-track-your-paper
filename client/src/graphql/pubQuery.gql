@@ -6,7 +6,7 @@ query PubQuery($terms: String) {
       miniref
       title
       curationStatus
-      cvtermByTypeId {
+      type {
         name
       }
     }

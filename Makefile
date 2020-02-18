@@ -5,6 +5,7 @@ all: pull-data load-data
 
 up:
 	docker-compose up -d --build
+	sleep 10
 
 down:
 	docker-compose down -v
