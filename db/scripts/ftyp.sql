@@ -31,7 +31,7 @@ SELECT p.pub_id,
                      setweight(to_tsvector('simple', p.publisher), 'D'),
                      setweight(to_tsvector('simple', p.pubplace), 'D')
                )
-           )::tsvector AS text_index_col
+           )::tsvector AS pub_tsvector
 FROM pub p
          -- Pull in all pub authors.
          LEFT JOIN (
@@ -71,12 +71,12 @@ WHERE flybase.data_class(p.uniquename) = 'FBrf'
   AND p.is_obsolete = false;
 
 -- Full text index on the materialize view.
-CREATE INDEX pub_text_idx ON ftyp_hidden.pub_search USING GIN (text_index_col);
+CREATE INDEX pub_text_idx ON ftyp_hidden.pub_search USING GIN (pub_tsvector);
 
 /**
   ftyp.search_pubs will perform a text search on a pre-defined set of
   publication fields.  The fields searched are defined by the
-  ftyp_hidden.pub_search.text_index_col materialized view column.
+  ftyp_hidden.pub_search.pub_tsvector materialized view column.
 
   This function takes a query term(s) and performs a full text search
   on this view.  It then orders them by a descending rank and returns
@@ -91,8 +91,8 @@ WHERE cvt.name IN ('paper', 'review', 'note')
   AND p.pub_id IN (
     SELECT pub_id
     FROM ftyp_hidden.pub_search
-    WHERE text_index_col @@ plainto_tsquery('simple', terms)
-    ORDER BY ts_rank_cd(text_index_col, plainto_tsquery('simple', terms)) DESC
+    WHERE pub_tsvector @@ plainto_tsquery('simple', terms)
+    ORDER BY ts_rank_cd(pub_tsvector, plainto_tsquery('simple', terms)) DESC
 );
 $$ LANGUAGE SQL STABLE;
 
@@ -132,9 +132,9 @@ $$ LANGUAGE plpgsql STABLE;
 CREATE OR REPLACE FUNCTION public.pub_curation_status(pub pub) RETURNS text AS
 $$
 DECLARE
-    curated_by text[];
-    has_nocur  boolean = false;
-    has_features  boolean = false;
+    curated_by   text[];
+    has_nocur    boolean = false;
+    has_features boolean = false;
 BEGIN
 
     -- Select all 'curated_by' derived statuses for an FBrf into an array of values.
@@ -182,26 +182,6 @@ $$ LANGUAGE plpgsql STABLE;
 
 
 /**
-  This function creates an edge N-gram tsvector for tokens that are fed into it.
-
-  e.g. cnn -> c, cn, cnn
-       park -> p, pa, par, park
-
-  This is used to generate a text index that can be used to quickly find genes
-  using a prefix search technique across many fields.
- */
-CREATE OR REPLACE FUNCTION ftyp_hidden.edge_gram_tsvector(text text) RETURNS tsvector AS
-$$
-BEGIN
-    RETURN (
-        SELECT array_to_tsvector((SELECT array_agg(DISTINCT substring(lexeme for len))
-                                  FROM unnest(to_tsvector(text)), generate_series(1, length(lexeme)) len))
-    );
-END;
-$$ IMMUTABLE LANGUAGE plpgsql;
-
-
-/**
   This materialized view powers the gene search of FTYP.
   The columns are FBgn ID, current symbol, and
  */
@@ -211,19 +191,38 @@ CREATE MATERIALIZED VIEW
 SELECT f.feature_id,
        f.uniquename                            fbgn,
        flybase.current_symbol(f.uniquename) AS symbol,
+       json_build_object(
+               'FBgn', f.uniquename,
+               'Symbol', flybase.current_symbol(f.uniquename),
+               'Annotation ID', CG.accession,
+               'Name', flybase.current_fullname(f.uniquename),
+               'Plain Symbol', f.name,
+               'Synonyms', s.synonyms
+           )                                AS identifiers,
+    /**
+      This field builds a tsvector that is used for fast full text searching.
+      Each field that we want to search is first parsed into a ts_vector using
+      the 'simple' config.  Using 'english' or other configs will not work
+      with gene symbols.  The tsvector is then weighted according to
+      importance using a scale of A-D in PostgreSQL v10.
+      Finally, the weighted tsvector is concatenated together into a single value.
+     */
        (
-           -- Weights can be A-D in Postgres v10
            concat_ws(' ',
-                     setweight(ftyp_hidden.edge_gram_tsvector(f.uniquename), 'A'), -- FlyBase ID
-                     setweight(ftyp_hidden.edge_gram_tsvector(flybase.current_symbol(f.uniquename)), 'A'), -- Current symbol
-                     setweight(ftyp_hidden.edge_gram_tsvector(flybase.current_fullname(f.uniquename)), 'B'),-- Current fullname
-                     setweight(ftyp_hidden.edge_gram_tsvector(f.name), 'B'), -- Plain symbol
-                     setweight(ftyp_hidden.edge_gram_tsvector(s.synonyms), 'D') -- Synonyms
+                     setweight(to_tsvector('simple', f.uniquename), 'A'), -- FlyBase ID
+                     setweight(to_tsvector('simple', flybase.current_symbol(f.uniquename)), 'A'), -- Current symbol
+                     setweight(to_tsvector('simple', CG.accession), 'A'), -- CG Number
+                     setweight(to_tsvector('simple', flybase.current_fullname(f.uniquename)), 'B'),-- Current fullname
+                     setweight(to_tsvector('simple', f.name), 'C'), -- Plain symbol
+                     setweight(to_tsvector('simple', concat_ws(' ', s.synonyms, CG_synonym.accession)), 'D') -- Synonyms
                )
-           )::tsvector                      AS text_index_col
+           )::tsvector                      AS identifiers_tsvector
 FROM feature f
          JOIN cvterm ON f.type_id = cvterm.cvterm_id
          JOIN organism o ON f.organism_id = o.organism_id
+    /**
+      Get Symbol and name synonyms.
+     */
          LEFT JOIN LATERAL (
     SELECT fs.feature_id,
            string_agg(
@@ -239,29 +238,51 @@ FROM feature f
     FROM feature_synonym fs
              JOIN synonym ON fs.synonym_id = synonym.synonym_id
              JOIN cvterm stype ON synonym.type_id = stype.cvterm_id
-    WHERE stype.name = 'symbol'
+    WHERE (stype.name = 'symbol' OR stype.name = 'fullname')
       AND fs.is_current = false
       AND f.feature_id = fs.feature_id
     GROUP BY fs.feature_id
     ) AS s ON TRUE
+    /**
+     Get Annotation IDs
+     */
+         LEFT JOIN LATERAL (
+    SELECT dbx.accession
+    FROM feature_dbxref fdbx
+             JOIN dbxref dbx ON fdbx.dbxref_id = dbx.dbxref_id
+             JOIN db ON dbx.db_id = db.db_id
+    WHERE upper(db.name) = 'FLYBASE ANNOTATION IDS'
+      AND fdbx.is_current = true
+      AND f.feature_id = fdbx.feature_id
+    LIMIT 1
+    ) AS CG ON TRUE
+    /**
+      Get Secondary Annotation IDs
+     */
+         LEFT JOIN LATERAL (
+    SELECT string_agg(DISTINCT dbx.accession, ' ') AS accession
+    FROM feature_dbxref fdbx
+             JOIN dbxref dbx ON fdbx.dbxref_id = dbx.dbxref_id
+             JOIN db ON dbx.db_id = db.db_id
+    WHERE upper(db.name) = 'FLYBASE ANNOTATION IDS'
+      AND fdbx.is_current = false
+      AND f.feature_id = fdbx.feature_id
+    ) AS CG_synonym ON TRUE
 WHERE f.uniquename ~ '^FBgn\d+$'
   AND f.is_obsolete = false
   AND (o.genus = 'Drosophila' AND o.species = 'melanogaster')
 ;
 
-CREATE INDEX ON ftyp_hidden.gene_search USING gin(text_index_col);
+CREATE INDEX ON ftyp_hidden.gene_search USING gin (identifiers_tsvector);
 
-CREATE OR REPLACE FUNCTION ftyp.search_genes(terms text) RETURNS SETOF feature AS
+CREATE OR REPLACE FUNCTION ftyp.search_gene_identifiers(terms text, OUT FBgn text, OUT symbol text, OUT match_highlight json) RETURNS SETOF record AS
 $$
-SELECT f.*
-FROM feature f
-WHERE f.feature_id IN (
-    SELECT feature_id
-    FROM ftyp_hidden.gene_search
-    WHERE text_index_col @@ plainto_tsquery('simple', terms)
-    ORDER BY ts_rank_cd(text_index_col, plainto_tsquery('simple', terms)) DESC
-    LIMIT 10
-);
+SELECT gs.fbgn                                                                    as FBgn,
+       gs.symbol,
+       ts_headline('simple', gs.identifiers, to_tsquery('simple', terms || ':*')) AS match_highlight
+FROM ftyp_hidden.gene_search AS gs
+WHERE identifiers_tsvector @@ to_tsquery('simple', terms || ':*')
+ORDER BY ts_rank_cd(identifiers_tsvector, to_tsquery('simple', terms || ':*')) DESC
+    ;
 $$ LANGUAGE SQL STABLE;
 
-CREATE EXTENSION pg_trgm;
