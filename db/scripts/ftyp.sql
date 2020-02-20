@@ -273,7 +273,12 @@ WHERE f.uniquename ~ '^FBgn\d+$'
   AND (o.genus = 'Drosophila' AND o.species = 'melanogaster')
 ;
 
+-- Activate postgres trigram extension.
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+-- Create a full text index on the tsvector column for identifiers.
 CREATE INDEX ON ftyp_hidden.gene_search USING gin (identifiers_tsvector);
+-- Create a trigram GIN index
+CREATE INDEX symbol_trgm_idx ON ftyp_hidden.gene_search USING GIN (symbol gin_trgm_ops);
 
 CREATE OR REPLACE FUNCTION ftyp.search_gene_identifiers(terms text, OUT FBgn text, OUT symbol text, OUT match_highlight json) RETURNS SETOF record AS
 $$
@@ -281,8 +286,16 @@ SELECT gs.fbgn                                                                  
        gs.symbol,
        ts_headline('simple', gs.identifiers, to_tsquery('simple', terms || ':*')) AS match_highlight
 FROM ftyp_hidden.gene_search AS gs
-WHERE identifiers_tsvector @@ to_tsquery('simple', terms || ':*')
-ORDER BY ts_rank_cd(identifiers_tsvector, to_tsquery('simple', terms || ':*')) DESC
+WHERE gs.symbol ILIKE terms || '%'
+   OR identifiers_tsvector @@ to_tsquery('simple', terms || ':*')
+ORDER BY
+    -- First sort by distance between query and the symbol (ascending).
+    terms <-> symbol,
+    --  Then sort by score of query and a full text score against all IDs (ID, symbol, name, etc.)
+    ts_rank(identifiers_tsvector, plainto_tsquery('simple', terms)) DESC,
+    -- Then sort by a score of a wildcard query and a full text score against all IDs.
+    ts_rank(identifiers_tsvector, to_tsquery('simple', terms || ':*')) DESC
+LIMIT 30
     ;
 $$ LANGUAGE SQL STABLE;
 
