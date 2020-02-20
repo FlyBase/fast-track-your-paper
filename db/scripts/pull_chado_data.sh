@@ -24,6 +24,7 @@ pg_dump -x -O -n public -c --if-exists --disable-triggers \
         -t dbxref \
         -t synonym \
         -t feature_synonym \
+        -t feature_dbxref \
         -t pub \
         -t pubauthor \
         -t pubprop \

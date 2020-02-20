@@ -84,11 +84,11 @@ const PubResults = ({
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td
                           className={
-                            p.cvtermByTypeId.name.match(/review|note/i)
+                            p?.type?.name.match(/review|note/i)
                               ? 'text-warning'
                               : 'text-info'
                           }>
-                          <b>{p.cvtermByTypeId.name}</b>: {p.miniref} <br />{' '}
+                          <b>{p?.type?.name}</b>: {p.miniref} <br />{' '}
                           <b>{p.title}</b>
                         </td>
                         <td>
