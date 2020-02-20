@@ -1,0 +1,10 @@
+#genesStepPanel table td {
+  text-align: center;
+}
+#genesStepPanel .btn {
+  vertical-align: initial;
+  padding: 0 12px;
+}
+.abcell {
+  display: none;
+}
