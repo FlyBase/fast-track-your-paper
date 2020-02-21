@@ -25,7 +25,6 @@ const FlagsStep = ({ service, flags, bagRef, children }) => {
         </div>
         <div className="panel-body">
           <form>
-
             <div className="well well-sm text-info">
               <em>
                 The following data types (new allele, new transgene, physical
@@ -460,7 +459,6 @@ const FlagsStep = ({ service, flags, bagRef, children }) => {
             </div>
 
             {children}
-
           </form>
         </div>
       </div>

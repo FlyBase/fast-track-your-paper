@@ -15,14 +15,17 @@ const GenesStep = ({ service, geens, children }) => {
               <h3 className="panel-title">Associate Genes</h3>
             </div>
             <div className="panel-body">
-
               <div className="form-group">
-
                 <div className="col-sm-8 control-label">
-
                   <div className="radio">
                     <label>
-                      <input type="radio" name="input-method" id="optionsRadios1" value="option1" checked />
+                      <input
+                        type="radio"
+                        name="input-method"
+                        id="optionsRadios1"
+                        value="option1"
+                        checked
+                      />
                       Use the FTYP gene search form to find one or a few genes
                     </label>
                     <IconHelp
@@ -32,8 +35,14 @@ const GenesStep = ({ service, geens, children }) => {
                   </div>
                   <div className="radio">
                     <label>
-                      <input type="radio" name="input-method" id="optionsRadios2" value="option2" />
-                      Use the FTYP gene bulk upload form to submit a text file of gene IDs
+                      <input
+                        type="radio"
+                        name="input-method"
+                        id="optionsRadios2"
+                        value="option2"
+                      />
+                      Use the FTYP gene bulk upload form to submit a text file
+                      of gene IDs
                     </label>
                     <IconHelp
                       initial={showAllHelp}
@@ -42,7 +51,12 @@ const GenesStep = ({ service, geens, children }) => {
                   </div>
                   <div className="radio">
                     <label>
-                      <input type="radio" name="input-method" id="optionsRadios3" value="option3" />
+                      <input
+                        type="radio"
+                        name="input-method"
+                        id="optionsRadios3"
+                        value="option3"
+                      />
                       No genes studied in this publication
                     </label>
                     <IconHelp
@@ -50,18 +64,23 @@ const GenesStep = ({ service, geens, children }) => {
                       message="You will be selecting genes from search results to be connected to this publication."
                     />
                   </div>
-
                 </div>
 
-                  <label for="showAb" className="col-sm-4 control-label">
-                    Antibodies generated
-                    <input id="showAb" name="showAb" type="checkbox" onClick={() => setShowAntibodyCells(!showAntibodyCells)} />
-                  </label>
-
+                <label for="showAb" className="col-sm-4 control-label">
+                  Antibodies generated
+                  <input
+                    id="showAb"
+                    name="showAb"
+                    type="checkbox"
+                    onClick={() => setShowAntibodyCells(!showAntibodyCells)}
+                  />
+                </label>
               </div>
-
             </div>
-            <GenesStudiedTable showAbs={showAntibodyCells} genes={genesStudied} />
+            <GenesStudiedTable
+              showAbs={showAntibodyCells}
+              genes={genesStudied}
+            />
             <br />
             {children}
           </div>
