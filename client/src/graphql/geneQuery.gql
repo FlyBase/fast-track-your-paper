@@ -1,0 +1,10 @@
+query GeneQuery($gene: String, $species: String) {
+  results: searchGeneIdentifiers(term: $gene, speciesAbbrev: $species) {
+    genes: nodes {
+      hl: matchHighlight
+      id
+      symbol
+      species
+    }
+  }
+}

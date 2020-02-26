@@ -125,6 +125,7 @@ function StepContainer() {
   const {
     pubMachine,
     authorMachine,
+    geneMachine,
     submission: { publication, citation, contact, flags, genes },
   } = current.context
 
@@ -190,6 +191,7 @@ function StepContainer() {
   } else if (current.matches({ pending: 'genes' })) {
     step = (
       <GenesStepWrapper
+        service={geneMachine}
         genes={genes}
         prevClick={() => send('PREV')}
         nextClick={() => send('NEXT')}

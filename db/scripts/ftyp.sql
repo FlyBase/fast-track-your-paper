@@ -180,24 +180,38 @@ BEGIN
 END
 $$ LANGUAGE plpgsql STABLE;
 
+CREATE OR REPLACE FUNCTION ftyp_hidden.array_unique_stable(p_input ANYARRAY)
+    RETURNS ANYARRAY
+AS
+$$
+SELECT array_agg(t ORDER BY x)
+FROM (
+         SELECT DISTINCT ON (t) t, x
+         FROM unnest(p_input) WITH ORDINALITY AS p(t, x)
+         ORDER BY t, x
+     ) t2;
+$$ LANGUAGE SQL STABLE;
 
 /**
   This materialized view powers the gene search of FTYP.
-  The columns are FBgn ID, current symbol, and
+  The columns are feature_id, FBgn ID, current symbol,
+  a JSON object, and a tsvector column for powering
+  text searches.
  */
 DROP MATERIALIZED VIEW IF EXISTS ftyp_hidden.gene_search;
 CREATE MATERIALIZED VIEW
     ftyp_hidden.gene_search AS
 SELECT f.feature_id,
-       f.uniquename                            fbgn,
+       f.uniquename                         AS id,
        flybase.current_symbol(f.uniquename) AS symbol,
+       o.abbreviation                       AS species,
        json_build_object(
-               'FBgn', f.uniquename,
-               'Symbol', flybase.current_symbol(f.uniquename),
-               'Annotation ID', CG.accession,
-               'Name', flybase.current_fullname(f.uniquename),
-               'Plain Symbol', f.name,
-               'Synonyms', s.synonyms
+               'id', f.uniquename,
+               'symbol', flybase.current_symbol(f.uniquename),
+               'annotationId', CG.accession,
+               'name', flybase.current_fullname(f.uniquename),
+               'plainSymbol', f.name,
+               'synonyms', s.synonyms::text[] || CG_synonym.accession::text[]
            )                                AS identifiers,
     /**
       This field builds a tsvector that is used for fast full text searching.
@@ -214,7 +228,10 @@ SELECT f.feature_id,
                      setweight(to_tsvector('simple', CG.accession), 'A'), -- CG Number
                      setweight(to_tsvector('simple', flybase.current_fullname(f.uniquename)), 'B'),-- Current fullname
                      setweight(to_tsvector('simple', f.name), 'C'), -- Plain symbol
-                     setweight(to_tsvector('simple', concat_ws(' ', s.synonyms, CG_synonym.accession)), 'D') -- Synonyms
+                     setweight(to_tsvector('simple',
+                                           array_to_string(s.synonyms::text[] || CG_synonym.accession::text[], ' ',
+                                                           '')),
+                               'D') -- Synonyms
                )
            )::tsvector                      AS identifiers_tsvector
 FROM feature f
@@ -225,15 +242,9 @@ FROM feature f
      */
          LEFT JOIN LATERAL (
     SELECT fs.feature_id,
-           string_agg(
-                   DISTINCT
-                   (
-                       CASE
-                           WHEN synonym.name = synonym.synonym_sgml THEN synonym.synonym_sgml
-                           ELSE concat_ws(' ', synonym.synonym_sgml, synonym.name)
-                           END
-                       ),
-                   ' '
+           (
+               ftyp_hidden.array_unique_stable(
+                           array_agg(DISTINCT synonym.synonym_sgml)::text[] || array_agg(DISTINCT synonym.name)::text[])
                ) AS synonyms
     FROM feature_synonym fs
              JOIN synonym ON fs.synonym_id = synonym.synonym_id
@@ -260,7 +271,7 @@ FROM feature f
       Get Secondary Annotation IDs
      */
          LEFT JOIN LATERAL (
-    SELECT string_agg(DISTINCT dbx.accession, ' ') AS accession
+    SELECT array_agg(DISTINCT dbx.accession)::text[] AS accession
     FROM feature_dbxref fdbx
              JOIN dbxref dbx ON fdbx.dbxref_id = dbx.dbxref_id
              JOIN db ON dbx.db_id = db.db_id
@@ -270,31 +281,42 @@ FROM feature f
     ) AS CG_synonym ON TRUE
 WHERE f.uniquename ~ '^FBgn\d+$'
   AND f.is_obsolete = false
-  AND (o.genus = 'Drosophila' AND o.species = 'melanogaster')
+  AND (
+        (o.genus = 'Drosophila' AND o.species = 'melanogaster')
+        OR
+        (o.genus = 'Homo' AND o.species = 'sapiens')
+    )
 ;
 
 -- Activate postgres trigram extension.
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 -- Create a full text index on the tsvector column for identifiers.
-CREATE INDEX ON ftyp_hidden.gene_search USING gin (identifiers_tsvector);
+CREATE INDEX ON ftyp_hidden.gene_search USING GIN (identifiers_tsvector);
 -- Create a trigram GIN index
 CREATE INDEX symbol_trgm_idx ON ftyp_hidden.gene_search USING GIN (symbol gin_trgm_ops);
 
-CREATE OR REPLACE FUNCTION ftyp.search_gene_identifiers(terms text, OUT FBgn text, OUT symbol text, OUT match_highlight json) RETURNS SETOF record AS
+-- Index on species.
+CREATE INDEX species_idx ON ftyp_hidden.gene_search (species);
+
+CREATE OR REPLACE FUNCTION ftyp.search_gene_identifiers(term text, species_abbrev text, OUT id text, OUT symbol text, OUT species text, OUT match_highlight json) RETURNS SETOF record AS
 $$
-SELECT gs.fbgn                                                                    as FBgn,
+SELECT gs.id,
        gs.symbol,
-       ts_headline('simple', gs.identifiers, to_tsquery('simple', terms || ':*')) AS match_highlight
+       gs.species,
+       ts_headline('simple', gs.identifiers, to_tsquery('simple', term || ':*')) AS match_highlight
 FROM ftyp_hidden.gene_search AS gs
-WHERE gs.symbol ILIKE terms || '%'
-   OR identifiers_tsvector @@ to_tsquery('simple', terms || ':*')
+WHERE (
+                  gs.symbol ILIKE term || '%'
+              OR identifiers_tsvector @@ to_tsquery('simple', term || ':*')
+          )
+    AND gs.species SIMILAR TO COALESCE(species_abbrev,'%')
 ORDER BY
     -- First sort by distance between query and the symbol (ascending).
-    terms <-> symbol,
+    term <-> symbol,
     --  Then sort by score of query and a full text score against all IDs (ID, symbol, name, etc.)
-    ts_rank(identifiers_tsvector, plainto_tsquery('simple', terms)) DESC,
+    ts_rank(identifiers_tsvector, plainto_tsquery('simple', term)) DESC,
     -- Then sort by a score of a wildcard query and a full text score against all IDs.
-    ts_rank(identifiers_tsvector, to_tsquery('simple', terms || ':*')) DESC
+    ts_rank(identifiers_tsvector, to_tsquery('simple', term || ':*')) DESC
 LIMIT 30
     ;
 $$ LANGUAGE SQL STABLE;

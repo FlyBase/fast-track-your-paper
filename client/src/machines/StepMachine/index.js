@@ -3,7 +3,8 @@ import {
   createPubStepMachine,
   initialContext as pubContext,
 } from '../PubStepMachine'
-import { createAuthorStepMachine } from '../AuthorStepMachine'
+import { createAuthorStepMachine } from 'machines/AuthorStepMachine'
+import { createGeneStepMachine } from 'machines/GeneStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 
 const { assign } = actions
@@ -18,6 +19,7 @@ const initialContext = {
   // References to the substep actors
   pubMachine: undefined,
   authorMachine: undefined,
+  geneMachine: undefined,
   error: null,
   // The FTYP submission object.
   submission: {
@@ -184,6 +186,11 @@ export const createStepMachine = () => {
             authorMachine: spawn(
               createAuthorStepMachine().withContext(context.authorMachine ?? {})
             ),
+            geneMachine: spawn(
+              createGeneStepMachine().withContext(
+                context.geneMachine ?? {}
+              )
+            ),
           }
         }),
         // This action resets the application context to its initial state.
@@ -211,6 +218,13 @@ export const createStepMachine = () => {
                 createAuthorStepMachine(),
                 'authorStepMachine'
               ),
+            }
+          }
+        }),
+        spawnGeneMachine: assign((context, event) => {
+          if (!context.geneMachine) {
+            return {
+              geneMachine: spawn(createGeneStepMachine(), 'geneStepMachine'),
             }
           }
         }),

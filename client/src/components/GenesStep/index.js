@@ -1,10 +1,31 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { useService } from '@xstate/react'
 import IconHelp from '../IconHelp'
-import GenesStudiedTable from '../GenesStudiedTable'
 
-const GenesStep = ({ service, geens, children }) => {
+import { ApolloContext } from 'contexts'
+import GenesStudiedTable from '../GenesStudiedTable'
+import GeneSearchInput from 'components/GeneSearchInput'
+import GeneSearchResults from 'components/GeneSearchResults'
+
+
+
+const GenesStep = ({ service, children }) => {
+// Get the GraphQL client from the apollo context object.
+// https://reactjs.org/docs/hooks-reference.html#usecontext
+  const client = useContext(ApolloContext)
+  const [current, send] = useService(service)
   const [showAllHelp, setShowAllHelp] = useState(false)
   const [showAntibodyCells, setShowAntibodyCells] = useState(false)
+
+  const { geneResults = [] } = current.context
+
+  /*
+  Function to handle when a user types in the input field.
+   */
+  const handleOnChange = gene => {
+    send('SUBMIT', { gene, client })
+  }
+
   const genesStudied = []
   return (
     <>
@@ -24,7 +45,7 @@ const GenesStep = ({ service, geens, children }) => {
                         name="input-method"
                         id="optionsRadios1"
                         value="option1"
-                        checked
+                        defaultChecked={true}
                       />
                       Use the FTYP gene search form to find one or a few genes
                     </label>
@@ -66,7 +87,7 @@ const GenesStep = ({ service, geens, children }) => {
                   </div>
                 </div>
 
-                <label for="showAb" className="col-sm-4 control-label">
+                <label htmlFor="showAb" className="col-sm-4 control-label">
                   Antibodies generated
                   <input
                     id="showAb"
@@ -77,10 +98,10 @@ const GenesStep = ({ service, geens, children }) => {
                 </label>
               </div>
             </div>
-            <GenesStudiedTable
-              showAbs={showAntibodyCells}
-              genes={genesStudied}
-            />
+            <GeneSearchInput onChange={handleOnChange}>
+              <GeneSearchResults genes={geneResults} />
+              <GenesStudiedTable showAbs={showAntibodyCells} />
+            </GeneSearchInput>
             <br />
             {children}
           </div>
