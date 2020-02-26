@@ -7,11 +7,9 @@ import GenesStudiedTable from '../GenesStudiedTable'
 import GeneSearchInput from 'components/GeneSearchInput'
 import GeneSearchResults from 'components/GeneSearchResults'
 
-
-
 const GenesStep = ({ service, children }) => {
-// Get the GraphQL client from the apollo context object.
-// https://reactjs.org/docs/hooks-reference.html#usecontext
+  // Get the GraphQL client from the apollo context object.
+  // https://reactjs.org/docs/hooks-reference.html#usecontext
   const client = useContext(ApolloContext)
   const [current, send] = useService(service)
   const [showAllHelp, setShowAllHelp] = useState(false)

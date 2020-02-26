@@ -187,9 +187,7 @@ export const createStepMachine = () => {
               createAuthorStepMachine().withContext(context.authorMachine ?? {})
             ),
             geneMachine: spawn(
-              createGeneStepMachine().withContext(
-                context.geneMachine ?? {}
-              )
+              createGeneStepMachine().withContext(context.geneMachine ?? {})
             ),
           }
         }),
