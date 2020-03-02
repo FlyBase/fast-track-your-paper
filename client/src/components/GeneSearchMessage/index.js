@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const GeneSearchMessage = ({ searchCount = 0, filteredCount = 0 }) => {
   if (searchCount !== 0 && filteredCount === 0) {
-    return <b>All genes already added to your list.</b>
+    return <b>All matching genes already added to your list.</b>
   } else if (searchCount === 0) {
     return <b>No matching genes found.</b>
   }
