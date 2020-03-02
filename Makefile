@@ -3,7 +3,7 @@ IMAGE_TAG := develop
 
 all: pull-data load-data
 
-up:
+up: pull-images
 	docker-compose up -d --build
 	sleep 10
 
@@ -16,6 +16,9 @@ start:
 stop:
 	docker-compose stop
 
+pull-images:
+	docker-compose pull
+
 clean: down
 	rm -r db/data/*
 
@@ -27,4 +30,4 @@ load-data: up
 $(DATA_DIR)/chado_feature.tsv $(DATA_DIR)/chado $(DATA_DIR)/feature:
 	cd db; mkdir -p data && scripts/pull_chado_data.sh
 
-.PHONY: up down clean load-data start stop
+.PHONY: up down clean load-data start stop pull-images

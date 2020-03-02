@@ -26,7 +26,7 @@ services:
       --allow-explain
       --enable-query-batching
       --legacy-relations omit
-      --connection postgres://postgres:@db/ftyp
+      --connection postgres://postgres:CHANGEME@db/ftyp
       --schema public,flybase,ftyp
     networks:
       - frontend
@@ -39,6 +39,7 @@ services:
     restart: always
     environment:
       POSTGRES_DB: ftyp
+      POSTGRES_PASSWORD: CHANGEME
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     volumes:
       - ftyp-data:/var/lib/postgresql/data
@@ -62,3 +63,4 @@ networks:
 
 volumes:
   ftyp-data: {}
+
