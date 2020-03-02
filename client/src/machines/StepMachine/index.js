@@ -34,7 +34,7 @@ const initialContext = {
     // Data flags
     flags: {},
     // Genes
-    genes: {},
+    genes: [],
   },
 }
 

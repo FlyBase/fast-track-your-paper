@@ -103,16 +103,30 @@ const localStorageState = fetchFromLocalStorage(
   getInitialContext()
 )
 
-const hydratedMachine = createStepMachine().withConfig(
-  {
-    actions: {
-      persist: context => {
-        storeToLocalStorage(localStorageKey, context)
+let hydratedMachine
+try {
+  hydratedMachine = createStepMachine().withConfig(
+    {
+      actions: {
+        persist: context => {
+          storeToLocalStorage(localStorageKey, context)
+        },
       },
     },
-  },
-  localStorageState
-)
+    localStorageState
+  )
+} catch (error) {
+  hydratedMachine = createStepMachine().withConfig(
+    {
+      actions: {
+        persist: context => {
+          storeToLocalStorage(localStorageKey, context)
+        },
+      },
+    },
+    getInitialContext()
+  )
+}
 
 function StepContainer() {
   const [current, send] = useMachine(hydratedMachine)
