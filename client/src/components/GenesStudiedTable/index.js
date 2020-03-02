@@ -1,33 +1,16 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import GeneStudiedRow from 'components/GenesStudiedRow'
 
 import './index.css'
 
 // import { useStateFromProp } from 'hooks/useStateFromProp'
 
-//TODO: Remove when API is in place.
-const initGenes = [
-  {
-    id: 'FBgn0000490',
-    symbol: 'dpp',
-    synonyms: ['dpp', 'DPP', 'BMP'],
-    antibody: 'none',
-  },
-  {
-    id: 'FBgn0013765',
-    symbol: 'cnn',
-    synonyms: ['CNN', 'centrosomin', 'blah'],
-    antibody: 'monoclonal',
-  },
-  {
-    id: 'FBgn12345',
-    symbol: '18w',
-    synonyms: ['18 wheeler', '18W', 'hello'],
-    antibody: 'polyclonal',
-  },
-]
-
-const GenesStudiedTable = ({ showAbs = false, genes = initGenes }) => {
+const GenesStudiedTable = ({
+  showAbs = false,
+  genes = [],
+  onGeneDelete = () => {},
+}) => {
   let abcell = showAbs ? '' : 'abcell'
 
   return (
@@ -67,11 +50,22 @@ const GenesStudiedTable = ({ showAbs = false, genes = initGenes }) => {
             abcell={abcell}
             gene={gene}
             onAbClick={({ gene, antibody: ab }) => console.log(gene, ab)}
+            onDelete={onGeneDelete}
           />
         ))}
       </tbody>
     </table>
   )
+}
+GenesStudiedTable.propTypes = {
+  showAbs: PropTypes.bool,
+  genes: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      symbol: PropTypes.string,
+    })
+  ),
+  onGeneDelete: PropTypes.func,
 }
 
 export default GenesStudiedTable

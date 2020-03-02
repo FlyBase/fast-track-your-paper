@@ -16,9 +16,7 @@ const InputWrapper = styled.div`
 const GeneSearchInput = ({ onChange = () => {}, children }) => {
   const handleOnChange = evt => {
     const symbol = evt?.target?.value ?? ''
-    if (symbol.length > 0) {
-      onChange(symbol)
-    }
+    onChange(symbol)
   }
 
   return (
@@ -34,7 +32,6 @@ const GeneSearchInput = ({ onChange = () => {}, children }) => {
 
 GeneSearchInput.propTypes = {
   onChange: PropTypes.func,
-  children: PropTypes.element.isRequired,
 }
 
 export default GeneSearchInput

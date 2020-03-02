@@ -27,15 +27,11 @@ export const createGeneStepMachine = () => {
           actions: ['setSearchTerm'],
           target: 'search.loading',
         },
-        NOGENE_ERROR: {
-          target: 'nogene',
-        },
       },
       // All states for the gene steps.
       states: {
         // Initial state.
         idle: {},
-        nogene: {},
         /*
          * Search state and substates of loading, loaded, and failed.
          */
@@ -58,7 +54,14 @@ export const createGeneStepMachine = () => {
               },
             },
             // State for when results have returned without error.
-            loaded: {},
+            loaded: {
+              on: {
+                CLEAR: {
+                  actions: ['resetGeneStep'],
+                  target: '#genesteps.idle',
+                },
+              },
+            },
             failed: {},
           },
         },

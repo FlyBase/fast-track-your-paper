@@ -1,11 +1,13 @@
 import React, { useContext, useState } from 'react'
 import { useService } from '@xstate/react'
 import IconHelp from '../IconHelp'
+import differenceBy from 'lodash.differenceby'
 
 import { ApolloContext } from 'contexts'
-import GenesStudiedTable from '../GenesStudiedTable'
+import GenesStudiedTable from 'components/GenesStudiedTable'
 import GeneSearchInput from 'components/GeneSearchInput'
 import GeneSearchResults from 'components/GeneSearchResults'
+import GeneSearchMessage from 'components/GeneSearchMessage'
 
 const GenesStep = ({ service, children }) => {
   // Get the GraphQL client from the apollo context object.
@@ -14,17 +16,38 @@ const GenesStep = ({ service, children }) => {
   const [current, send] = useService(service)
   const [showAllHelp, setShowAllHelp] = useState(false)
   const [showAntibodyCells, setShowAntibodyCells] = useState(false)
+  const [genesStudied, setGenesStudied] = useState([])
 
   const { geneResults = [] } = current.context
+
+  const filteredGeneResults = differenceBy(geneResults, genesStudied, 'id')
 
   /*
   Function to handle when a user types in the input field.
    */
-  const handleOnChange = gene => {
-    send('SUBMIT', { gene, client })
+  const handleOnChange = (gene = '') => {
+    if (gene === '') {
+      send('CLEAR')
+    } else {
+      send('SUBMIT', { gene, client })
+    }
   }
 
-  const genesStudied = []
+  const addToGenesStudied = (gene = {}) => {
+    setGenesStudied([...genesStudied, gene])
+  }
+
+  const removeFromGenesStudied = (gene = {}) => {
+    const geneIndex = genesStudied.findIndex(
+      geneStudied => geneStudied.id === gene.id
+    )
+    if (geneIndex !== -1) {
+      const copyOfGenesStudied = [...genesStudied]
+      copyOfGenesStudied.splice(geneIndex, 1)
+      setGenesStudied(copyOfGenesStudied)
+    }
+  }
+
   return (
     <>
       <div className="container">
@@ -97,8 +120,23 @@ const GenesStep = ({ service, children }) => {
               </div>
             </div>
             <GeneSearchInput onChange={handleOnChange}>
-              <GeneSearchResults genes={geneResults} />
-              <GenesStudiedTable showAbs={showAntibodyCells} />
+              {current.matches('search.loaded') && (
+                <>
+                  <GeneSearchResults
+                    genes={filteredGeneResults}
+                    onGeneClick={addToGenesStudied}
+                  />
+                  <GeneSearchMessage
+                    searchCount={geneResults.length}
+                    filteredCount={filteredGeneResults.length}
+                  />
+                </>
+              )}
+              <GenesStudiedTable
+                genes={genesStudied}
+                onGeneDelete={removeFromGenesStudied}
+                showAbs={showAntibodyCells}
+              />
             </GeneSearchInput>
             <br />
             {children}
