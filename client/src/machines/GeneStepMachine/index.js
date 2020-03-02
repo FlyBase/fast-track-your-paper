@@ -9,6 +9,7 @@ const geneQuery = loader('graphql/geneQuery.gql')
 export const initialContext = {
   term: null,
   geneResults: [],
+  genesStudied: []
 }
 
 export const createGeneStepMachine = () => {
@@ -26,6 +27,9 @@ export const createGeneStepMachine = () => {
         SUBMIT: {
           actions: ['setSearchTerm'],
           target: 'search.loading',
+        },
+        SET_GENES_STUDIED: {
+          actions: ['setGenesStudied'],
         },
       },
       // All states for the gene steps.
@@ -72,6 +76,10 @@ export const createGeneStepMachine = () => {
       actions: {
         resetGeneStep: assign({ ...initialContext }),
         setSearchTerm: assign({ term: (context, event) => event.term }),
+        setGenesStudied: sendParent((context, event) => ({
+          type: 'SET_GENES',
+          genes: event?.genes ?? [],
+        })),
         // Set search results.
         setGeneResults: assign((context, event) => {
           return {

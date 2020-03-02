@@ -10,7 +10,7 @@ const GeneSearchResults = ({ genes = [], onGeneClick = () => {} }) => (
 )
 
 GeneSearchResults.propTypes = {
-  genes: PropTypes.arrayOf(PropTypes.string),
+  genes: PropTypes.arrayOf(PropTypes.object),
   onGeneClick: PropTypes.func,
 }
 export default GeneSearchResults

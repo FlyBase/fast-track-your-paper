@@ -132,6 +132,9 @@ export const createStepMachine = () => {
             genes: {
               entry: ['persist'],
               on: {
+                SET_GENES: {
+                  actions: ['setGenes', 'persist'],
+                },
                 NEXT: { target: 'confirm' },
                 PREV: { target: 'flags' },
               },
@@ -243,6 +246,15 @@ export const createStepMachine = () => {
               ...submission,
               citation: null,
               publication: event.pub,
+            },
+          }
+        }),
+        setGenes: assign((context, event) => {
+          const { submission } = context
+          return {
+            submission: {
+              ...submission,
+              genes: event?.genes ?? []
             },
           }
         }),
