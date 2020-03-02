@@ -10,6 +10,7 @@ const GenesStudiedTable = ({
   showAbs = false,
   genes = [],
   onGeneDelete = () => {},
+  onAbClick = () => {},
 }) => {
   let abcell = showAbs ? '' : 'abcell'
 
@@ -49,7 +50,7 @@ const GenesStudiedTable = ({
             key={gene.id}
             abcell={abcell}
             gene={gene}
-            onAbClick={({ gene, antibody: ab }) => console.log(gene, ab)}
+            onAbClick={onAbClick}
             onDelete={onGeneDelete}
           />
         ))}
@@ -66,6 +67,7 @@ GenesStudiedTable.propTypes = {
     })
   ),
   onGeneDelete: PropTypes.func,
+  onAbClick: PropTypes.func,
 }
 
 export default GenesStudiedTable

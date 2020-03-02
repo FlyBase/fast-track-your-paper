@@ -9,7 +9,6 @@ const geneQuery = loader('graphql/geneQuery.gql')
 export const initialContext = {
   term: null,
   geneResults: [],
-  genesStudied: []
 }
 
 export const createGeneStepMachine = () => {

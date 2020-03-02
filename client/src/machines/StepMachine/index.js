@@ -254,7 +254,7 @@ export const createStepMachine = () => {
           return {
             submission: {
               ...submission,
-              genes: event?.genes ?? []
+              genes: event?.genes ?? [],
             },
           }
         }),

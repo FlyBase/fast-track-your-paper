@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
+import useLocalstorage from '@rooks/use-localstorage'
 import { useService } from '@xstate/react'
 import IconHelp from '../IconHelp'
 import differenceBy from 'lodash.differenceby'
@@ -9,7 +10,7 @@ import GeneSearchInput from 'components/GeneSearchInput'
 import GeneSearchResults from 'components/GeneSearchResults'
 import GeneSearchMessage from 'components/GeneSearchMessage'
 
-const GenesStep = ({ service, children, genes:savedGenes = [] }) => {
+const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   // Get the GraphQL client from the apollo context object.
   // https://reactjs.org/docs/hooks-reference.html#usecontext
   const client = useContext(ApolloContext)
@@ -18,7 +19,10 @@ const GenesStep = ({ service, children, genes:savedGenes = [] }) => {
   // Show all help subtext.
   const [showAllHelp, setShowAllHelp] = useState(false)
   // Show antibody columns in genes studied table.
-  const [showAntibodyCells, setShowAntibodyCells] = useState(false)
+  const [showAntibodyCells, setShowAntibodyCells] = useLocalstorage(
+    'show-antibodies',
+    false
+  )
   // Keep local array of genes studied that is pre-populated from saved data.
   const [genesStudied, setGenesStudied] = useState(savedGenes)
 
@@ -36,7 +40,7 @@ const GenesStep = ({ service, children, genes:savedGenes = [] }) => {
    */
   useEffect(() => {
     send('SET_GENES_STUDIED', { genes: genesStudied })
-  }, [ genesStudied ])
+  }, [genesStudied, send])
 
   /**
    * Function to handle when a user types in the input field.
@@ -81,6 +85,27 @@ const GenesStep = ({ service, children, genes:savedGenes = [] }) => {
       // Set the copy as the new list in state.
       setGenesStudied(copyOfGenesStudied)
     }
+  }
+
+  /**
+   * Event handler to update the antibody information of a gene in the
+   * genes studied list.
+   *
+   * @param gene <object> - The gene object from the studied list that the user
+   *                        has updated antibody information for.
+   * @param antibody <string> - The new antibody information to update the gene with.
+   *                            e.g. none, monoclonal, polyclonal
+   */
+  const setGeneAntibody = ({ gene = {}, antibody = 'none' }) => {
+    // Create a copy of the genes studied list with updated antibody information.
+    const copyOfGenesStudied = genesStudied.map(geneStudied => {
+      if (gene?.id === geneStudied.id) {
+        gene.antibody = antibody
+      }
+      return geneStudied
+    })
+    // Set the state to the newly updated list.
+    setGenesStudied(copyOfGenesStudied)
   }
 
   return (
@@ -150,6 +175,7 @@ const GenesStep = ({ service, children, genes:savedGenes = [] }) => {
                     name="showAb"
                     type="checkbox"
                     onClick={() => setShowAntibodyCells(!showAntibodyCells)}
+                    checked={showAntibodyCells}
                   />
                 </label>
               </div>
@@ -170,6 +196,7 @@ const GenesStep = ({ service, children, genes:savedGenes = [] }) => {
               <GenesStudiedTable
                 genes={genesStudied}
                 onGeneDelete={removeFromGenesStudied}
+                onAbClick={setGeneAntibody}
                 showAbs={showAntibodyCells}
               />
             </GeneSearchInput>

@@ -5,7 +5,7 @@ const Input = ({ gene = {}, antibody = 'none', onAbClick, ...props }) => (
   <input
     type="radio"
     name={`${gene.id}_ab`}
-    defaultChecked={gene.antibody === antibody}
+    defaultChecked={gene?.antibody ?? 'none' === antibody}
     onChange={() => onAbClick({ gene, antibody })}
     {...props}
   />
