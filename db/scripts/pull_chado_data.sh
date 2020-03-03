@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script pulls select data from production chado and stores it in the db/data directory.
 
 # Usage:
