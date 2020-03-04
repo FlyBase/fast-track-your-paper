@@ -17,8 +17,6 @@ make PGHOST=<HOSTNAME> PGDATABASE=<DBNAME> PGPORT=<PORT> PGUSER=<USER>
 * clean - Stops the containers, removes the disk volumes, and removes all pulled DB data.
 * pull-data - Pulls data from the production Chado database.
 * load-data - Loads data from the pulled sources and stores it in the docker DB container.
-* build-images - Builds docker images for the Github package repo.
-* push-images - Pushes docker images to the Github package repo.
 
 ## Docker container
 
