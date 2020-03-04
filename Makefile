@@ -1,5 +1,4 @@
 DATA_DIR   = db/data
-IMAGE_TAG := develop
 
 all: pull-data load-data
 

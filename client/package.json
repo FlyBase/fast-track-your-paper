@@ -8,7 +8,7 @@
     "@rooks/use-localstorage": "^3.6.0",
     "@sentry/browser": "^5.13.0",
     "@xstate/react": "^0.8.1",
-    "antd": "^4.0.0",
+    "antd": "^4.0.1",
     "apollo-boost": "^0.4.4",
     "formik": "^2.1.4",
     "graphql": "^14.6.0",
@@ -23,7 +23,7 @@
     "react-router-dom": "^5.1.0",
     "react-scripts": "^3.4.0",
     "styled-components": "^5.0.1",
-    "xstate": "^4.7.8",
+    "xstate": "^4.8.0",
     "yup": "^0.28.1"
   },
   "scripts": {
