@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
+set -Eeuo pipefail
+# Cancel all load steps on Ctrl-C
+trap ctrl_c SIGINT
+trap ctrl_c SIGTERM
+
+function ctrl_c() {
+  echo "Data load killed, exiting.";
+  exit $?;
+}
+
+JOBS=${PGJOBS:-3}
+
 # Load rest of the table definitions and data.
 # POSTGRES_DB env variable is defined by the Postgres docker hub image.
 # This variable is set via the docker-compose.yml file.
-pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/chado -O -F d -j 3
+pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/chado -O -F d -j ${JOBS} || true
 
 # Load genes data.
-pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/feature -O -F d -j 3
+pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/feature -O -F d -j ${JOBS} || true
 
 psql -d $POSTGRES_DB -f /ftyp/scripts/load_genes.sql
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Die on errors
+set -Eeuo pipefail
+
 # This script pulls select data from production chado and stores it in the db/data directory.
 
 # Usage:
@@ -11,6 +14,15 @@
 # PGUSER - Username
 # PGDATABASE - Database
 # PGJOBS  - Number of jobs (default: 3)
+
+# Cancel all load steps on Ctrl-C
+trap ctrl_c SIGINT
+trap ctrl_c SIGTERM
+
+function ctrl_c() {
+  echo "Data pull killed, exiting.";
+  exit $?;
+}
 
 JOBS=${PGJOBS:-3}
 
@@ -39,4 +51,4 @@ chmod 755 data/chado data/feature
 # Pull only gene data for the feature table.
 # Can't use directory format here since we are pulling a subset
 # of the feature table out.
-psql -f scripts/pull_genes.sql
+psql -f scripts/pull_genes.sql > data/chado.feature.tsv

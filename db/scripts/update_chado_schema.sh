@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Die on errors
+set -Eeuo pipefail
+
 # This script updates the production chado schema file in db/initdb.d/01.production.chado.schema.sql
 # Usage:
 # $ cd db

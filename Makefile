@@ -1,6 +1,6 @@
 DATA_DIR   = db/data
 
-all: pull-data load-data
+all: pull-data load-data build-client
 
 up: pull-images
 	docker-compose up -d --build
@@ -18,8 +18,16 @@ stop:
 pull-images:
 	docker-compose pull
 
-clean: down
-	rm -r db/data/*
+clean: down clean-db clean-client
+
+clean-db:
+	rm -rf db/data/*
+
+clean-client:
+	rm -rf client/build/*
+
+build-client:
+	cd client; yarn run build
 
 pull-data:$(DATA_DIR)/chado_feature.tsv $(DATA_DIR)/chado $(DATA_DIR)/feature
 
