@@ -303,11 +303,11 @@ $$
 SELECT gs.id,
        gs.symbol,
        gs.species,
-       ts_headline('simple', gs.identifiers, to_tsquery('simple', term || ':*')) AS match_highlight
+       ts_headline('simple', gs.identifiers, to_tsquery('simple', regexp_replace(coalesce(term,''), '(\W)', '\\\1') || ':*')) AS match_highlight
 FROM ftyp_hidden.gene_search AS gs
 WHERE (
                   gs.symbol ILIKE term || '%'
-              OR identifiers_tsvector @@ to_tsquery('simple', term || ':*')
+              OR identifiers_tsvector @@ to_tsquery('simple', regexp_replace(coalesce(term,''), '(\W)', '\\\1') || ':*')
           )
     AND gs.species SIMILAR TO COALESCE(species_abbrev,'%')
 ORDER BY
@@ -316,7 +316,8 @@ ORDER BY
     --  Then sort by score of query and a full text score against all IDs (ID, symbol, name, etc.)
     ts_rank(identifiers_tsvector, plainto_tsquery('simple', term)) DESC,
     -- Then sort by a score of a wildcard query and a full text score against all IDs.
-    ts_rank(identifiers_tsvector, to_tsquery('simple', term || ':*')) DESC
+    ts_rank(identifiers_tsvector, to_tsquery('simple', regexp_replace(coalesce(term,''), '(\W)', '\\\1') || ':*')) DESC,
+    gs.symbol
 LIMIT 30
     ;
 $$ LANGUAGE SQL STABLE;

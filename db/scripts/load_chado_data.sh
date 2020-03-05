@@ -31,5 +31,5 @@ psql -d $POSTGRES_DB -f /chado/schema/FBrf/main.sql
 
 psql -d $POSTGRES_DB -f /ftyp/scripts/ftyp.sql
 
-vacuumdb -f -v -z -a 
+vacuumdb -f -v -z -t ftyp_hidden.gene_search -t ftyp_hidden.pub_search $POSTGRES_DB
 
