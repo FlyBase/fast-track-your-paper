@@ -1,6 +1,4 @@
-import { actions, Machine, sendParent } from 'xstate'
-
-const { assign } = actions
+import { Machine, sendParent } from 'xstate'
 
 export const initialContext = {}
 
