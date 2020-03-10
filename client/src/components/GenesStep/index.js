@@ -114,7 +114,15 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
         <form>
           <div id="genesStepPanel" className="panel panel-primary">
             <div className="panel-heading">
-              <h3 className="panel-title">Associate Genes</h3>
+              <h3 className="panel-title">
+                Associate Genes
+                <button
+                  type="button"
+                  className="pull-right btn btn-default btn-xs"
+                  onClick={() => setShowAllHelp(!showAllHelp)}>
+                  {showAllHelp ? 'Hide' : 'Show'} All Help Messages
+                </button>
+              </h3>
             </div>
             <div className="panel-body">
               <div className="form-group">
