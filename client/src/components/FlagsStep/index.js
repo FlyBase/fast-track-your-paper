@@ -7,7 +7,7 @@ import DiseaseTextArea from 'components/DiseaseTextArea'
 import CellLineFlag from 'components/CellLineFlag'
 import DatasetFlag from 'components/DatasetFlag'
 
-const FlagsStep = ({ flags, onSubmit, bagRef, children }) => {
+const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
   const [showAllHelp, setShowAllHelp] = useState(false)
   return (
     <div className="container">
@@ -59,8 +59,7 @@ const FlagsStep = ({ flags, onSubmit, bagRef, children }) => {
              */
             innerRef={bagRef}
             onSubmit={(values, actions) => {
-              console.log('DataFlag: onsubmit called')
-              console.log(values)
+              setFlags({ flags: { ...values } })
             }}>
             {({ values, values: { no_flags: noneApply } }) => (
               <Form>

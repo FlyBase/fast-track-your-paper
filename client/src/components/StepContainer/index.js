@@ -198,7 +198,7 @@ function StepContainer() {
   } else if (current.matches({ pending: 'flags' })) {
     step = (
       <FlagsStepWrapper
-        onSubmit={data => send('SAVE_FLAGS', data)}
+        setFlags={data => send('SET_FLAGS', data)}
         flags={flags}
         bagRef={flagsFormikBagRef}
         prevClick={async () => {
