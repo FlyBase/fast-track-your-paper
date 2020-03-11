@@ -10,8 +10,7 @@ const Input = styled.input`
   border: 1px solid rgba(0, 0, 0, 0, 0.5);
 `
 
-const InputWrapper = styled.div`
-`
+const InputWrapper = styled.div``
 
 const GeneSearchInput = ({ onChange = () => {}, children }) => {
   const handleOnChange = evt => {
@@ -20,17 +19,24 @@ const GeneSearchInput = ({ onChange = () => {}, children }) => {
   }
 
   return (
-  <>
-    <div className="form-group">
-      <div className="col-sm-10 col-sm-offset-1 control-label" style={{marginBottom:'1em'}}>
-        <label htmlFor="gene">Gene Search:</label>
-        <InputWrapper>
-          <Input type="text" id="gene" name="gene" onChange={handleOnChange} />
-        </InputWrapper>
+    <>
+      <div className="form-group">
+        <div
+          className="col-sm-10 col-sm-offset-1 control-label"
+          style={{ marginBottom: '1em' }}>
+          <label htmlFor="gene">Gene Search:</label>
+          <InputWrapper>
+            <Input
+              type="text"
+              id="gene"
+              name="gene"
+              onChange={handleOnChange}
+            />
+          </InputWrapper>
+        </div>
+        {children}
       </div>
-      {children}
-    </div>
-  </>
+    </>
   )
 }
 

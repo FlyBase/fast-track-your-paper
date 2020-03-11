@@ -24,14 +24,18 @@ import './index.css'
     Shows, but does not render, things like <up> tags.
 */
 const GeneSearchResults = ({ genes = [], onGeneClick = () => {} }) => (
-  <div id="geneSearchSuggestions" style={{position:"relative"}}>
-  <ul>
-    {genes.map(g => (
-      <li key={g.id} onClick={() => onGeneClick(g)}>
-        <a href={`/reports/${g.id}`} ><b dangerouslySetInnerHTML={ { __html: g.symbol } } /></a>&emsp;<span dangerouslySetInnerHTML={ { __html: g.hl.name } } />
-      </li>
-    ))}
-  </ul>
+  <div id="geneSearchSuggestions" style={{ position: 'relative' }}>
+    <ul>
+      {genes.map(g => (
+        <li key={g.id} onClick={() => onGeneClick(g)}>
+          <a href={`/reports/${g.id}`}>
+            <b dangerouslySetInnerHTML={{ __html: g.symbol }} />
+          </a>
+          &emsp;
+          <span dangerouslySetInnerHTML={{ __html: g.hl.name }} />
+        </li>
+      ))}
+    </ul>
   </div>
 )
 

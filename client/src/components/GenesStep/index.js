@@ -125,7 +125,6 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
               </h3>
             </div>
             <div className="panel-body">
-
               <div className="form-group">
                 <div className="col-sm-8 control-label">
                   <div className="radio">
@@ -191,42 +190,38 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                     </label>
                   </div>
                 </div>
-
               </div>
+            </div>
+            {/* end panel body */}
 
-            </div>{/* end panel body */}
+            <GeneSearchInput onChange={handleOnChange}>
+              {current.matches('search.loaded') && (
+                <>
+                  <GeneSearchResults
+                    genes={filteredGeneResults}
+                    onGeneClick={addToGenesStudied}
+                  />
+                  <GeneSearchMessage
+                    searchCount={geneResults.length}
+                    filteredCount={filteredGeneResults.length}
+                  />
+                </>
+              )}
 
-              <GeneSearchInput onChange={handleOnChange}>
+              <GenesStudiedTable
+                genes={genesStudied}
+                onGeneDelete={removeFromGenesStudied}
+                onAbClick={setGeneAntibody}
+                showAbs={showAntibodyCells}
+              />
+            </GeneSearchInput>
 
-                {current.matches('search.loaded') && (
-                  <>
-                    <GeneSearchResults
-                      genes={filteredGeneResults}
-                      onGeneClick={addToGenesStudied}
-                    />
-                    <GeneSearchMessage
-                      searchCount={geneResults.length}
-                      filteredCount={filteredGeneResults.length}
-                    />
-                  </>
-                )}
+            <br />
+            <br />
 
-                <GenesStudiedTable
-                  genes={genesStudied}
-                  onGeneDelete={removeFromGenesStudied}
-                  onAbClick={setGeneAntibody}
-                  showAbs={showAntibodyCells}
-                />
-
-              </GeneSearchInput>
-
-              <br /><br />
-
-              {children}
-
-
-          </div>{/* end panel */}
-
+            {children}
+          </div>
+          {/* end panel */}
         </form>
       </div>
     </>

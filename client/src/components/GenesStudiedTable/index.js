@@ -15,7 +15,9 @@ const GenesStudiedTable = ({
   let abcell = showAbs ? '' : 'abcell'
 
   return (
-    <table className="table table-striped table-hover table-condensed" style={{borderBottom:"1px solid #ccc",marginTop:"1em"}}>
+    <table
+      className="table table-striped table-hover table-condensed"
+      style={{ borderBottom: '1px solid #ccc', marginTop: '1em' }}>
       <thead>
         <tr>
           <th>Genes studied in this publication</th>
