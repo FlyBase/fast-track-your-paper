@@ -9,6 +9,7 @@ const geneQuery = loader('graphql/geneQuery.gql')
 export const initialContext = {
   term: null,
   geneResults: [],
+  totalCount: 0,
 }
 
 export const createGeneStepMachine = () => {
@@ -83,6 +84,7 @@ export const createGeneStepMachine = () => {
         setGeneResults: assign((context, event) => {
           return {
             geneResults: event?.data?.data?.results?.genes ?? [],
+            totalCount: event?.data?.data?.results?.totalCount ?? 0,
           }
         }),
       },
@@ -91,10 +93,10 @@ export const createGeneStepMachine = () => {
          * that is resolved by the Xstate library.
          */
         invokeGeneSearch: (context, event) => {
-          const { client, gene, species = null } = event
+          const { client, ...rest } = event
           return client.query({
             query: geneQuery,
-            variables: { gene, species },
+            variables: { ...rest },
           })
         },
       },

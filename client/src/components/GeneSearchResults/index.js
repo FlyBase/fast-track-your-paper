@@ -23,8 +23,13 @@ import './index.css'
   <b>{g.symbol}</b>
     Shows, but does not render, things like <up> tags.
 */
-const GeneSearchResults = ({ genes = [], onGeneClick = () => {} }) => (
+const GeneSearchResults = ({
+  genes = [],
+  totalCount = 0,
+  onGeneClick = () => {},
+}) => (
   <div id="geneSearchSuggestions" style={{ position: 'relative' }}>
+    Showing {genes.length} of {totalCount} matches.
     <ul>
       {genes.map(g => (
         <li key={g.id} onClick={() => onGeneClick(g)}>
@@ -41,6 +46,7 @@ const GeneSearchResults = ({ genes = [], onGeneClick = () => {} }) => (
 
 GeneSearchResults.propTypes = {
   genes: PropTypes.arrayOf(PropTypes.object),
+  totalCount: PropTypes.number,
   onGeneClick: PropTypes.func,
 }
 export default GeneSearchResults
