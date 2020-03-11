@@ -27,7 +27,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   const [genesStudied, setGenesStudied] = useState(savedGenes)
 
   // Get the gene search results from the current machine context.
-  const { geneResults = [] } = current.context
+  const { geneResults = [], totalCount } = current.context
   // Filter results so we do not show genes that have already been added to the
   // studied table.
   const filteredGeneResults = differenceBy(geneResults, genesStudied, 'id')
@@ -51,8 +51,8 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
       // Clear results if they have cleared the input field.
       send('CLEAR')
     } else {
-      // Send gene input and the GraphQL client.
-      send('SUBMIT', { gene, client })
+      // Send gene input, the GraphQL client, and limit results to top 20.
+      send('SUBMIT', { gene, limit: 20, client })
     }
   }
 
@@ -200,6 +200,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                   <GeneSearchResults
                     genes={filteredGeneResults}
                     onGeneClick={addToGenesStudied}
+                    totalCount={totalCount}
                   />
                   <GeneSearchMessage
                     searchCount={geneResults.length}

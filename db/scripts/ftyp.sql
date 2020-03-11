@@ -318,7 +318,6 @@ ORDER BY
     -- Then sort by a score of a wildcard query and a full text score against all IDs.
     ts_rank(identifiers_tsvector, to_tsquery('simple', regexp_replace(coalesce(term,''), '(\W)', '\\\1') || ':*')) DESC,
     gs.symbol
-LIMIT 30
     ;
 $$ LANGUAGE SQL STABLE;
 
