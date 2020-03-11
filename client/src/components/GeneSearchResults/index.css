@@ -1,0 +1,21 @@
+#geneSearchSuggestions ul {
+  position: absolute;
+  top: 65px;
+  left: 10%;  /* works except for x-small windows */
+  background-color: rgba(240,240,240,0.9);
+  z-index: 5;
+  border-radius: 8px;
+  list-style: none inside;
+  padding: 3px 8px;
+  padding-right: 5em;
+}
+
+#geneSearchSuggestions li {
+  display: flex;
+  white-space: nowrap;
+  width: 120%;
+}
+
+#geneSearchSuggestions li a {
+  flex-basis: 20%;
+}

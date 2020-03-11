@@ -4,13 +4,13 @@ import styled from 'styled-components/macro'
 
 const Input = styled.input`
   font-size: 1.3em;
-  min-height: 3em;
+  min-height: 2em;
   line-height: 1.5em;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0, 0.5);
 `
 
 const InputWrapper = styled.div`
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0, 0.5);
 `
 
 const GeneSearchInput = ({ onChange = () => {}, children }) => {
@@ -20,13 +20,17 @@ const GeneSearchInput = ({ onChange = () => {}, children }) => {
   }
 
   return (
-    <div>
-      <label htmlFor="gene">Gene Search:</label>
-      <InputWrapper>
-        <Input type="text" id="gene" name="gene" onChange={handleOnChange} />
-      </InputWrapper>
+  <>
+    <div className="form-group">
+      <div className="col-sm-10 col-sm-offset-1 control-label" style={{marginBottom:'1em'}}>
+        <label htmlFor="gene">Gene Search:</label>
+        <InputWrapper>
+          <Input type="text" id="gene" name="gene" onChange={handleOnChange} />
+        </InputWrapper>
+      </div>
       {children}
     </div>
+  </>
   )
 }
 

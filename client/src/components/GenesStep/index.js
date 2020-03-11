@@ -125,6 +125,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
               </h3>
             </div>
             <div className="panel-body">
+
               <div className="form-group">
                 <div className="col-sm-8 control-label">
                   <div className="radio">
@@ -176,41 +177,56 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                   </div>
                 </div>
 
-                <label htmlFor="showAb" className="col-sm-4 control-label">
-                  Antibodies generated
-                  <input
-                    id="showAb"
-                    name="showAb"
-                    type="checkbox"
-                    onClick={() => setShowAntibodyCells(!showAntibodyCells)}
-                    defaultChecked={showAntibodyCells}
-                  />
-                </label>
+                <div className="col-sm-4">
+                  <div className="checkbox">
+                    <label htmlFor="showAb" className="control-label">
+                      <input
+                        id="showAb"
+                        name="showAb"
+                        type="checkbox"
+                        onClick={() => setShowAntibodyCells(!showAntibodyCells)}
+                        defaultChecked={showAntibodyCells}
+                      />
+                      <b>antibodies generated</b>
+                    </label>
+                  </div>
+                </div>
+
               </div>
-            </div>
-            <GeneSearchInput onChange={handleOnChange}>
-              {current.matches('search.loaded') && (
-                <>
-                  <GeneSearchResults
-                    genes={filteredGeneResults}
-                    onGeneClick={addToGenesStudied}
-                  />
-                  <GeneSearchMessage
-                    searchCount={geneResults.length}
-                    filteredCount={filteredGeneResults.length}
-                  />
-                </>
-              )}
-              <GenesStudiedTable
-                genes={genesStudied}
-                onGeneDelete={removeFromGenesStudied}
-                onAbClick={setGeneAntibody}
-                showAbs={showAntibodyCells}
-              />
-            </GeneSearchInput>
-            <br />
-            {children}
-          </div>
+
+            </div>{/* end panel body */}
+
+              <GeneSearchInput onChange={handleOnChange}>
+
+                {current.matches('search.loaded') && (
+                  <>
+                    <GeneSearchResults
+                      genes={filteredGeneResults}
+                      onGeneClick={addToGenesStudied}
+                    />
+                    <GeneSearchMessage
+                      searchCount={geneResults.length}
+                      filteredCount={filteredGeneResults.length}
+                    />
+                  </>
+                )}
+
+                <GenesStudiedTable
+                  genes={genesStudied}
+                  onGeneDelete={removeFromGenesStudied}
+                  onAbClick={setGeneAntibody}
+                  showAbs={showAntibodyCells}
+                />
+
+              </GeneSearchInput>
+
+              <br /><br />
+
+              {children}
+
+
+          </div>{/* end panel */}
+
         </form>
       </div>
     </>
