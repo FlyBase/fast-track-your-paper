@@ -1,7 +1,6 @@
 #geneSearchSuggestions ul {
   position: absolute;
-  top: 65px;
-  left: 10%;  /* works except for x-small windows */
+  left: 10%;
   background-color: rgba(240,240,240,0.9);
   z-index: 5;
   border-radius: 8px;
@@ -9,13 +8,24 @@
   padding: 3px 8px;
   padding-right: 5em;
 }
-
+#geneSearchSuggestions li:hover {
+  background-color: rgba(230,230,230,0.5);
+  width: 115%;
+}
 #geneSearchSuggestions li {
   display: flex;
-  white-space: nowrap;
   width: 120%;
 }
 
 #geneSearchSuggestions li a {
   flex-basis: 20%;
+}
+
+@media screen and (min-width: 768px) {
+  #geneSearchSuggestions ul {
+    top: 65px;
+  }
+  #geneSearchSuggestions li {
+    white-space: nowrap;
+  }
 }
