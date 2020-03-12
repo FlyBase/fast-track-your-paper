@@ -27,7 +27,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   const [genesStudied, setGenesStudied] = useState(savedGenes)
 
   // Get the gene search results from the current machine context.
-  const { geneResults = [] } = current.context
+  const { geneResults = [], totalCount } = current.context
   // Filter results so we do not show genes that have already been added to the
   // studied table.
   const filteredGeneResults = differenceBy(geneResults, genesStudied, 'id')
@@ -51,8 +51,8 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
       // Clear results if they have cleared the input field.
       send('CLEAR')
     } else {
-      // Send gene input and the GraphQL client.
-      send('SUBMIT', { gene, client })
+      // Send gene input, the GraphQL client, and limit results to top 20.
+      send('SUBMIT', { gene, limit: 20, client })
     }
   }
 
@@ -114,10 +114,17 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
         <form>
           <div id="genesStepPanel" className="panel panel-primary">
             <div className="panel-heading">
-              <h3 className="panel-title">Associate Genes</h3>
+              <h3 className="panel-title">
+                Associate Genes
+                <button
+                  type="button"
+                  className="pull-right btn btn-default btn-xs"
+                  onClick={() => setShowAllHelp(!showAllHelp)}>
+                  {showAllHelp ? 'Hide' : 'Show'} All Help Messages
+                </button>
+              </h3>
             </div>
             <div className="panel-body">
-
               <div className="form-group">
                 <div className="col-sm-8 control-label">
                   <div className="radio">
@@ -183,42 +190,39 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                     </label>
                   </div>
                 </div>
-
               </div>
+            </div>
+            {/* end panel body */}
 
-            </div>{/* end panel body */}
+            <GeneSearchInput onChange={handleOnChange}>
+              {current.matches('search.loaded') && (
+                <>
+                  <GeneSearchResults
+                    genes={filteredGeneResults}
+                    onGeneClick={addToGenesStudied}
+                    totalCount={totalCount}
+                  />
+                  <GeneSearchMessage
+                    searchCount={geneResults.length}
+                    filteredCount={filteredGeneResults.length}
+                  />
+                </>
+              )}
 
-              <GeneSearchInput onChange={handleOnChange}>
+              <GenesStudiedTable
+                genes={genesStudied}
+                onGeneDelete={removeFromGenesStudied}
+                onAbClick={setGeneAntibody}
+                showAbs={showAntibodyCells}
+              />
+            </GeneSearchInput>
 
-                {current.matches('search.loaded') && (
-                  <>
-                    <GeneSearchResults
-                      genes={filteredGeneResults}
-                      onGeneClick={addToGenesStudied}
-                    />
-                    <GeneSearchMessage
-                      searchCount={geneResults.length}
-                      filteredCount={filteredGeneResults.length}
-                    />
-                  </>
-                )}
+            <br />
+            <br />
 
-                <GenesStudiedTable
-                  genes={genesStudied}
-                  onGeneDelete={removeFromGenesStudied}
-                  onAbClick={setGeneAntibody}
-                  showAbs={showAntibodyCells}
-                />
-
-              </GeneSearchInput>
-
-              <br /><br />
-
-              {children}
-
-
-          </div>{/* end panel */}
-
+            {children}
+          </div>
+          {/* end panel */}
         </form>
       </div>
     </>

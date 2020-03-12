@@ -1,5 +1,10 @@
-query GeneQuery($gene: String, $species: String) {
-  results: searchGeneIdentifiers(term: $gene, speciesAbbrev: $species) {
+query GeneQuery($gene: String, $species: String, $limit: Int = 20) {
+  results: searchGeneIdentifiers(
+    term: $gene
+    speciesAbbrev: $species
+    first: $limit
+  ) {
+    totalCount
     genes: nodes {
       hl: matchHighlight
       id

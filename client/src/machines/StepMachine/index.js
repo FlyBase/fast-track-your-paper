@@ -124,6 +124,9 @@ export const createStepMachine = () => {
             flags: {
               entry: ['persist'],
               on: {
+                SET_FLAGS: {
+                  actions: ['setFlags', 'persist'],
+                },
                 NEXT: { target: 'genes' },
                 PREV: { target: 'author' },
               },
@@ -255,6 +258,15 @@ export const createStepMachine = () => {
             submission: {
               ...submission,
               genes: event?.genes ?? [],
+            },
+          }
+        }),
+        setFlags: assign((context, event) => {
+          const { submission } = context
+          return {
+            submission: {
+              ...submission,
+              flags: event?.flags ?? {},
             },
           }
         }),

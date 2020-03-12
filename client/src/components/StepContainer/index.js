@@ -134,7 +134,8 @@ function StepContainer() {
   // Reference to the Formik bag object.
   // This lets us trigger a submit from outside the form, which is needed
   // for some of the next/prev steps.
-  const formikBagRef = useRef()
+  const authorFormikBagRef = useRef()
+  const flagsFormikBagRef = useRef()
 
   const {
     pubMachine,
@@ -180,16 +181,16 @@ function StepContainer() {
       <AuthorStepWrapper
         service={authorMachine}
         contact={contact}
-        bagRef={formikBagRef}
+        bagRef={authorFormikBagRef}
         prevClick={async () => {
           /**
            * submitForm() returns a promise so we need to await it.
            */
-          await formikBagRef.current.submitForm()
+          await authorFormikBagRef.current.submitForm()
           send('PREV')
         }}
         nextClick={async () => {
-          await formikBagRef.current.submitForm()
+          await authorFormikBagRef.current.submitForm()
           send('NEXT')
         }}
       />
@@ -197,9 +198,20 @@ function StepContainer() {
   } else if (current.matches({ pending: 'flags' })) {
     step = (
       <FlagsStepWrapper
+        setFlags={data => send('SET_FLAGS', data)}
         flags={flags}
-        prevClick={() => send('PREV')}
-        nextClick={() => send('NEXT')}
+        bagRef={flagsFormikBagRef}
+        prevClick={async () => {
+          /**
+           * submitForm() returns a promise so we need to await it.
+           */
+          await flagsFormikBagRef.current.submitForm()
+          send('PREV')
+        }}
+        nextClick={async () => {
+          await flagsFormikBagRef.current.submitForm()
+          send('NEXT')
+        }}
       />
     )
   } else if (current.matches({ pending: 'genes' })) {
