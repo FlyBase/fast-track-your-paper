@@ -27,7 +27,7 @@ services:
       --enable-query-batching
       --legacy-relations omit
       --connection postgres://postgres:CHANGEME@db/ftyp
-      --schema ftyp
+      --schema ftyp,flybase,public
     networks:
       - frontend
       - internal
