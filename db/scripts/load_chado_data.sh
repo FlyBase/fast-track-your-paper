@@ -18,6 +18,7 @@ pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/ch
 
 # Load genes data.
 pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/feature -O -F d -j ${JOBS} || true
+pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/featureloc -O -F d -j ${JOBS} || true
 
 psql -d $POSTGRES_DB -f /ftyp/scripts/load_genes.sql
 

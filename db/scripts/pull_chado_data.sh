@@ -30,6 +30,7 @@ JOBS=${PGJOBS:-3}
 # The directory format (-F d) allows us to use a multi-threaded dump
 # where -j n sets the number of threads/jobs used.
 pg_dump -x -O -n public -s -t feature -T audit -F d -j ${JOBS} -f data/feature
+pg_dump -x -O -n public -s -t featureloc -T audit -F d -j ${JOBS} -f data/featureloc
 pg_dump -x -O -n public -c --if-exists --disable-triggers \
         -t cvterm \
         -t db \
@@ -46,9 +47,10 @@ pg_dump -x -O -n public -c --if-exists --disable-triggers \
         -T audit \
         -F d -j ${JOBS} -f data/chado
 
-chmod 755 data/chado data/feature
+chmod 755 data/chado data/feature data/featureloc
 
 # Pull only gene data for the feature table.
 # Can't use directory format here since we are pulling a subset
 # of the feature table out.
 psql -f scripts/pull_genes.sql > data/chado.feature.tsv
+psql -f scripts/pull_gene_locations.sql > data/chado.gene_location.tsv

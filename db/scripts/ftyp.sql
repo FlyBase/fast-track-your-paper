@@ -205,6 +205,8 @@ SELECT f.feature_id,
        f.uniquename                         AS id,
        flybase.current_symbol(f.uniquename) AS symbol,
        o.abbreviation                       AS species,
+       gl.has_location                      AS has_location,
+       flybase.pub_count(f.uniquename)      AS pub_count,
        json_build_object(
                'id', f.uniquename,
                'symbol', flybase.current_symbol(f.uniquename),
@@ -237,6 +239,7 @@ SELECT f.feature_id,
 FROM feature f
          JOIN cvterm ON f.type_id = cvterm.cvterm_id
          JOIN organism o ON f.organism_id = o.organism_id
+         LEFT JOIN ftyp_hidden.gene_location gl on f.feature_id = gl.feature_id
     /**
       Get Symbol and name synonyms.
      */
@@ -297,26 +300,37 @@ CREATE INDEX symbol_trgm_idx ON ftyp_hidden.gene_search USING GIN (symbol gin_tr
 
 -- Index on species.
 CREATE INDEX species_idx ON ftyp_hidden.gene_search (species);
+CREATE INDEX has_location_idx ON ftyp_hidden.gene_search (has_location);
+CREATE INDEX pub_count_idx ON ftyp_hidden.gene_search (pub_count);
 
-CREATE OR REPLACE FUNCTION ftyp.search_gene_identifiers(term text, species_abbrev text, OUT id text, OUT symbol text, OUT species text, OUT match_highlight json) RETURNS SETOF record AS
+CREATE OR REPLACE FUNCTION ftyp.search_gene_identifiers(term text, species_abbrev text, OUT id text, OUT symbol text,
+                                                        OUT species text,
+                                                        OUT match_highlight json) RETURNS SETOF record AS
 $$
 SELECT gs.id,
        gs.symbol,
        gs.species,
-       ts_headline('simple', gs.identifiers, to_tsquery('simple', regexp_replace(coalesce(term,''), '(\W)', '\\\1') || ':*')) AS match_highlight
+       ts_headline('simple', gs.identifiers,
+                   to_tsquery('simple', regexp_replace(coalesce(term, ''), '(\W)', '\\\1') || ':*')) AS match_highlight
 FROM ftyp_hidden.gene_search AS gs
 WHERE (
-                  gs.symbol ILIKE term || '%'
-              OR identifiers_tsvector @@ to_tsquery('simple', regexp_replace(coalesce(term,''), '(\W)', '\\\1') || ':*')
-          )
-    AND gs.species SIMILAR TO COALESCE(species_abbrev,'%')
+        gs.symbol ILIKE term || '%'
+        OR identifiers_tsvector @@ to_tsquery('simple', regexp_replace(coalesce(term, ''), '(\W)', '\\\1') || ':*')
+    )
+  AND gs.species SIMILAR TO COALESCE(species_abbrev, '%')
 ORDER BY
-    -- First sort by distance between query and the symbol (ascending).
+    -- Sort by distance between query and the symbol (ascending).
     term <-> symbol,
-    --  Then sort by score of query and a full text score against all IDs (ID, symbol, name, etc.)
+    --  Sort by score of query and a full text score against all IDs (ID, symbol, name, etc.)
     ts_rank(identifiers_tsvector, plainto_tsquery('simple', term)) DESC,
-    -- Then sort by a score of a wildcard query and a full text score against all IDs.
-    ts_rank(identifiers_tsvector, to_tsquery('simple', regexp_replace(coalesce(term,''), '(\W)', '\\\1') || ':*')) DESC,
+    -- Sort by a score of a wildcard query and a full text score against all IDs.
+    ts_rank(identifiers_tsvector,
+            to_tsquery('simple', regexp_replace(coalesce(term, ''), '(\W)', '\\\1') || ':*')) DESC,
+    -- Sort by whether or not the gene has a location.
+    gs.has_location DESC,
+    -- Sort by number of associated publications.
+    gs.pub_count DESC,
+    -- Sort alphanumerically by symbol.
     gs.symbol
     ;
 $$ LANGUAGE SQL STABLE;
