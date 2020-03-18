@@ -29,22 +29,28 @@ const GeneSearchResults = ({
   onGeneClick = () => {},
 }) => (
   <div id="geneSearchSuggestions">
-		<div id="geneSearchSuggestionsContainer">
-			<ul>
-				{genes.map(g => (
-					<li key={g.id} onClick={() => onGeneClick(g)}>
-						<a href={`/reports/${g.id}`} target="_blank">
-							<b dangerouslySetInnerHTML={{ __html: g.symbol }} />
-						</a>
-						&emsp;
-						<span dangerouslySetInnerHTML={{ __html: g.hl.name }} />
-						&emsp;
-						<i dangerouslySetInnerHTML={{ __html: (g.hl.synonyms) ? g.hl.synonyms.join(', ') : '' }} />
-					</li>
-				))}
-			</ul>
-			<span id="geneSearchSuggestionsSummary">Showing {genes.length} of {totalCount} matches.</span>
-		</div>
+    <div id="geneSearchSuggestionsContainer">
+      <ul>
+        {genes.map(g => (
+          <li key={g.id} onClick={() => onGeneClick(g)}>
+            <a href={`/reports/${g.id}`} target="_blank">
+              <b dangerouslySetInnerHTML={{ __html: g.symbol }} />
+            </a>
+            &emsp;
+            <span dangerouslySetInnerHTML={{ __html: g.hl.name }} />
+            &emsp;
+            <i
+              dangerouslySetInnerHTML={{
+                __html: g.hl.synonyms ? g.hl.synonyms.join(', ') : '',
+              }}
+            />
+          </li>
+        ))}
+      </ul>
+      <span id="geneSearchSuggestionsSummary">
+        Showing {genes.length} of {totalCount} matches.
+      </span>
+    </div>
   </div>
 )
 

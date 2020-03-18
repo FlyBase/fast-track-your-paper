@@ -10,13 +10,13 @@
   padding: 0 6px;
   z-index: 5;
   border-radius: 8px;
-  box-shadow:	3px 6px 3px 0px #ccc;
+  box-shadow: 3px 6px 3px 0px #ccc;
   overflow-y: auto;
   max-width: 60%;
 }
 #geneSearchSuggestionsSummary {
-	font-size: 12px;
-	font-style: italic;
+  font-size: 12px;
+  font-style: italic;
 }
 #geneSearchSuggestions ul {
   list-style: none inside;
