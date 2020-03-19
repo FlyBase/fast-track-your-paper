@@ -136,7 +136,8 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                         value="option1"
                         defaultChecked={true}
                       />
-                      Use the FTYP gene search form to find one or a few genes
+                      Use the FTYP gene search form to find{' '}
+                      <b>one or a few genes</b>
                     </label>
                     <IconHelp
                       initial={showAllHelp}
@@ -151,12 +152,12 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                         id="optionsRadios2"
                         value="option2"
                       />
-                      Use the FTYP gene bulk upload form to submit a text file
-                      of gene IDs
+                      Use the FTYP gene bulk upload form to submit a{' '}
+                      <b>text file of gene IDs</b>
                     </label>
                     <IconHelp
                       initial={showAllHelp}
-                      message="You will be selecting genes from search results to be connected to this publication."
+                      message="You will be uploading a text file of gene identifiers to be connected to this publication."
                     />
                   </div>
                   <div className="radio">
@@ -167,11 +168,11 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                         id="optionsRadios3"
                         value="option3"
                       />
-                      No genes studied in this publication
+                      <b>No genes</b> studied in this publication
                     </label>
                     <IconHelp
                       initial={showAllHelp}
-                      message="You will be selecting genes from search results to be connected to this publication."
+                      message="You confirm that there should be no genes connected to this publication."
                     />
                   </div>
                 </div>

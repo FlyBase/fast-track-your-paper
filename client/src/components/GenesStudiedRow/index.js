@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const Input = ({ gene = {}, antibody = 'none', onAbClick, ...props }) => (
   <input
-    type="radio"
+    type="checkbox"
     name={`${gene.id}_ab`}
     defaultChecked={gene?.antibody ?? 'none' === antibody}
     onChange={() => onAbClick({ gene, antibody })}
@@ -23,14 +23,6 @@ const GeneStudiedRow = ({
         {gene.symbol}
       </a>
     </th>
-    <td className={abcell}>
-      <Input
-        gene={gene}
-        onAbClick={onAbClick}
-        antibody="none"
-        title="No antibodies"
-      />
-    </td>
     <td className={abcell}>
       <Input
         gene={gene}
