@@ -10,8 +10,6 @@ const Input = styled.input`
   border: 1px solid rgba(0, 0, 0, 0, 0.5);
 `
 
-const InputWrapper = styled.div``
-
 const GeneSearchInput = ({ onChange = () => {}, children }) => {
   const handleOnChange = evt => {
     const symbol = evt?.target?.value ?? ''
@@ -25,14 +23,14 @@ const GeneSearchInput = ({ onChange = () => {}, children }) => {
           className="col-sm-10 col-sm-offset-1 control-label"
           style={{ marginBottom: '1em' }}>
           <label htmlFor="gene">Gene Search:</label>
-          <InputWrapper>
+          <div>
             <Input
               type="text"
               id="gene"
               name="gene"
               onChange={handleOnChange}
             />
-          </InputWrapper>
+          </div>
         </div>
         {children}
       </div>
