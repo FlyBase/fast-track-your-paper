@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import GeneSearchHit from 'components/GeneSearchHit'
 
 import './index.css'
 
@@ -23,16 +24,7 @@ import './index.css'
   <b>{g.symbol}</b>
     Shows, but does not render, things like <up> tags.
 */
-const GeneSearchResults = ({
-  genes = [],
-  totalCount = 0,
-  onGeneClick = () => {},
-}) => (
-  <div id="geneSearchSuggestions">
-    <div id="geneSearchSuggestionsContainer">
-      <ul>
-        {genes.map(g => (
-          <li key={g.id} onClick={() => onGeneClick(g)}>
+/*
             <a href={`/reports/${g.id}`} target="_blank">
               <b dangerouslySetInnerHTML={{ __html: g.symbol }} />
             </a>
@@ -44,12 +36,29 @@ const GeneSearchResults = ({
                 __html: g.hl.synonyms ? g.hl.synonyms.join(', ') : '',
               }}
             />
-          </li>
-        ))}
+*/
+const GeneSearchResults = ({
+  genes = [],
+  totalCount = 0,
+  onGeneClick = () => {},
+  z = '',
+}) => (
+  <div id="geneSearchSuggestions">
+    <div id="geneSearchSuggestionsContainer">
+      <div id="geneSearchSuggestionsSummary">
+        Showing {genes.length} of {totalCount} matches.&emsp;
+      </div>
+      <ul>
+        {genes.map(g => {
+          z = z ? '' : 'z'
+          let zclass = z
+          return (
+            <li key={g.id} onClick={() => onGeneClick(g)} className={zclass}>
+              <GeneSearchHit g={g} />
+            </li>
+          )
+        })}
       </ul>
-      <span id="geneSearchSuggestionsSummary">
-        Showing {genes.length} of {totalCount} matches.
-      </span>
     </div>
   </div>
 )

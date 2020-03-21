@@ -4,50 +4,52 @@
 #geneSearchSuggestionsContainer {
   position: absolute;
   top: 65px;
-  left: 120px;
-  /* background-color: rgba(240, 240, 240, 0.9); */
+  left: 10%;
   background-color: #eee;
-  padding: 0 6px;
+  padding: 0 /*6px*/;
   z-index: 5;
   border-radius: 8px;
   box-shadow: 3px 6px 3px 0px #ccc;
-  overflow-y: auto;
-  max-width: 60%;
+  max-width: 75%;
 }
 #geneSearchSuggestionsSummary {
   font-size: 12px;
   font-style: italic;
+  text-align: right;
 }
 #geneSearchSuggestions ul {
   list-style: none inside;
-  padding-left: 0;
-  padding-right: 3em;
+  padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
 }
-#geneSearchSuggestions li:hover {
-  /* background-color: rgba(230, 230, 230, 0.5); */
-  background-color: #ddd;
-  /* width: 115%; */
-}
 #geneSearchSuggestions li {
+  border-radius: 8px;
   display: flex;
-  /* width: 120%; */
   cursor: pointer;
+}
+#geneSearchSuggestions li.z {
+  background-color: #e8e8e8;
+}
+#geneSearchSuggestions li:hover {
+  background-color: #ddd;
 }
 
 #geneSearchSuggestions li a {
-  flex-basis: 20%;
+  flex-basis: 15%;
   flex-shrink: 0;
+  padding: 0 5px;
 }
 #geneSearchSuggestions li span {
-  flex-basis: 30%;
+  flex-basis: 35%;
   flex-shrink: 0;
+  padding: 0 5px;
 }
 #geneSearchSuggestions li i {
   flex-basis: 50%;
   flex-shrink: 0;
+  padding: 0 5px;
   white-space: normal;
 }
 
@@ -56,6 +58,6 @@
     top: 65px;
   }
   #geneSearchSuggestions li {
-    white-space: nowrap;
+    /*white-space: nowrap;*/
   }
 }

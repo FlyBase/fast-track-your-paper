@@ -30,6 +30,10 @@ const GeneSearchInput = ({ onChange = () => {}, children }) => {
               name="gene"
               onChange={handleOnChange}
             />
+            &emsp;
+            <span className="small">
+              Matches to synonyms will be shown <i>in italics</i>.
+            </span>
           </div>
         </div>
         {children}
