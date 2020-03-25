@@ -11,7 +11,7 @@ const Input = styled.input`
 `
 
 const GeneSearchInput = ({ onChange = () => {}, children }) => {
-  const handleOnChange = evt => {
+  const handleOnChange = (evt) => {
     const symbol = evt?.target?.value ?? ''
     onChange(symbol)
   }

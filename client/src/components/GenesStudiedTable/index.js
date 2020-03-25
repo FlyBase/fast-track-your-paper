@@ -42,7 +42,7 @@ const GenesStudiedTable = ({
         </tr>
       </thead>
       <tbody>
-        {genes.map(gene => (
+        {genes.map((gene) => (
           <GeneStudiedRow
             key={gene.id}
             abcell={abcell}

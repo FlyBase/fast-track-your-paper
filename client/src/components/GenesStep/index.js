@@ -75,7 +75,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   const removeFromGenesStudied = (gene = {}) => {
     // Get the array index of the gene to remove.
     const geneIndex = genesStudied.findIndex(
-      geneStudied => geneStudied.id === gene.id
+      (geneStudied) => geneStudied.id === gene.id
     )
     if (geneIndex !== -1) {
       // Copy array to avoid mutating state directly.
@@ -98,7 +98,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
    */
   const setGeneAntibody = ({ gene = {}, antibody = 'none' }) => {
     // Create a copy of the genes studied list with updated antibody information.
-    const copyOfGenesStudied = genesStudied.map(geneStudied => {
+    const copyOfGenesStudied = genesStudied.map((geneStudied) => {
       if (gene?.id === geneStudied.id) {
         gene.antibody = antibody
       }
@@ -134,7 +134,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                         name="input-method"
                         id="optionsRadios1"
                         value="option1"
-                        defaultChecked={true}
+                        defaultChecked={current.matches({search: 'idle'})}
                       />
                       Use the FTYP gene search form to find{' '}
                       <b>one or a few genes</b>

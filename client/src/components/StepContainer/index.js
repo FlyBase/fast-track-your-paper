@@ -108,7 +108,7 @@ try {
   hydratedMachine = createStepMachine().withConfig(
     {
       actions: {
-        persist: context => {
+        persist: (context) => {
           storeToLocalStorage(localStorageKey, context)
         },
       },
@@ -119,7 +119,7 @@ try {
   hydratedMachine = createStepMachine().withConfig(
     {
       actions: {
-        persist: context => {
+        persist: (context) => {
           storeToLocalStorage(localStorageKey, context)
         },
       },
@@ -148,7 +148,7 @@ function StepContainer() {
     Get the array index of the current step.
     This is required to show progress in the StepIndicator component.
    */
-  const currentStepIdx = steps.findIndex(s => {
+  const currentStepIdx = steps.findIndex((s) => {
     // Check for nested pending state
     if (current.value.pending) {
       return s.name === current.value.pending
@@ -198,7 +198,7 @@ function StepContainer() {
   } else if (current.matches({ pending: 'flags' })) {
     step = (
       <FlagsStepWrapper
-        setFlags={data => send('SET_FLAGS', data)}
+        setFlags={(data) => send('SET_FLAGS', data)}
         flags={flags}
         bagRef={flagsFormikBagRef}
         prevClick={async () => {

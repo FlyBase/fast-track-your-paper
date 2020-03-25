@@ -17,30 +17,39 @@ export const createGeneStepMachine = () => {
   return Machine(
     {
       id: 'genesteps',
-      initial: 'idle',
+      initial: 'search',
       context: initialContext,
       // Global events to watch for.
       on: {
-        /* When a SUBMIT event is fired, set the search terms
-         * in the context and transition to the search.loading state.
-         */
-        SUBMIT: {
-          actions: ['setSearchTerm'],
-          target: 'search.loading',
-        },
         SET_GENES_STUDIED: {
           actions: ['setGenesStudied'],
         },
       },
       // All states for the gene steps.
       states: {
-        // Initial state.
-        idle: {},
         /*
-         * Search state and substates of loading, loaded, and failed.
+         * Search state and substates of idle, loading, loaded, and failed.
          */
         search: {
+          initial: 'idle',
+          on: {
+            /* When a SUBMIT event is fired, set the search terms
+             * in the context and transition to the search.loading state.
+             */
+            SUBMIT: {
+              actions: ['setSearchTerm'],
+              target: 'search.loading',
+            },
+            BATCH: {
+              target: 'batch',
+            },
+            NONE: {
+              target: 'none',
+            },
+          },
           states: {
+            // Initial state.
+            idle: {},
             loading: {
               /* Fire off a GraphQL query, save the results, and transition
                * to either the loaded or failed state.  The onDone and onError
@@ -62,13 +71,15 @@ export const createGeneStepMachine = () => {
               on: {
                 CLEAR: {
                   actions: ['resetGeneStep'],
-                  target: '#genesteps.idle',
+                  target: 'idle',
                 },
               },
             },
             failed: {},
           },
         },
+        batch: {},
+        none: {},
       },
     },
     {
