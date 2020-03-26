@@ -41,7 +41,7 @@ const GeneStudiedRow = ({
     </td>
     <td>
       <button onClick={() => onDelete(gene)} title="Remove gene">
-        <i className="fa fa-close"></i>
+        <i className="fa fa-trash"></i>
       </button>
     </td>
   </tr>

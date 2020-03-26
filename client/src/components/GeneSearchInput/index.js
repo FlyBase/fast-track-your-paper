@@ -29,6 +29,7 @@ const GeneSearchInput = ({ onChange = () => {}, children }) => {
               type="text"
               id="gene"
               name="gene"
+              autoComplete="off"
               onChange={handleOnChange}
             />
 	        	&emsp;<span className="small">Matches to synonyms will be shown <i>in italics</i>.</span>

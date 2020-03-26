@@ -11,16 +11,22 @@ const GenesStudiedTable = ({
   genes = [],
   onGeneDelete = () => {},
   onAbClick = () => {},
+  children,
 }) => {
   let abcell = showAbs ? '' : 'abcell'
 
   return (
-    <table
-      className="table table-striped table-hover table-condensed"
-      style={{ borderBottom: '1px solid #ccc', marginTop: '1em' }}>
+    <table className="table table-striped table-hover table-condensed">
+      <colgroup>
+      	<col />
+      	<col style={{width:"6em"}} />
+      	<col style={{width:"6em"}} />
+      	<col style={{width:"5em"}} />
+      </colgroup>
       <thead>
         <tr>
           <th>Genes studied in this publication</th>
+          <th colspan="3">{children}</th>
         </tr>
         <tr className="info">
           <th>Gene</th>
