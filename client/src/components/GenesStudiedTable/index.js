@@ -4,8 +4,6 @@ import GeneStudiedRow from 'components/GenesStudiedRow'
 
 import './index.css'
 
-// import { useStateFromProp } from 'hooks/useStateFromProp'
-
 const GenesStudiedTable = ({
   showAbs = false,
   genes = [],

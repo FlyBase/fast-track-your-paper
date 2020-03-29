@@ -40,12 +40,8 @@ export const createGeneStepMachine = () => {
               actions: ['setSearchTerm'],
               target: 'search.loading',
             },
-            BATCH: {
-              target: 'batch',
-            },
-            NONE: {
-              target: 'none',
-            },
+            BATCH: 'batch',
+            NONE: 'none',
           },
           states: {
             // Initial state.
@@ -78,8 +74,18 @@ export const createGeneStepMachine = () => {
             failed: {},
           },
         },
-        batch: {},
-        none: {},
+        batch: {
+          on: {
+            SEARCH: 'search',
+            NONE: 'none',
+          },
+        },
+        none: {
+          on: {
+            SEARCH: 'search',
+            BATCH: 'batch',
+          },
+        },
       },
     },
     {
