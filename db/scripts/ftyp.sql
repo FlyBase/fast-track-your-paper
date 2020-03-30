@@ -335,3 +335,18 @@ ORDER BY
     ;
 $$ LANGUAGE SQL STABLE;
 
+
+/**
+  Function for FTYP that wraps the flybase.update_ids function
+  (https://github.com/FlyBase/chado/blob/master/schema/ids/id_updater.sql).
+ */
+CREATE OR REPLACE FUNCTION ftyp.validate_ids(ids text[],
+                                             OUT submitted_id text,
+                                             OUT updated_id text,
+                                             OUT status text) RETURNS SETOF record AS
+$$
+SELECT submitted_id, updated_id, status::text
+FROM flybase.update_ids(ids);
+
+$$ LANGUAGE SQL STABLE;
+

@@ -15,6 +15,7 @@ services:
       --subscriptions
       --watch
       --dynamic-json
+      --disable-default-mutations
       --no-setof-functions-contain-nulls
       --no-ignore-rbac
       --no-ignore-indexes

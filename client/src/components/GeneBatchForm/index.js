@@ -28,7 +28,7 @@ const GeneBatchForm = ({ onSubmit, ...props }) => {
     <Formik
       initialValues={{ ids: '' }}
       validationSchema={validationSchema}
-      onSubmit={(values) => console.log(values)}>
+      onSubmit={onSubmit}>
       <Form>
         <label htmlFor="ids">FlyBase Gene IDs (FBgn)</label>
         <GeneBatchInput name="ids" rows={10} />
