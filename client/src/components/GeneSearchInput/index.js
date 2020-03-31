@@ -28,6 +28,7 @@ const GeneSearchInput = ({ onChange = () => {}, children }) => {
               type="text"
               id="gene"
               name="gene"
+              autoComplete="off"
               onChange={handleOnChange}
             />
             &emsp;

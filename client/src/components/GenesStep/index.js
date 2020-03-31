@@ -178,24 +178,15 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                 </div>
 
                 <div className="col-sm-4">
-                  <div className="checkbox">
-                    <label htmlFor="showAb" className="control-label">
-                      <input
-                        id="showAb"
-                        name="showAb"
-                        type="checkbox"
-                        onClick={() => setShowAntibodyCells(!showAntibodyCells)}
-                        defaultChecked={showAntibodyCells}
-                      />
-                      <b>antibodies generated</b>
-                    </label>
-                  </div>
+
                 </div>
+
               </div>
             </div>
             {/* end panel body */}
 
             <GeneSearchInput onChange={handleOnChange}>
+
               {current.matches('search.loaded') && (
                 <>
                   <GeneSearchResults
@@ -215,7 +206,21 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                 onGeneDelete={removeFromGenesStudied}
                 onAbClick={setGeneAntibody}
                 showAbs={showAntibodyCells}
-              />
+              >
+                  <div className="checkbox" style={{float:"right",margin:0}}>
+                    <label htmlFor="showAb" className="control-label">
+                      <input
+                        id="showAb"
+                        name="showAb"
+                        type="checkbox"
+                        onClick={() => setShowAntibodyCells(!showAntibodyCells)}
+                        defaultChecked={showAntibodyCells}
+                      />
+                      <b>antibodies generated</b>
+                    </label>
+                  </div>
+              </GenesStudiedTable>
+
             </GeneSearchInput>
 
             <br />
