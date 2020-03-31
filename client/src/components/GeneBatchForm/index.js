@@ -24,11 +24,22 @@ const validationSchema = Yup.object().shape({
 })
 
 const GeneBatchForm = ({ onSubmit, ...props }) => {
+  const preSubmit = ({ ids: idField }) => {
+    try {
+      // Convert string field into an array of IDs.
+      const ids = idField.split(/[\s,]+/)
+      // Pass IDs to user function.
+      onSubmit(ids)
+    } catch (error) {
+      console.log(`Failed to split ID list: ${error}`)
+    }
+  }
+
   return (
     <Formik
       initialValues={{ ids: '' }}
       validationSchema={validationSchema}
-      onSubmit={onSubmit}>
+      onSubmit={preSubmit}>
       <Form>
         <label htmlFor="ids">FlyBase Gene IDs (FBgn)</label>
         <GeneBatchInput name="ids" rows={10} />

@@ -17,6 +17,7 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.differenceby": "^4.8.0",
     "lodash.isempty": "^4.4.0",
+    "lodash.unionby": "^4.8.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-app-polyfill": "^1.0.6",

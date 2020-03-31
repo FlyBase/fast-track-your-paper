@@ -3,8 +3,9 @@ import React, { useContext, useState, useEffect } from 'react'
 import styled from 'styled-components/macro'
 import useLocalstorage from '@rooks/use-localstorage'
 import { useService } from '@xstate/react'
-import IconHelp from '../IconHelp'
+import IconHelp from 'components/IconHelp'
 import differenceBy from 'lodash.differenceby'
+import unionBy from 'lodash.unionby'
 
 import { ApolloContext } from 'contexts'
 import GenesStudiedTable from 'components/GenesStudiedTable'
@@ -12,6 +13,7 @@ import GeneSearchInput from 'components/GeneSearchInput'
 import GeneSearchResults from 'components/GeneSearchResults'
 import GeneSearchMessage from 'components/GeneSearchMessage'
 import GeneBatchForm from 'components/GeneBatchForm'
+import GeneBatchResults from 'components/GeneBatchResults'
 
 const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   // Get the GraphQL client from the apollo context object.
@@ -30,44 +32,32 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   const [genesStudied, setGenesStudied] = useState(savedGenes)
 
   // Get the gene search results from the current machine context.
-  const { geneResults = [], totalCount } = current.context
+  const {
+    geneResults = [],
+    totalCount,
+    validIds = [],
+    updatedIds = [],
+    splitIds = [],
+    invalidIds = [],
+  } = current.context
   // Filter results so we do not show genes that have already been added to the
   // studied table.
+
   const filteredGeneResults = differenceBy(geneResults, genesStudied, 'id')
-
   /**
-   * Every time the genesStudied array changes, send an event to synchronize
-   * the list with the submission in the parent machine.
+   * Event handler to add genes to the list of genes studied.
    *
-   * This keeps the local and global submission state in sync.
+   * @param genes [<object>|<array>] - The gene object or an array of genes that are to be added.
+   *
    */
-  useEffect(() => {
-    send('SET_GENES_STUDIED', { genes: genesStudied })
-  }, [genesStudied, send])
-
-  /**
-   * Function to handle when a user types in the input field.
-   * @param gene <string> - The users gene input.
-   */
-  const handleOnChange = (gene = '') => {
-    if (gene === '') {
-      // Clear results if they have cleared the input field.
-      send('CLEAR')
+  const addToGenesStudied = (genes = {}) => {
+    if (Array.isArray(genes)) {
+      // Append genes from batch upload to list and update the local state.
+      setGenesStudied(unionBy(genesStudied, genes, 'id'))
     } else {
-      // Send gene input, the GraphQL client, and limit results to top 20.
-      send('SUBMIT', { gene, limit: 20, client })
+      // Append gene to list and update the local state.
+      setGenesStudied(unionBy(genesStudied, [genes], 'id'))
     }
-  }
-
-  /**
-   * Event handler to add a gene from the search results to the list of
-   * genes studied.
-   *
-   * @param gene <object> - The gene object that was clicked on.
-   */
-  const addToGenesStudied = (gene = {}) => {
-    // Append gene to list and update the local state.
-    setGenesStudied([...genesStudied, gene])
   }
 
   /**
@@ -87,6 +77,55 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
       copyOfGenesStudied.splice(geneIndex, 1)
       // Set the copy as the new list in state.
       setGenesStudied(copyOfGenesStudied)
+    }
+  }
+
+  /**
+   * Every time the genesStudied array changes, send an event to synchronize
+   * the list with the submission in the parent machine.
+   *
+   * This keeps the local and global submission state in sync.
+   */
+  useEffect(() => {
+    send('SET_GENES_STUDIED', { genes: genesStudied })
+  }, [genesStudied, send])
+
+  /**
+   * Every time the validIds array changes, send an event to synchronize
+   * the list with the submission in the parent machine.
+   *
+   * This keeps the local and global submission state in sync.
+   */
+  useEffect(() => {
+    if (validIds.length > 0) {
+      addToGenesStudied(validIds)
+    }
+    // TODO Figure out how best to handle this with useCallback
+    // eslint-disable-next-line
+  }, [validIds])
+
+  /**
+   * Function to handle when a user types in the input field.
+   * @param gene <string> - The users gene input.
+   */
+  const handleOnChange = (gene = '') => {
+    if (gene === '') {
+      // Clear results if they have cleared the input field.
+      send('CLEAR')
+    } else {
+      // Send gene input, the GraphQL client, and limit results to top 20.
+      send('SUBMIT', { gene, limit: 20, client })
+    }
+  }
+
+  /**
+   * This function is used to handle the onSubmit of the GeneBatchForm component.
+   * It is passed an object that contains all the fields of the batch upload form.
+   * @param idField
+   */
+  const handleOnUpload = (ids = []) => {
+    if (ids.length !== 0) {
+      send('VALIDATE', { ids, client })
     }
   }
 
@@ -230,8 +269,19 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                   flex: 0 1 300px;
                 }
               `}>
-              <GeneBatchForm />
-              <div>Results here</div>
+              <GeneBatchForm onSubmit={handleOnUpload} />
+              <div>
+                {current.matches({ batch: 'loaded' }) && (
+                  <GeneBatchResults
+                    validIds={validIds}
+                    invalidIds={invalidIds}
+                    updatedIds={updatedIds}
+                    splitIds={splitIds}
+                    onAdd={addToGenesStudied}
+                  />
+                )}
+                {current.matches({ batch: 'loading' }) && <h3>Uploading...</h3>}
+              </div>
             </div>
           )}
           {!current.matches('none') && (

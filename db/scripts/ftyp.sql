@@ -343,9 +343,10 @@ $$ LANGUAGE SQL STABLE;
 CREATE OR REPLACE FUNCTION ftyp.validate_ids(ids text[],
                                              OUT submitted_id text,
                                              OUT updated_id text,
-                                             OUT status text) RETURNS SETOF record AS
+                                             OUT status text,
+                                             OUT symbol text) RETURNS SETOF record AS
 $$
-SELECT submitted_id, updated_id, status::text
+SELECT DISTINCT submitted_id, updated_id, status::text, flybase.current_symbol(updated_id) as symbol
 FROM flybase.update_ids(ids);
 
 $$ LANGUAGE SQL STABLE;

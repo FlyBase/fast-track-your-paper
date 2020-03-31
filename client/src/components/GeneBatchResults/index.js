@@ -1,0 +1,79 @@
+import React from 'react'
+
+/**
+ *  Component to display results of Batch ID uploading / validation.
+ *
+ *  This component gets 4 arrays of objects representing the different types
+ *  of ID validation statuses.
+ *
+ *  Valid IDs - Submitted IDs are current and valid.
+ *  Updated IDs - Submitted IDs were not current but updated without issue.
+ *  Split IDs - Submitted IDs were not current and were split into two or more FBgn IDs.  Careful review
+ *              by the user should be undertaken.
+ *  Invalid IDs - IDs that are not valid FlyBase gene IDs (FBgn).
+ *
+ *  Each object in the array has the following structure.
+ *
+ *  {
+ *    id: 'FBgn1234',
+ *    submittedId: 'FBgn00001'
+ *    status: 'current'
+ *    symbol: 'dpp'
+ *  }
+ *
+ *  Field descriptions:
+ *
+ *  id - Is the current FlyBase ID (if applicable).
+ *  submittedId - What they uploaded.
+ *  status - ID Validation status ('current','updated','split',null).
+ *  symbol - Current FlyBase symbol (if applicable).
+ *
+ * @param validIds - Array of ID validation objects that are current.
+ * @param updatedIds - Array of updated IDs that were cleanly updated.
+ * @param splitIds - Array of IDs that have been split and should be review.
+ * @param invalidIds - Array of IDs that are invalid.
+ *
+ */
+const GeneBatchResults = ({
+  validIds,
+  updatedIds,
+  splitIds,
+  invalidIds,
+  onAdd = () => {},
+}) => {
+  /**
+   * TODO:
+   * 1. Styling
+   * 2. Allow user to review/view IDs (the submitted ID and the updated/split/invalid ID).
+   * 3. Support export (button that copies to clipboard or file download).
+   * 4. Add export to ID Validator for invalid entities.
+   */
+  return (
+    <div>
+      <div>Current: {validIds?.length ?? 0}</div>
+      <div>
+        Updated: {updatedIds?.length ?? 0}{' '}
+        <Add ids={updatedIds} handleOnClick={onAdd} />
+      </div>
+      <div>
+        Splits: {splitIds?.length ?? 0}{' '}
+        <Add ids={splitIds} handleOnClick={onAdd} />
+      </div>
+      <div>Invalid: {invalidIds?.length ?? 0}</div>
+    </div>
+  )
+}
+
+const Add = ({ ids = [], handleOnClick, ...props }) => {
+  if (ids.length !== 0) {
+    return (
+      <button type="button" {...props} onClick={() => handleOnClick(ids)}>
+        Add to List
+      </button>
+    )
+  }
+
+  return null
+}
+
+export default GeneBatchResults
