@@ -18,33 +18,33 @@ const GenesStudiedTable = ({
   return (
     <table className="table table-striped table-hover table-condensed">
       <colgroup>
-      	<col />
-      	<col style={{width:"6em"}} />
-      	<col style={{width:"6em"}} />
-      	<col style={{width:"5em"}} />
+        <col />
+        <col style={{ width: '8em' }} />
+        <col style={{ width: '8em' }} />
+        <col style={{ width: '6em' }} />
       </colgroup>
       <thead>
         <tr>
           <th>Genes studied in this publication</th>
-          <th colspan="3">{children}</th>
+          <th colSpan="3">{children}</th>
         </tr>
         <tr className="info">
           <th>Gene</th>
-          <td className={abcell}>
+          <th className={abcell}>
             monoclonal
             <br />
             antibody
-          </td>
-          <td className={abcell}>
+          </th>
+          <th className={abcell}>
             polyclonal
             <br />
             antibody
-          </td>
-          <td>
-            delete
+          </th>
+          <th>
+            remove
             <br />
             gene
-          </td>
+          </th>
         </tr>
       </thead>
       <tbody>

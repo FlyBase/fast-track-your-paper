@@ -50,13 +50,13 @@ const GeneSearchResults = ({
       </div>
       <ul>
         {genes.map(g => {
-        	z = (z) ? '' : 'z';
-        	let zclass = z;
-        	return(
-          <li key={g.id} onClick={() => onGeneClick(g)}
-          		className={zclass} >
-          	<GeneSearchHit g={g} />
-          </li>)
+          z = z ? '' : 'z'
+          let zclass = z
+          return (
+            <li key={g.id} onClick={() => onGeneClick(g)} className={zclass}>
+              <GeneSearchHit g={g} />
+            </li>
+          )
         })}
       </ul>
     </div>

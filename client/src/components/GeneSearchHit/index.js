@@ -25,27 +25,26 @@ import PropTypes from 'prop-types'
     Shows, but does not render, things like <up> tags.
 */
 const GeneSearchHit = ({ g = {} }) => {
+  const synonymCell = (g = {}) => {
+    let syns = g.hl.synonyms
+    let synlist = []
+    if (syns) {
+      for (let i = 0; i < syns.length; i++) {
+        if (syns[i].match(/<b/)) synlist.push(syns[i])
+      }
+    }
+    return <i dangerouslySetInnerHTML={{ __html: synlist.join(', ') }} />
+  }
 
-	const synonymCell = ( g = {} ) => {
-		let syns = g.hl.synonyms;
-		let synlist = [];
-		if( syns ) {
-			for( let i=0; i<syns.length; i++ ) {
-				if( syns[i].match(/<b/) ) synlist.push(syns[i]);
-			}
-		}
-		return <i dangerouslySetInnerHTML={{ __html: synlist.join(', ') }}	/>
-	}
-
-	return (
-		<>
-			<a href={`/reports/${g.id}`} target="_blank" rel="noopener noreferrer">
-				<b dangerouslySetInnerHTML={{ __html: g.symbol }} />
-			</a>
-			<span dangerouslySetInnerHTML={{ __html: g.hl.name }} />
-			{ synonymCell(g) }
-		</>
-	)
+  return (
+    <>
+      <a href={`/reports/${g.id}`} target="_blank" rel="noopener noreferrer">
+        <b dangerouslySetInnerHTML={{ __html: g.symbol }} />
+      </a>
+      <span dangerouslySetInnerHTML={{ __html: g.hl.name }} />
+      {synonymCell(g)}
+    </>
+  )
 }
 
 GeneSearchHit.propTypes = {

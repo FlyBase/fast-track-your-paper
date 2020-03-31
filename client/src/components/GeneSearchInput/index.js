@@ -21,7 +21,8 @@ const GeneSearchInput = ({ onChange = () => {}, children }) => {
   return (
     <>
       <div className="form-group">
-        <div className="col-sm-10 col-sm-offset-1 control-label"
+        <div
+          className="col-sm-10 col-sm-offset-1 control-label"
           style={{ marginBottom: '1em' }}>
           <label htmlFor="gene">Gene Search:</label>
           <InputWrapper>
@@ -32,7 +33,10 @@ const GeneSearchInput = ({ onChange = () => {}, children }) => {
               autoComplete="off"
               onChange={handleOnChange}
             />
-	        	&emsp;<span className="small">Matches to synonyms will be shown <i>in italics</i>.</span>
+            &emsp;
+            <span className="small">
+              Matches to synonyms will be shown <i>in italics</i>.
+            </span>
           </InputWrapper>
         </div>
         {children}

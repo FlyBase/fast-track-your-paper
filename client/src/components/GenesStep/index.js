@@ -177,16 +177,12 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                   </div>
                 </div>
 
-                <div className="col-sm-4">
-
-                </div>
-
+                <div className="col-sm-4"></div>
               </div>
             </div>
             {/* end panel body */}
 
             <GeneSearchInput onChange={handleOnChange}>
-
               {current.matches('search.loaded') && (
                 <>
                   <GeneSearchResults
@@ -205,22 +201,20 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                 genes={genesStudied}
                 onGeneDelete={removeFromGenesStudied}
                 onAbClick={setGeneAntibody}
-                showAbs={showAntibodyCells}
-              >
-                  <div className="checkbox" style={{float:"right",margin:0}}>
-                    <label htmlFor="showAb" className="control-label">
-                      <input
-                        id="showAb"
-                        name="showAb"
-                        type="checkbox"
-                        onClick={() => setShowAntibodyCells(!showAntibodyCells)}
-                        defaultChecked={showAntibodyCells}
-                      />
-                      <b>antibodies generated</b>
-                    </label>
-                  </div>
+                showAbs={showAntibodyCells}>
+                <div className="checkbox" style={{ float: 'right', margin: 0 }}>
+                  <label htmlFor="showAb" className="control-label">
+                    <input
+                      id="showAb"
+                      name="showAb"
+                      type="checkbox"
+                      onClick={() => setShowAntibodyCells(!showAntibodyCells)}
+                      defaultChecked={showAntibodyCells}
+                    />
+                    <b>antibodies generated</b>
+                  </label>
+                </div>
               </GenesStudiedTable>
-
             </GeneSearchInput>
 
             <br />

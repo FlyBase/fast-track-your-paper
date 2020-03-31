@@ -30,7 +30,7 @@
   cursor: pointer;
 }
 #geneSearchSuggestions li.z {
-	background-color: #e8e8e8;
+  background-color: #e8e8e8;
 }
 #geneSearchSuggestions li:hover {
   background-color: #ddd;
