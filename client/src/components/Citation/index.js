@@ -4,7 +4,7 @@ import IconHelp from '../IconHelp'
 const Citation = ({ send }) => {
   const textareaEl = useRef(null)
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     send('CITATION.SUBMIT', { citation: textareaEl.current.value })
     e.preventDefault()
   }

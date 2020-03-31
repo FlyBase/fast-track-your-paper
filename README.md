@@ -7,6 +7,7 @@ A tool for expediting curation of published research in genetic databases.
 * Docker
 * Docker compose
 * Git
+* PostgreSQL client (`pg_dump` and `psql` commands)
 
 ## Getting started
 
@@ -15,9 +16,10 @@ A tool for expediting curation of published research in genetic databases.
 git clone https://github.com/FlyBase/fast-track-your-paper.git
 ```
 
-2. Pull data and start docker containers
+2. Pull / load data and start docker containers
 
-Replace all values in between '<>' with their appropriate values for your situation.
+Replace all values in between angle brackets ('<>') with their appropriate values for your situation.
+The values should not contain the angle brackets.
 
 ```bash
 cd fast-track-your-paper
@@ -25,6 +27,17 @@ make PGHOST=<HOSTNAME> PGDATABASE=<DBNAME> PGPORT=<PORT> PGUSER=<USER>
 ```
 
 For full details see the db [README](./db/README.md).
+
+## Makefile targets
+
+* all - Default target that pulls data, starts the containers, and loads the data.
+* up - Brings up the docker containers
+* down - Brings down and removes the disk volumes
+* start - Starts the docker containers
+* stop - Stops the docker containers
+* clean - Stops the containers, removes the disk volumes, and removes all pulled DB data.
+* pull-data - Pulls data from the production Chado database.
+* load-data - Loads data from the pulled sources and stores it in the docker DB container.
 
 ## Docker containers
 

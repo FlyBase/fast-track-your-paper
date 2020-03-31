@@ -49,7 +49,7 @@ const GeneSearchResults = ({
         Showing {genes.length} of {totalCount} matches.&emsp;
       </div>
       <ul>
-        {genes.map(g => {
+        {genes.map((g) => {
           z = z ? '' : 'z'
           let zclass = z
           return (

@@ -36,7 +36,7 @@ const PubStep = ({
   const { terms, totalPubs, pubs = [] } = current.context
 
   // Send the event with the selected pub to the pub service.
-  const handlePubClick = pub => send('SELECT_PUB', { pub })
+  const handlePubClick = (pub) => send('SELECT_PUB', { pub })
 
   return (
     <>

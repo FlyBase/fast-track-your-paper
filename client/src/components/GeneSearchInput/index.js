@@ -10,36 +10,32 @@ const Input = styled.input`
   border: 1px solid rgba(0, 0, 0, 0, 0.5);
 `
 
-const GeneSearchInput = ({ onChange = () => {}, children }) => {
-  const handleOnChange = evt => {
+const GeneSearchInput = ({
+  onChange = () => {},
+  mode = 'search',
+  children,
+}) => {
+  const handleOnChange = (evt) => {
     const symbol = evt?.target?.value ?? ''
     onChange(symbol)
   }
 
   return (
-    <>
-      <div className="form-group">
-        <div
-          className="col-sm-10 col-sm-offset-1 control-label"
-          style={{ marginBottom: '1em' }}>
-          <label htmlFor="gene">Gene Search:</label>
-          <div>
-            <Input
-              type="text"
-              id="gene"
-              name="gene"
-              autoComplete="off"
-              onChange={handleOnChange}
-            />
-            &emsp;
-            <span className="small">
-              Matches to synonyms will be shown <i>in italics</i>.
-            </span>
-          </div>
+    <div className="form-group">
+      <div
+        className="col-sm-10 col-sm-offset-1 control-label"
+        style={{ marginBottom: '1em' }}>
+        <label htmlFor="gene">Gene Search:</label>
+        <div>
+          <Input type="text" id="gene" name="gene" onChange={handleOnChange} />
+          &emsp;
+          <span className="small">
+            Matches to synonyms will be shown <i>in italics</i>.
+          </span>
         </div>
-        {children}
       </div>
-    </>
+      {children}
+    </div>
   )
 }
 

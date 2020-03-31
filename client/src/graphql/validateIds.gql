@@ -1,0 +1,10 @@
+query ValidateIds($ids: [String!]!) {
+  results: validateIds(ids: $ids) {
+    nodes {
+      status
+      submittedId
+      id: updatedId
+      symbol
+    }
+  }
+}

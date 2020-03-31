@@ -5,11 +5,16 @@ const { assign } = actions
 
 // The GraphQL query to search all publication data.
 const geneQuery = loader('graphql/geneQuery.gql')
+const validateIds = loader('graphql/validateIds.gql')
 
 export const initialContext = {
   term: null,
   geneResults: [],
   totalCount: 0,
+  validIds: [],
+  updatedIds: [],
+  splitIds: [],
+  invalidIds: [],
 }
 
 export const createGeneStepMachine = () => {
@@ -17,35 +22,40 @@ export const createGeneStepMachine = () => {
   return Machine(
     {
       id: 'genesteps',
-      initial: 'idle',
+      initial: 'search',
       context: initialContext,
       // Global events to watch for.
       on: {
-        /* When a SUBMIT event is fired, set the search terms
-         * in the context and transition to the search.loading state.
-         */
-        SUBMIT: {
-          actions: ['setSearchTerm'],
-          target: 'search.loading',
-        },
         SET_GENES_STUDIED: {
           actions: ['setGenesStudied'],
         },
       },
       // All states for the gene steps.
       states: {
-        // Initial state.
-        idle: {},
         /*
-         * Search state and substates of loading, loaded, and failed.
+         * Search state and substates of idle, loading, loaded, and failed.
          */
         search: {
+          initial: 'idle',
+          on: {
+            /* When a SUBMIT event is fired, set the search terms
+             * in the context and transition to the search.loading state.
+             */
+            SUBMIT: {
+              actions: ['setSearchTerm'],
+              target: 'search.loading',
+            },
+            BATCH: 'batch',
+            NONE: 'none',
+          },
           states: {
+            // Initial state.
+            idle: {},
             loading: {
               /* Fire off a GraphQL query, save the results, and transition
                * to either the loaded or failed state.  The onDone and onError
                * actions are fired based on the resolution of the promise that
-               * is returned by the invokePubSearch function.
+               * is returned by the invokeGeneSearch function.
                */
               invoke: {
                 id: 'query-genes',
@@ -62,11 +72,47 @@ export const createGeneStepMachine = () => {
               on: {
                 CLEAR: {
                   actions: ['resetGeneStep'],
-                  target: '#genesteps.idle',
+                  target: 'idle',
                 },
               },
             },
             failed: {},
+          },
+        },
+        batch: {
+          initial: 'idle',
+          on: {
+            SEARCH: 'search',
+            NONE: 'none',
+            VALIDATE: 'batch.loading',
+          },
+          states: {
+            // Initial state.
+            idle: {},
+            loading: {
+              /* Fire off a GraphQL query, save the results, and transition
+               * to either the loaded or failed state.  The onDone and onError
+               * actions are fired based on the resolution of the promise that
+               * is returned by the invokeValidateIds function.
+               */
+              invoke: {
+                id: 'validate-ids',
+                src: 'invokeValidateIds',
+                onDone: {
+                  target: 'loaded',
+                  actions: ['setValidatedIds'],
+                },
+                onError: 'failed',
+              },
+            },
+            loaded: {},
+            failed: {},
+          },
+        },
+        none: {
+          on: {
+            SEARCH: 'search',
+            BATCH: 'batch',
           },
         },
       },
@@ -87,6 +133,40 @@ export const createGeneStepMachine = () => {
             totalCount: event?.data?.data?.results?.totalCount ?? 0,
           }
         }),
+        setValidatedIds: assign((context, event) => {
+          const validIds = []
+          const updatedIds = []
+          const splitIds = []
+          const invalidIds = []
+          /**
+           * Pull out the nodes of the GraphQL query result.
+           * This is an array of objects that has the validation status, the submitted ID,
+           * and the updated ID if available.  Validation status can be 'current', 'updated',
+           * 'split', or null.  Null values indicate an invalid ID.
+           */
+          const validationResults = event?.data?.data?.results?.nodes ?? []
+          validationResults.forEach((validation) => {
+            switch (validation.status) {
+              case 'current':
+                validIds.push(validation)
+                break
+              case 'updated':
+                updatedIds.push(validation)
+                break
+              case 'split':
+                splitIds.push(validation)
+                break
+              default:
+                invalidIds.push(validation)
+            }
+          })
+          return {
+            validIds,
+            updatedIds,
+            splitIds,
+            invalidIds,
+          }
+        }),
       },
       services: {
         /* Service for querying the GraphQL endpoints.  Returns a promise
@@ -96,6 +176,13 @@ export const createGeneStepMachine = () => {
           const { client, ...rest } = event
           return client.query({
             query: geneQuery,
+            variables: { ...rest },
+          })
+        },
+        invokeValidateIds: (context, event) => {
+          const { client, ...rest } = event
+          return client.query({
+            query: validateIds,
             variables: { ...rest },
           })
         },

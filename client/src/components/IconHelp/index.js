@@ -6,7 +6,7 @@ import { useStateFromProp } from '../../hooks/useStateFromProp'
 const IconHelp = ({ initial = true, message = '', children = null }) => {
   const [isVisible, setIsVisible] = useStateFromProp(initial)
 
-  const handleOnClick = e => {
+  const handleOnClick = (e) => {
     setIsVisible(!isVisible)
     e.preventDefault()
   }

@@ -17,7 +17,7 @@ const PubSearchForm = ({ send = () => {} }) => {
   Function to handle when a user hits enter in the input field
   or hits the submit button.
    */
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     const currEl = e.currentTarget
     if (
       (inputEl.current === currEl && e.key === 'Enter') ||

@@ -9,8 +9,8 @@
   visibility: hidden;
 }
 table {
-	border-bottom: 1px solid #ccc;
-	margin-top: 1em;
+  border-bottom: 1px solid #ccc;
+  margin-top: 1em;
 }
 table thead tr:last-child {
   background-color: #d9edf7;
