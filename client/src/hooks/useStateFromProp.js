@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react'
  * @param initialValue  The initial value to set from a prop.
  * @returns {[value, setValue]} Returns the state value and a setter for the value.
  */
-export const useStateFromProp = initialValue => {
+export const useStateFromProp = (initialValue) => {
   const [value, setValue] = useState(initialValue)
   useEffect(() => setValue(initialValue), [initialValue])
   return [value, setValue]

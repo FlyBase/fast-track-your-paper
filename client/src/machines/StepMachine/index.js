@@ -316,7 +316,7 @@ export const createStepMachine = () => {
           } = context
           return name && email
         },
-        isConfirmed: context => context.confirmed,
+        isConfirmed: (context) => context.confirmed,
       },
     }
   )

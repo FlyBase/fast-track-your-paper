@@ -58,14 +58,14 @@ Button.propTypes = {
  * @param props
  * @returns {*}
  */
-export const Prev = props => <Button direction="left" {...props} />
+export const Prev = (props) => <Button direction="left" {...props} />
 
 /**
  * Next navigation button, see StepNavigation.Button component for details.
  * @param props
  * @returns {*}
  */
-export const Next = props => <Button direction="right" {...props} />
+export const Next = (props) => <Button direction="right" {...props} />
 
 /**
  * Default wrapper for step navigation button components.

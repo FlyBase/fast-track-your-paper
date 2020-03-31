@@ -24,7 +24,7 @@ const PubResults = ({
   onPubClick = () => {},
   onCitationClick = () => {},
 }) => {
-  const handleOnPubClick = e => {
+  const handleOnPubClick = (e) => {
     const idx = e.currentTarget.getAttribute('data-pub-idx')
     const pub = pubs[idx]
     onPubClick(pub, e)

@@ -4,8 +4,6 @@ import GeneStudiedRow from 'components/GenesStudiedRow'
 
 import './index.css'
 
-// import { useStateFromProp } from 'hooks/useStateFromProp'
-
 const GenesStudiedTable = ({
   showAbs = false,
   genes = [],
@@ -48,7 +46,7 @@ const GenesStudiedTable = ({
         </tr>
       </thead>
       <tbody>
-        {genes.map(gene => (
+        {genes.map((gene) => (
           <GeneStudiedRow
             key={gene.id}
             abcell={abcell}
