@@ -167,7 +167,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
           </div>
           <div className="panel-body">
             <div className="form-group">
-              <div className="col-sm-8 control-label">
+              <div className="col-sm-12 control-label">
                 <div className="radio">
                   <label>
                     <input
@@ -197,14 +197,14 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                       onChange={() => send('BATCH')}
                     />
                     Use the FTYP gene bulk upload form to submit{' '}
-                    <b>a large list of FlyBase gene IDs (FBgn)</b>
+                    <b>a large list of FlyBase gene IDs</b> (<i>e.g.</i>,
+                    FBgn0000490)
                   </label>
                   <IconHelp
                     initial={showAllHelp}
                     message="You will be entering a list of FlyBase gene identifiers (FBgn) to be connected to this publication."
                   />
                 </div>
-
 
                 <div className="radio">
                   <label>
@@ -223,8 +223,6 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                     message="You confirm that there should be no genes connected to this publication."
                   />
                 </div>
-
-
               </div>
 
               <div className="col-sm-4"></div>
@@ -247,28 +245,6 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                   />
                 </>
               )}
-
-
-              <GenesStudiedTable
-                genes={genesStudied}
-                onGeneDelete={removeFromGenesStudied}
-                onAbClick={setGeneAntibody}
-                showAbs={showAntibodyCells}>
-                <div className="checkbox" style={{ float: 'right', margin: 0 }}>
-                  <label htmlFor="showAb" className="control-label">
-                    <input
-                      id="showAb"
-                      name="showAb"
-                      type="checkbox"
-                      onClick={() => setShowAntibodyCells(!showAntibodyCells)}
-                      defaultChecked={showAntibodyCells}
-                    />
-                    <b>antibodies generated</b>
-                  </label>
-                </div>
-              </GenesStudiedTable>
-
-
             </GeneSearchInput>
           )}
           {current.matches('batch') && (
@@ -277,13 +253,15 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                 display: flex;
                 flex-flow: row wrap;
                 justify-content: space-evenly;
-
                 form {
                   flex: 0 1 300px;
                 }
               `}>
               <GeneBatchForm onSubmit={handleOnUpload} />
-              <div>
+              <div
+                css={`
+                  flex: 0 1 300px;
+                `}>
                 {current.matches({ batch: 'loaded' }) && (
                   <GeneBatchResults
                     validIds={validIds}

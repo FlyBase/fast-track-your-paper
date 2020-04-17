@@ -1,5 +1,8 @@
 import { useField } from 'formik'
 import React from 'react'
+import styled from 'styled-components/macro'
+
+import './index.css'
 
 const GeneBatchInput = (props) => {
   const [field, meta] = useField({ ...props, type: 'textarea' })
@@ -7,7 +10,10 @@ const GeneBatchInput = (props) => {
 
   return (
     <div className={`form-group ${hasError ? 'has-error' : ''}`}>
-      <textarea className="form-control" {...field} {...props}></textarea>
+      <textarea
+        className="form-control batch-input"
+        {...field}
+        {...props}></textarea>
       {hasError ? <div className="text-danger">{meta.error}</div> : null}
     </div>
   )

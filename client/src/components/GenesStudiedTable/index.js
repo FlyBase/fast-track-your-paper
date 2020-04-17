@@ -28,21 +28,9 @@ const GenesStudiedTable = ({
         </tr>
         <tr className="info">
           <th>Gene</th>
-          <th className={abcell}>
-            monoclonal
-            <br />
-            antibody
-          </th>
-          <th className={abcell}>
-            polyclonal
-            <br />
-            antibody
-          </th>
-          <th>
-            remove
-            <br />
-            gene
-          </th>
+          <th className={abcell}>monoclonal antibody</th>
+          <th className={abcell}>polyclonal antibody</th>
+          <th>remove gene</th>
         </tr>
       </thead>
       <tbody>

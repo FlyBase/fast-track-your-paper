@@ -41,16 +41,32 @@ const GeneBatchForm = ({ onSubmit, ...props }) => {
       validationSchema={validationSchema}
       onSubmit={preSubmit}>
       <Form>
-        <label htmlFor="ids">FlyBase Gene IDs (FBgn)</label>
-        <GeneBatchInput name="ids" rows={10} />
-        <button
-          type="submit"
-          css={`
-            margin-top: 1rem;
-          `}
-          className="btn btn-default btn-lg">
-          Upload
-        </button>
+        <div>
+          <label
+            htmlFor="ids"
+            css={`
+              margin: 0;
+            `}>
+            FlyBase Gene IDs
+          </label>
+          <button
+            type="submit"
+            css={`
+              float: right;
+              font-weight: bold;
+              padding: 2px 8px;
+              margin: -2px 0 4px;
+            `}
+            className="btn btn-info">
+            Upload
+          </button>
+        </div>
+        <GeneBatchInput
+          name="ids"
+          placeholder="Copy and paste FlyBase FBgn IDs only.
+IDs can be separated by commas, spaces, tabs, or returns."
+          rows={10}
+        />
       </Form>
     </Formik>
   )

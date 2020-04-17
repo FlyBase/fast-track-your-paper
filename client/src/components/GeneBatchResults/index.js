@@ -1,4 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
+import IconHelp from 'components/IconHelp'
+
+import './index.css'
 
 /**
  *  Component to display results of Batch ID uploading / validation.
@@ -48,18 +51,50 @@ const GeneBatchResults = ({
    * 3. Support export (button that copies to clipboard or file download).
    * 4. Add export to ID Validator for invalid entities.
    */
+  const [showAllHelp, setShowAllHelp] = useState(false)
   return (
-    <div>
-      <div>Current: {validIds?.length ?? 0}</div>
-      <div>
-        Updated: {updatedIds?.length ?? 0}{' '}
-        <Add ids={updatedIds} handleOnClick={onAdd} />
+    <div id="batch-results">
+      <label
+        htmlFor="ids"
+        css={`
+          margin: 0;
+        `}>
+        Uploaded Genes
+      </label>
+      <div className="panel panel-default">
+        <div className="panel-body">
+          <div>
+            <div>Current:</div>
+            <div>{validIds?.length ?? 0}</div>
+            <div>{validIds?.length ? 'Added to List' : ''}</div>
+          </div>
+          <div>
+            <div>
+              Updated
+              <IconHelp
+                initial={showAllHelp}
+                message="These obsolete gene IDs were unambiguously converted to a current ID."
+              />
+            </div>
+            <div>{updatedIds?.length ?? 0} </div>
+            <div>
+              <Add ids={updatedIds} handleOnClick={onAdd} />
+            </div>
+          </div>
+          <div>
+            <div>Splits:</div>
+            <div>{splitIds?.length ?? 0} </div>
+            <div>
+              <Add ids={splitIds} handleOnClick={onAdd} />
+            </div>
+          </div>
+          <div>
+            <div>Invalid:</div>
+            <div>{invalidIds?.length ?? 0}</div>
+            <div></div>
+          </div>
+        </div>
       </div>
-      <div>
-        Splits: {splitIds?.length ?? 0}{' '}
-        <Add ids={splitIds} handleOnClick={onAdd} />
-      </div>
-      <div>Invalid: {invalidIds?.length ?? 0}</div>
     </div>
   )
 }
@@ -67,7 +102,11 @@ const GeneBatchResults = ({
 const Add = ({ ids = [], handleOnClick, ...props }) => {
   if (ids.length !== 0) {
     return (
-      <button type="button" {...props} onClick={() => handleOnClick(ids)}>
+      <button
+        className="btn btn-xs"
+        type="button"
+        {...props}
+        onClick={() => handleOnClick(ids)}>
         Add to List
       </button>
     )
