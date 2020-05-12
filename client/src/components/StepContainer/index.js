@@ -224,7 +224,7 @@ function StepContainer() {
       />
     )
   } else if (current.matches({ pending: 'confirm' })) {
-    step = <ConfirmStepWrapper />
+    step = <ConfirmStepWrapper submission={current.context.submission} />
   } else if (current.matches({ pending: 'submitted' })) {
     step = <SubmitStepWrapper />
   }
