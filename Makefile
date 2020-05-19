@@ -27,7 +27,9 @@ clean-client:
 	rm -rf client/build/*
 
 build-client:
-	cd client; yarn run build
+	cd client
+	yarn install
+	yarn run build
 
 pull-data:$(DATA_DIR)/chado_feature.tsv $(DATA_DIR)/chado $(DATA_DIR)/feature
 
