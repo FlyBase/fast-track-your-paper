@@ -254,10 +254,15 @@ export const createStepMachine = () => {
         }),
         setGenes: assign((context, event) => {
           const { submission } = context
+          // Remove the highlighting info before adding to genes array.
+          const genes = (event?.genes ?? []).map((gene) => {
+            delete gene['hl']
+            return gene
+          })
           return {
             submission: {
               ...submission,
-              genes: event?.genes ?? [],
+              genes,
             },
           }
         }),
