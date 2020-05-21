@@ -4,8 +4,12 @@ import 'react-app-polyfill/stable'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import ApolloClient from 'apollo-boost'
-import { ApolloContext } from 'contexts/index'
+import {
+  ApolloClient,
+  ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+} from '@apollo/client'
 
 // Initialize error capturing.
 import * as Sentry from '@sentry/browser'
@@ -33,12 +37,17 @@ if (process.env.NODE_ENV !== 'production') {
  *  nested components that need access to the GraphQL client
  *  without having to prop drill it down.
  */
-const client = new ApolloClient({ uri: '/graphql' })
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: '/graphql',
+  }),
+})
 
 ReactDOM.render(
-  <ApolloContext.Provider value={client}>
+  <ApolloProvider client={client}>
     <App />
-  </ApolloContext.Provider>,
+  </ApolloProvider>,
   document.getElementById('root')
 )
 

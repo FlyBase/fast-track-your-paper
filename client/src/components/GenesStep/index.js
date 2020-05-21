@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 // eslint-disable-next-line
 import styled from 'styled-components/macro'
 import useLocalstorage from '@rooks/use-localstorage'
@@ -7,18 +7,18 @@ import IconHelp from 'components/IconHelp'
 import differenceBy from 'lodash.differenceby'
 import unionBy from 'lodash.unionby'
 
-import { ApolloContext } from 'contexts'
 import GenesStudiedTable from 'components/GenesStudiedTable'
 import GeneSearchInput from 'components/GeneSearchInput'
 import GeneSearchResults from 'components/GeneSearchResults'
 import GeneSearchMessage from 'components/GeneSearchMessage'
 import GeneBatchForm from 'components/GeneBatchForm'
 import GeneBatchResults from 'components/GeneBatchResults'
+import {useApolloClient} from "@apollo/client";
 
 const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   // Get the GraphQL client from the apollo context object.
   // https://reactjs.org/docs/hooks-reference.html#usecontext
-  const client = useContext(ApolloContext)
+  const client = useApolloClient()
   // Initialize gene step machine from the parent machine.
   const [current, send] = useService(service)
   // Show all help subtext.
