@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import { useMachine } from '@xstate/react'
 import { Divider } from 'antd'
+import { useApolloClient } from '@apollo/client'
 // eslint-disable-next-line
 import styled from 'styled-components/macro'
 
@@ -130,6 +131,7 @@ try {
 
 function StepContainer() {
   const [current, send] = useMachine(hydratedMachine)
+  const client = useApolloClient()
 
   // Reference to the Formik bag object.
   // This lets us trigger a submit from outside the form, which is needed
@@ -224,7 +226,13 @@ function StepContainer() {
       />
     )
   } else if (current.matches({ pending: 'confirm' })) {
-    step = <ConfirmStepWrapper submission={current.context.submission} />
+    step = (
+      <ConfirmStepWrapper
+        submission={current.context.submission}
+        prevClick={() => send('PREV')}
+        nextClick={() => send('NEXT', { client })}
+      />
+    )
   } else if (current.matches({ pending: 'submitted' })) {
     step = <SubmitStepWrapper />
   }

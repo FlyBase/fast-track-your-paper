@@ -13,7 +13,7 @@ import GeneSearchResults from 'components/GeneSearchResults'
 import GeneSearchMessage from 'components/GeneSearchMessage'
 import GeneBatchForm from 'components/GeneBatchForm'
 import GeneBatchResults from 'components/GeneBatchResults'
-import {useApolloClient} from "@apollo/client";
+import { useApolloClient } from '@apollo/client'
 
 const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   // Get the GraphQL client from the apollo context object.
