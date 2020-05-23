@@ -25,6 +25,7 @@ const initialContext = {
   authorMachine: undefined,
   geneMachine: undefined,
   error: null,
+  output: null,
   confirmed: false,
   // The FTYP submission object.
   submission: {
@@ -163,9 +164,6 @@ export const createStepMachine = () => {
         submitted: {
           id: 'submitted',
           initial: 'sending',
-          on: {
-            START_OVER: { target: '#ftyp.pending.pub' },
-          },
           states: {
             sending: {
               invoke: {
@@ -173,6 +171,7 @@ export const createStepMachine = () => {
                 src: 'invokeSaveToDb',
                 onDone: {
                   target: 'success',
+                  actions: assign({ output: (context, event) => event.data }),
                 },
                 onError: {
                   target: 'failure',
@@ -184,6 +183,9 @@ export const createStepMachine = () => {
               // When we leave this step we reset the context so the user
               // doesn't resubmit their data again.
               exit: ['resetContext'],
+              on: {
+                START_OVER: { target: '#ftyp' },
+              },
             },
             failure: {
               on: {

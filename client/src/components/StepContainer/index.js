@@ -13,6 +13,7 @@ import FlagsStep from 'components/FlagsStep'
 import GenesStep from 'components/GenesStep'
 import ConfirmStep from 'components/ConfirmStep'
 import SubmitStep from 'components/SubmitStep'
+import SubmitFailed from 'components/SubmitFailed'
 import StepIndicator from 'components/StepIndicator'
 import StepNavigation, { Prev, Next } from 'components/StepNavigation'
 
@@ -25,7 +26,7 @@ const steps = [
   { name: 'flags', label: 'Data' },
   { name: 'genes', label: 'Genes' },
   { name: 'confirm', label: 'Confirmation' },
-  { name: 'submitted', label: 'Finished' },
+  { name: 'success', label: 'Finished' },
 ]
 
 const PubStepWrapper = ({ nextClick, ...props }) => (
@@ -144,6 +145,8 @@ function StepContainer() {
     authorMachine,
     geneMachine,
     submission: { publication, citation, contact, flags, genes },
+    output,
+    error,
   } = current.context
 
   /*
@@ -155,7 +158,7 @@ function StepContainer() {
     if (current.value.pending) {
       return s.name === current.value.pending
     }
-    return s.name === current.value
+    return s.name === current.value.submitted
   })
   let step
 
@@ -233,8 +236,22 @@ function StepContainer() {
         nextClick={() => send('NEXT', { client })}
       />
     )
-  } else if (current.matches({ pending: 'submitted' })) {
-    step = <SubmitStepWrapper />
+  } else if (current.matches({ submitted: 'success' })) {
+    step = (
+      <SubmitStepWrapper
+        submission={current.context.submission}
+        nextClick={() => send('START_OVER')}
+        result={output}
+      />
+    )
+  } else if (current.matches({ submitted: 'failure' })) {
+    step = (
+      <SubmitFailed
+        submission={current.context.submission}
+        onRetry={() => send('RETRY')}
+        error={error.message}
+      />
+    )
   }
 
   return (
