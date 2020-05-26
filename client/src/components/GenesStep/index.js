@@ -6,6 +6,7 @@ import { useService } from '@xstate/react'
 import IconHelp from 'components/IconHelp'
 import differenceBy from 'lodash.differenceby'
 import unionBy from 'lodash.unionby'
+import cloneDeep from 'lodash.clonedeep'
 
 import GenesStudiedTable from 'components/GenesStudiedTable'
 import GeneSearchInput from 'components/GeneSearchInput'
@@ -137,14 +138,36 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
    *                        has updated antibody information for.
    * @param antibody <string> - The new antibody information to update the gene with.
    *                            e.g. none, monoclonal, polyclonal
+   * @param isChecked <boolean> - Whether or not the antibody is checked or not.
    */
-  const setGeneAntibody = ({ gene = {}, antibody = 'none' }) => {
+  const setGeneAntibody = ({ gene = {}, antibody = 'none', isChecked = false }) => {
     // Create a copy of the genes studied list with updated antibody information.
     const copyOfGenesStudied = genesStudied.map((geneStudied) => {
-      if (gene?.id === geneStudied.id) {
-        gene.antibody = antibody
+      let localGeneCopy = cloneDeep(geneStudied)
+      // Update antibody information
+      if (gene?.id === localGeneCopy.id) {
+        if (isChecked && 'antibody' in localGeneCopy) {
+          const abSet = new Set(localGeneCopy.antibody)
+          abSet.add(antibody)
+          localGeneCopy.antibody = [...abSet]
+        }
+        else if (isChecked && !('antibody' in localGeneCopy)) {
+          localGeneCopy.antibody = [antibody]
+        }
+        else {
+          // Delete antibody if it exists and isChecked is false.
+          const abSet = new Set(localGeneCopy.antibody)
+          abSet.delete(antibody)
+          if (abSet.size === 0 && 'antibody' in localGeneCopy) {
+            delete localGeneCopy.antibody
+          }
+          else {
+            localGeneCopy.antibody = [...abSet]
+          }
+        }
       }
-      return geneStudied
+      // Return unmodified gene.
+      return localGeneCopy
     })
     // Set the state to the newly updated list.
     setGenesStudied(copyOfGenesStudied)
