@@ -1,0 +1,10 @@
+query Submissions {
+  submissions: listSubmissions {
+    nodes {
+      fbrf
+      submittedToFlybase
+      dateProcessed
+      userData
+    }
+  }
+}
