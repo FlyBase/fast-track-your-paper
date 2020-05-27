@@ -140,7 +140,11 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
    *                            e.g. none, monoclonal, polyclonal
    * @param isChecked <boolean> - Whether or not the antibody is checked or not.
    */
-  const setGeneAntibody = ({ gene = {}, antibody = 'none', isChecked = false }) => {
+  const setGeneAntibody = ({
+    gene = {},
+    antibody = 'none',
+    isChecked = false,
+  }) => {
     // Create a copy of the genes studied list with updated antibody information.
     const copyOfGenesStudied = genesStudied.map((geneStudied) => {
       let localGeneCopy = cloneDeep(geneStudied)
@@ -150,18 +154,15 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
           const abSet = new Set(localGeneCopy.antibody)
           abSet.add(antibody)
           localGeneCopy.antibody = [...abSet]
-        }
-        else if (isChecked && !('antibody' in localGeneCopy)) {
+        } else if (isChecked && !('antibody' in localGeneCopy)) {
           localGeneCopy.antibody = [antibody]
-        }
-        else {
+        } else {
           // Delete antibody if it exists and isChecked is false.
           const abSet = new Set(localGeneCopy.antibody)
           abSet.delete(antibody)
           if (abSet.size === 0 && 'antibody' in localGeneCopy) {
             delete localGeneCopy.antibody
-          }
-          else {
+          } else {
             localGeneCopy.antibody = [...abSet]
           }
         }

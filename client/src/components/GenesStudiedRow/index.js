@@ -6,7 +6,9 @@ const Input = ({ gene = {}, antibody = 'none', onAbClick, ...props }) => (
     type="checkbox"
     name={`${gene.id}_ab`}
     defaultChecked={(gene?.antibody ?? []).includes(antibody)}
-    onChange={evt => onAbClick({ gene, antibody, isChecked: evt.target.checked  })}
+    onChange={(evt) =>
+      onAbClick({ gene, antibody, isChecked: evt.target.checked })
+    }
     {...props}
   />
 )
@@ -52,7 +54,9 @@ GeneStudiedRow.propTypes = {
     id: PropTypes.string.isRequired,
     symbol: PropTypes.string.isRequired,
     synonyms: PropTypes.arrayOf(PropTypes.string),
-    antibody: PropTypes.arrayOf(PropTypes.oneOf(['none', 'monoclonal', 'polyclonal'])),
+    antibody: PropTypes.arrayOf(
+      PropTypes.oneOf(['none', 'monoclonal', 'polyclonal'])
+    ),
   }).isRequired,
 }
 
