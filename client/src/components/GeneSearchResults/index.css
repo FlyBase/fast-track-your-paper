@@ -36,7 +36,7 @@
   background-color: #ddd;
 }
 
-#geneSearchSuggestions li a {
+#geneSearchSuggestions li b.text-info {
   flex-basis: 15%;
   flex-shrink: 0;
   padding: 0 5px;

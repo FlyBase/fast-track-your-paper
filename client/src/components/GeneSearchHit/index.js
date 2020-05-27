@@ -38,9 +38,7 @@ const GeneSearchHit = ({ g = {} }) => {
 
   return (
     <>
-      <a href={`/reports/${g.id}`} target="_blank" rel="noopener noreferrer">
-        <b dangerouslySetInnerHTML={{ __html: g.symbol }} />
-      </a>
+      <b className="text-info" dangerouslySetInnerHTML={{ __html: g.symbol }} />
       <span dangerouslySetInnerHTML={{ __html: g.hl.name }} />
       {synonymCell(g)}
     </>
