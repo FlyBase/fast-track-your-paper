@@ -6,20 +6,31 @@ import {
 } from '@devexpress/dx-react-grid-bootstrap3'
 
 const columns = [
-  { name: 'id', title: 'ID' },
-  { name: 'product', title: 'Product' },
-  { name: 'owner', title: 'Owner' },
-]
-const rows = [
-  { id: 0, product: 'DevExtreme', owner: 'DevExpress' },
-  { id: 1, product: 'DevExtreme Reactive', owner: 'DevExpress' },
+  { name: 'fbrf', title: 'FBrf' },
+  { name: 'submittedToFlybase', title: 'Submitted' },
+  {
+    name: 'name',
+    title: 'Name',
+    getCellValue: row => row?.userData?.contact?.name ?? ''
+  },
+  {
+    name: 'email',
+    title: 'E-mail',
+    getCellValue: row => row?.userData?.contact?.email ?? ''
+  },
+
 ]
 
-export default () => (
+const SubmissionTable = ({ rows }) => {
+  return (
   <div>
     <Grid rows={rows} columns={columns}>
       <Table />
       <TableHeaderRow />
     </Grid>
   </div>
-)
+  )
+}
+
+export default SubmissionTable
+
