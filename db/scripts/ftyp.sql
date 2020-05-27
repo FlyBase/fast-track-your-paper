@@ -391,3 +391,7 @@ CREATE OR REPLACE FUNCTION ftyp.submit_paper(submission jsonb) RETURNS timestamp
     (user_data) VALUES (submission)
   RETURNING ftyp_hidden.submissions.submitted_to_flybase;
 $$ LANGUAGE sql VOLATILE STRICT SECURITY INVOKER;
+
+CREATE OR REPLACE FUNCTION ftyp.list_submissions() RETURNS SETOF ftyp_hidden.submissions AS $$
+SELECT * from ftyp_hidden.submissions;
+$$ LANGUAGE sql STABLE;
