@@ -1,13 +1,13 @@
 import React from 'react'
 
-const SubmitStep = () => (
-  <>
-    <div className="panel panel-primary">
-      <div className="panel-heading">Thank you!</div>
-      <div className="panel-body"></div>
-      <div className="panel-footer"></div>
-    </div>
-  </>
-)
+const SubmitStep = ({ submission = {}, result, children }) => {
+  return (
+    <>
+      {/** TODO: Add follow up statements based submission flags and genes. */}
+      <h2>Thank you!</h2>
+      {children}
+    </>
+  )
+}
 
 export default SubmitStep

@@ -1,7 +1,6 @@
-import React, { useContext, useRef } from 'react'
+import React, { useRef } from 'react'
+import { useApolloClient } from '@apollo/client'
 import IconHelp from 'components/IconHelp'
-
-import { ApolloContext } from 'contexts'
 
 const PubSearchForm = ({ send = () => {} }) => {
   // Initialize DOM references to the form and input elements.
@@ -11,7 +10,7 @@ const PubSearchForm = ({ send = () => {} }) => {
 
   // Get the GraphQL client from the apollo context object.
   // https://reactjs.org/docs/hooks-reference.html#usecontext
-  const client = useContext(ApolloContext)
+  const client = useApolloClient()
 
   /*
   Function to handle when a user hits enter in the input field

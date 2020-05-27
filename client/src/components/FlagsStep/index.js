@@ -41,7 +41,7 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
               expression_wild_type: flags?.expression_wild_type ?? false,
               phenotypic_analysis: flags?.phenotypic_analysis ?? false,
               chemical_phenotypes: flags?.chemical_phenotypes ?? false,
-              dmel_model_change: flags?.dmel_model_changes ?? false,
+              dmel_model_change: flags?.dmel_model_change ?? false,
               mapping_of_features: flags?.mapping_of_features ?? false,
               cis_regulatory: flags?.cis_regulatory ?? false,
               anatomical_data: flags?.anatomical_data ?? false,

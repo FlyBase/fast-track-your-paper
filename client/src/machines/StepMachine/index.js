@@ -6,8 +6,12 @@ import {
 import { createAuthorStepMachine } from 'machines/AuthorStepMachine'
 import { createGeneStepMachine } from 'machines/GeneStepMachine'
 import cloneDeep from 'lodash.clonedeep'
+import { loader } from 'graphql.macro'
 
 const { assign } = actions
+
+// The GraphQL query to search all publication data.
+const submissionMutation = loader('graphql/submitPaper.gql')
 
 // See the following for full details on how this machine is
 // configured.
@@ -21,6 +25,8 @@ const initialContext = {
   authorMachine: undefined,
   geneMachine: undefined,
   error: null,
+  output: null,
+  confirmed: false,
   // The FTYP submission object.
   submission: {
     publication: null,
@@ -30,7 +36,6 @@ const initialContext = {
       email: null,
       isAuthor: false,
     },
-    confirmed: false,
     // Data flags
     flags: {},
     // Genes
@@ -87,7 +92,7 @@ export const createStepMachine = () => {
                 NEXT: [
                   {
                     target: 'author',
-                    actions: ['setStatus', 'persist'],
+                    actions: ['persist'],
                     cond: 'hasPublication',
                   },
                   // Fall through to here if guard conditions fail.
@@ -147,7 +152,8 @@ export const createStepMachine = () => {
               entry: ['persist'],
               on: {
                 NEXT: {
-                  target: '#ftyp.submitted',
+                  actions: ['confirmSubmission', 'persist'],
+                  target: '#ftyp.submitted.sending',
                 },
                 PREV: { target: 'genes' },
               },
@@ -156,12 +162,36 @@ export const createStepMachine = () => {
         },
         // Submitted step
         submitted: {
-          entry: ['persist'],
-          // When we leave this step we reset the context so the user
-          // doesn't resubmit their data again.
-          onExit: ['resetContext'],
-          on: {
-            START_OVER: { target: '#ftyp.pending.pub' },
+          id: 'submitted',
+          initial: 'sending',
+          states: {
+            sending: {
+              invoke: {
+                id: 'save-submission',
+                src: 'invokeSaveToDb',
+                onDone: {
+                  target: 'success',
+                  actions: assign({ output: (context, event) => event.data }),
+                },
+                onError: {
+                  target: 'failure',
+                  actions: assign({ error: (context, event) => event.data }),
+                },
+              },
+            },
+            success: {
+              // When we leave this step we reset the context so the user
+              // doesn't resubmit their data again.
+              exit: ['resetContext'],
+              on: {
+                START_OVER: { target: '#ftyp' },
+              },
+            },
+            failure: {
+              on: {
+                RETRY: { target: '#ftyp.pending.pub' },
+              },
+            },
           },
         },
       },
@@ -254,10 +284,15 @@ export const createStepMachine = () => {
         }),
         setGenes: assign((context, event) => {
           const { submission } = context
+          // Remove the highlighting info before adding to genes array.
+          const genes = (event?.genes ?? []).map((gene) => {
+            const { hl, ...rest } = gene
+            return { ...rest }
+          })
           return {
             submission: {
               ...submission,
-              genes: event?.genes ?? [],
+              genes,
             },
           }
         }),
@@ -317,6 +352,16 @@ export const createStepMachine = () => {
           return name && email
         },
         isConfirmed: (context) => context.confirmed,
+      },
+      services: {
+        invokeSaveToDb: (context, event) => {
+          const { client } = event
+          const { submission } = context
+          return client.mutate({
+            mutation: submissionMutation,
+            variables: { submission },
+          })
+        },
       },
     }
   )

@@ -351,3 +351,47 @@ FROM flybase.update_ids(ids);
 
 $$ LANGUAGE SQL STABLE;
 
+
+
+/**
+Table for holding user submissions.
+*/
+
+CREATE SEQUENCE ftyp_hidden.submissions_submission_id;
+
+CREATE OR REPLACE FUNCTION ftyp_hidden.get_submission_fbrf() RETURNS trigger AS $$
+BEGIN
+    -- '#>>' selects the JSON field at the specified path.
+    -- https://www.postgresql.org/docs/10/functions-json.html
+    NEW.fbrf = NEW.user_data#>>'{publication,uniquename}';
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TABLE IF EXISTS ftyp_hidden.submissions;
+CREATE TABLE ftyp_hidden.submissions (
+    submission_id integer PRIMARY KEY DEFAULT nextval('ftyp_hidden.submissions_submission_id'),
+    fbrf varchar UNIQUE DEFAULT NULL
+    CONSTRAINT fbrf_must_be_valid CHECK (fbrf ~ '^FBrf[0-9]+$'),
+    submitted_to_flybase timestamptz DEFAULT CURRENT_TIMESTAMP,
+    date_processed timestamptz DEFAULT null,
+    user_data jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+CREATE TRIGGER update_fbrf BEFORE INSERT OR UPDATE ON ftyp_hidden.submissions
+FOR EACH ROW EXECUTE PROCEDURE ftyp_hidden.get_submission_fbrf();
+
+CREATE INDEX fbrf_idx ON ftyp_hidden.submissions (fbrf);
+CREATE INDEX submitted_to_flybase_idx ON ftyp_hidden.submissions (submitted_to_flybase);
+CREATE INDEX date_processed ON ftyp_hidden.submissions (date_processed);
+CREATE INDEX user_data_idx1 ON ftyp_hidden.submissions USING GIN (user_data);
+
+CREATE OR REPLACE FUNCTION ftyp.submit_paper(submission jsonb) RETURNS timestamptz AS $$
+  INSERT INTO ftyp_hidden.submissions
+    (user_data) VALUES (submission)
+  RETURNING ftyp_hidden.submissions.submitted_to_flybase;
+$$ LANGUAGE sql VOLATILE STRICT SECURITY INVOKER;
+
+CREATE OR REPLACE FUNCTION ftyp.list_submissions() RETURNS SETOF ftyp_hidden.submissions AS $$
+SELECT * from ftyp_hidden.submissions;
+$$ LANGUAGE sql STABLE;
