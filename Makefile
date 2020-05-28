@@ -25,6 +25,7 @@ clean-db:
 
 clean-client:
 	rm -rf client/build/*
+	rm -rf client/node_modules/
 
 build-client:
 	cd client; yarn install && yarn run build
