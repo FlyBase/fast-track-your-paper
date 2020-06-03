@@ -70,7 +70,7 @@ const GeneBatchResults = ({
           </div>
           <div>
             <div>
-              Updated
+              Updated&nbsp;
               <IconHelp
                 initial={showAllHelp}
                 message="These obsolete gene IDs were unambiguously converted to a current ID."

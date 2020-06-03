@@ -314,7 +314,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                     onClick={() => setShowAntibodyCells(!showAntibodyCells)}
                     defaultChecked={showAntibodyCells}
                   />
-                  <b>antibodies generated</b>
+                  <b>antibodies&nbsp;generated</b>
                 </label>
               </div>
             </GenesStudiedTable>

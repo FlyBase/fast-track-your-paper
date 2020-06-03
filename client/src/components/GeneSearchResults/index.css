@@ -12,10 +12,19 @@
   box-shadow: 3px 6px 3px 0px #ccc;
   max-width: 75%;
 }
+#geneSearchSuggestionsDismiss {
+  position: absolute;
+  padding: 3px;
+  right: 2px;
+}
+#geneSearchSuggestionsDismiss:hover {
+  color: grey;
+  cursor: pointer;
+}
 #geneSearchSuggestionsSummary {
   font-size: 12px;
   font-style: italic;
-  text-align: right;
+  padding-left: 3px;
 }
 #geneSearchSuggestions ul {
   list-style: none inside;

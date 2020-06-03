@@ -63,6 +63,17 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
             }}>
             {({ values, values: { no_flags: noneApply } }) => (
               <Form>
+
+                <label>None</label>
+                <div className="form-group">
+                  <DataFlagCheckbox
+                    name="no_flags"
+                    showAllHelp={showAllHelp}
+                    helpMessage="Your publication reports other kinds of data than those listed here. Letting us know will help us improve curation efficiency.">
+                    None of these data-types apply
+                  </DataFlagCheckbox>
+                </div>
+
                 <div className="well well-sm text-info">
                   <em>
                     The following data types (new allele, new transgene,
@@ -274,17 +285,10 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
                   </DataFlagCheckbox>
                 </div>
 
-                <label>None</label>
-                <div className="form-group">
-                  <DataFlagCheckbox
-                    name="no_flags"
-                    showAllHelp={showAllHelp}
-                    helpMessage="Your publication reports other kinds of data than those listed above. Letting us know will help us improve curation efficiency.">
-                    None of the above data-types apply
-                  </DataFlagCheckbox>
-                </div>
                 {children}
+
                 <Persist name="flag-step" />
+
               </Form>
             )}
           </Formik>
