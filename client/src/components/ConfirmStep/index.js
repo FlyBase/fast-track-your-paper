@@ -1,6 +1,7 @@
 import React from 'react'
 
 const flags2HTMLstring = {
+  no_flags: 'You indicated no curation flags',
   new_allele:
     'generation of a new classical allele or chromosomal aberration in a Drosophila genome',
   new_transgene: 'generation of a new transgenic construct',
@@ -38,7 +39,6 @@ const flags2HTMLstring = {
   dataset_accession_numbers: [],
   new_pathway_member:
     'evidence that a gene is a new member or direct regulator of a receptor signaling pathway',
-  no_flags: 'You indicated no curation flags',
 }
 
 const ConfirmStep = ({ submission = {}, children }) => {
