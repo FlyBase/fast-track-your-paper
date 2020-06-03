@@ -206,6 +206,7 @@ SELECT f.feature_id,
        flybase.current_symbol(f.uniquename) AS symbol,
        o.abbreviation                       AS species,
        gl.has_location                      AS has_location,
+       gs.has_summary                       AS has_summary,
        flybase.pub_count(f.uniquename)      AS pub_count,
        json_build_object(
                'id', f.uniquename,
@@ -239,7 +240,8 @@ SELECT f.feature_id,
 FROM feature f
          JOIN cvterm ON f.type_id = cvterm.cvterm_id
          JOIN organism o ON f.organism_id = o.organism_id
-         LEFT JOIN ftyp_hidden.gene_location gl on f.feature_id = gl.feature_id
+         LEFT JOIN ftyp_hidden.gene_location gl ON f.feature_id = gl.feature_id
+         LEFT JOIN ftyp_hidden.gene_summary gs ON f.feature_id = gs.feature_id
     /**
       Get Symbol and name synonyms.
      */
@@ -301,15 +303,18 @@ CREATE INDEX symbol_trgm_idx ON ftyp_hidden.gene_search USING GIN (symbol gin_tr
 -- Index on species.
 CREATE INDEX species_idx ON ftyp_hidden.gene_search (species);
 CREATE INDEX has_location_idx ON ftyp_hidden.gene_search (has_location);
+CREATE INDEX has_summary_idx ON ftyp_hidden.gene_search (has_summary);
 CREATE INDEX pub_count_idx ON ftyp_hidden.gene_search (pub_count);
 
 CREATE OR REPLACE FUNCTION ftyp.search_gene_identifiers(term text, species_abbrev text, OUT id text, OUT symbol text,
                                                         OUT species text,
+                                                        OUT has_summary boolean,
                                                         OUT match_highlight json) RETURNS SETOF record AS
 $$
 SELECT gs.id,
        gs.symbol,
        gs.species,
+       gs.has_summary,
        ts_headline('simple', gs.identifiers,
                    to_tsquery('simple', regexp_replace(coalesce(term, ''), '(\W)', '\\\1') || ':*')) AS match_highlight
 FROM ftyp_hidden.gene_search AS gs

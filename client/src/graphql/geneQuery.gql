@@ -10,6 +10,7 @@ query GeneQuery($gene: String, $species: String, $limit: Int = 20) {
       id
       symbol
       species
+      hasSummary
     }
   }
 }

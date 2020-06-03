@@ -54,3 +54,4 @@ chmod 755 data/chado data/feature data/featureloc
 # of the feature table out.
 psql -f scripts/pull_genes.sql > data/chado.feature.tsv
 psql -f scripts/pull_gene_locations.sql > data/chado.gene_location.tsv
+psql -f scripts/pull_gene_summaries.sql > data/chado.gene_summary.tsv
