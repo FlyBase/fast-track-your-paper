@@ -45,7 +45,7 @@ const GeneSearchResults = ({
 }) => (
   <div id="geneSearchSuggestions">
     <div id="geneSearchSuggestionsContainer">
-      <i id="geneSearchSuggestionsDismiss" className="fa fa-times-circle" ></i>
+      <i id="geneSearchSuggestionsDismiss" className="fa fa-times-circle"></i>
       <div id="geneSearchSuggestionsSummary" className="bg-info">
         Showing {genes.length} of {totalCount} matches.&emsp;
       </div>

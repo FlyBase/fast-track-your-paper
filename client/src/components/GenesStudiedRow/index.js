@@ -41,7 +41,7 @@ const GeneStudiedRow = ({
         title="Polyclonal antibody"
       />
     </td>
-    <td style={{textAlign:'center'}}>
+    <td style={{ textAlign: 'center' }}>
       <button onClick={() => onDelete(gene)} title="Remove gene">
         <i className="fa fa-trash"></i>
       </button>

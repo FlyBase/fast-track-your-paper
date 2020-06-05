@@ -42,57 +42,93 @@ const flags2HTMLstring = {
 }
 
 const ConfirmStep = ({ submission = {}, children }) => {
-	let pubcite = (submission.publication)
-              ? <><h4>Publication ({submission.publication.type.name}):</h4><p><i>submission.publication.title</i> submission.publication.miniref</p></>
-              : <><h4>Citation:</h4><p>{submission.citation}</p><p>You did not find this publication when you searched our bibliography.</p></>;
+  let pubcite = submission.publication ? (
+    <>
+      <h4>Publication ({submission.publication.type.name}):</h4>
+      <p>
+        <i>submission.publication.title</i> submission.publication.miniref
+      </p>
+    </>
+  ) : (
+    <>
+      <h4>Citation:</h4>
+      <p>{submission.citation}</p>
+      <p>
+        You did not find this publication when you searched our bibliography.
+      </p>
+    </>
+  )
   return (
     <>
       <h3>Confirmation</h3>
       <div className="well">
-        { pubcite }
+        {pubcite}
         <h4>Contact Information:</h4>
         <p>
           {submission.contact.name} &lang;{submission.contact.email}&rang;
         </p>
         <p>
           You have indicated that you are{' '}
-          {submission.contact.isAuthor || <b>not</b>} an author on this publication.
+          {submission.contact.isAuthor || <b>not</b>} an author on this
+          publication.
         </p>
         <h4>Types of data:</h4>
         <ul>
-          {Object.keys(flags2HTMLstring).map( (flag) => {
-							if(submission.flags[flag]) {
-									/* logic here to parse Boolean flags, text, and arrays */
-									let dataFlag = flags2HTMLstring[flag]; console.log(typeof dataFlag);
-									let listyle = {};
-									if( dataFlag==='' ) {
-											dataFlag = '<b>'+flag.replace(/_/g,' ')+'</b><pre style="margin:0; font-style:italic;">'+submission.flags[flag]+'</pre>';
-											listyle = { listStyleType:'none', margin:0 };
-									}
-									if( flag.match(/dataset_/) ) {
-											/* dataset_pheno and dataset_accessions are both sub-Booleans; dataset_accession_numbers is a list, maybe? */
-											listyle = { listStyleType:'none', paddingLeft:'1em', fontWeight:'bold' };
-									}
-									if( typeof dataFlag == 'object' ) {
-									    dataFlag = /*(submission.flags[flag].length) ? submission.flags[flag].join(', ') :*/ submission.flags[flag];
-									    listyle = { listStyleType:'none', paddingLeft:'1em' }
-                  }
-									return ( <li key={flag} style={listyle} dangerouslySetInnerHTML={{ __html: dataFlag }} /> )
-							}
+          {Object.keys(flags2HTMLstring).map((flag) => {
+            if (submission.flags[flag]) {
+              /* logic here to parse Boolean flags, text, and arrays */
+              let dataFlag = flags2HTMLstring[flag]
+              console.log(typeof dataFlag)
+              let listyle = {}
+              if (dataFlag === '') {
+                dataFlag =
+                  '<b>' +
+                  flag.replace(/_/g, ' ') +
+                  '</b><pre style="margin:0; font-style:italic;">' +
+                  submission.flags[flag] +
+                  '</pre>'
+                listyle = { listStyleType: 'none', margin: 0 }
+              }
+              if (flag.match(/dataset_/)) {
+                /* dataset_pheno and dataset_accessions are both sub-Booleans; dataset_accession_numbers is a list, maybe? */
+                listyle = {
+                  listStyleType: 'none',
+                  paddingLeft: '1em',
+                  fontWeight: 'bold',
+                }
+              }
+              if (typeof dataFlag == 'object') {
+                dataFlag =
+                  /*(submission.flags[flag].length) ? submission.flags[flag].join(', ') :*/ submission
+                    .flags[flag]
+                listyle = { listStyleType: 'none', paddingLeft: '1em' }
+              }
+              return (
+                <li
+                  key={flag}
+                  style={listyle}
+                  dangerouslySetInnerHTML={{ __html: dataFlag }}
+                />
+              )
+            }
           })}
         </ul>
         <h4>Genes Studied ({submission.genes.length}):</h4>
         <ul>
-          {submission.genes.map( (gene) => {
-            return <li key={gene.id} style={{listStyleType:'none'}}>{gene.symbol}</li>
+          {submission.genes.map((gene) => {
+            return (
+              <li key={gene.id} style={{ listStyleType: 'none' }}>
+                {gene.symbol}
+              </li>
+            )
           })}
         </ul>
       </div>
-      
+
       {children}
     </>
   )
 }
-      /*<pre>{JSON.stringify(submission, null, 2)}</pre>*/
+/*<pre>{JSON.stringify(submission, null, 2)}</pre>*/
 
 export default ConfirmStep
