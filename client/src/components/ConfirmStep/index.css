@@ -1,0 +1,15 @@
+#confirmationPanel h4 button {
+  float: right;
+  padding: 0 8px;
+}
+#confirmationGenesList {
+  max-height: 200px;
+  overflow: auto;
+  padding: 0 10px;
+}
+#confirmationGenesList li {
+  list-style-type: none;
+}
+#confirmationGenesList li i {
+  float: right;
+}
