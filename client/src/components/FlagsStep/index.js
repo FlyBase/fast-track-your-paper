@@ -63,7 +63,6 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
             }}>
             {({ values, values: { no_flags: noneApply } }) => (
               <Form>
-
                 <label>None</label>
                 <div className="form-group">
                   <DataFlagCheckbox
@@ -288,7 +287,6 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
                 {children}
 
                 <Persist name="flag-step" />
-
               </Form>
             )}
           </Formik>
