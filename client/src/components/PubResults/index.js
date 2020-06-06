@@ -93,10 +93,10 @@ const PubResults = ({
                         </td>
                         <td>
                           {p.curationStatus ? (
-                            // <i className="fa fa-check"></i>
                             <span>{p.curationStatus}</span>
                           ) : (
-                            <i className="fa fa-times"></i>
+                            // <i className="fa fa-times"></i>
+                            <span></span>
                           )}
                         </td>
                       </tr>
