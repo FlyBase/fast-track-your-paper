@@ -124,6 +124,7 @@ const ConfirmStep = ({ submission = {}, children }) => {
                 />
               )
             }
+            return null
           })}
           {/*special handling for specific flag groups*/}
           {submission.flags.cell_line && (
