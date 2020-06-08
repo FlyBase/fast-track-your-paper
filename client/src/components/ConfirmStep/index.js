@@ -183,6 +183,5 @@ const ConfirmStep = ({ submission = {}, children }) => {
     </>
   )
 }
-/*<pre>{JSON.stringify(submission, null, 2)}</pre>*/
 
 export default ConfirmStep
