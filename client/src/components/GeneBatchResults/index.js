@@ -51,7 +51,7 @@ const GeneBatchResults = ({
    * 3. Support export (button that copies to clipboard or file download).
    * 4. Add export to ID Validator for invalid entities.
    */
-  const [showAllHelp, setShowAllHelp] = useState(false)
+  const [showAllHelp] = useState(false)
   return (
     <div id="batch-results">
       <label

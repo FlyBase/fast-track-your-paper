@@ -1,17 +1,11 @@
 import React from 'react'
 
 import DataFlagCheckbox from 'components/DataFlagCheckbox'
-import DataFlagTextArea from 'components/DataFlagTextArea'
 import DataFlagTxtInput from 'components/DataFlagTxtInput'
 import IconHelp from 'components/IconHelp'
 
 import './index.css'
 
-const textAreaStyle = {
-  resize: 'none',
-  width: '50%',
-  display: 'inline-block',
-}
 const textInputStyle = {
   width: '100%',
   display: 'inline-block',
