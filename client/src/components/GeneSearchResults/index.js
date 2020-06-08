@@ -41,11 +41,14 @@ const GeneSearchResults = ({
   genes = [],
   totalCount = 0,
   onGeneClick = () => {},
+  handleDismiss = () => {},
   z = '',
 }) => (
   <div id="geneSearchSuggestions">
     <div id="geneSearchSuggestionsContainer">
-      <i id="geneSearchSuggestionsDismiss" className="fa fa-times-circle"></i>
+      <button onClick={handleDismiss}>
+        <i id="geneSearchSuggestionsDismiss" className="fa fa-times-circle"></i>
+      </button>
       <div id="geneSearchSuggestionsSummary" className="bg-info">
         Showing {genes.length} of {totalCount} matches.&emsp;
       </div>
