@@ -126,26 +126,48 @@ const ConfirmStep = ({ submission = {}, children }) => {
             }
           })}
           {/*special handling for specific flag groups*/}
-          { submission.flags.cell_line && <li key="cell_line" dangerouslySetInnerHTML={{ __html: flags2HTMLstring.cell_line }} /> }
-          { submission.flags.stable_line && <li key="stable_line" dangerouslySetInnerHTML={{ __html: flags2HTMLstring.stable_line }} /> }
-          { submission.flags.commercial_line && <li key="commercial_line" dangerouslySetInnerHTML={{ __html: flags2HTMLstring.commercial_line }} /> }
-          { (submission.flags.cell_line_names || submission.flags.cell_line_sources) &&
-            <li key="cell_line" style={{listStyleType: 'none'}}>
+          {submission.flags.cell_line && (
+            <li
+              key="cell_line"
+              dangerouslySetInnerHTML={{ __html: flags2HTMLstring.cell_line }}
+            />
+          )}
+          {submission.flags.stable_line && (
+            <li
+              key="stable_line"
+              dangerouslySetInnerHTML={{ __html: flags2HTMLstring.stable_line }}
+            />
+          )}
+          {submission.flags.commercial_line && (
+            <li
+              key="commercial_line"
+              dangerouslySetInnerHTML={{
+                __html: flags2HTMLstring.commercial_line,
+              }}
+            />
+          )}
+          {(submission.flags.cell_line_names ||
+            submission.flags.cell_line_sources) && (
+            <li key="cell_line" style={{ listStyleType: 'none' }}>
               <h5>Cell Lines Used:</h5>
               <table className="table">
-                <tr><th>Name</th><th>Source</th></tr>
-                
+                <tr>
+                  <th>Name</th>
+                  <th>Source</th>
+                </tr>
               </table>
             </li>
-          }
+          )}
         </ul>
         <h4>
           Genes Studied ({submission.genes.length}):
           <button className="btn btn-default">Edit</button>
         </h4>
-        <ul id="confirmationGenesList" className='bg-warning'>
+        <ul id="confirmationGenesList" className="bg-warning">
           {submission.genes.map((gene) => {
-          	let ab = (gene.antibody) ? gene.antibody.join(' & ')+' Ab generated' : '';
+            let ab = gene.antibody
+              ? gene.antibody.join(' & ') + ' Ab generated'
+              : ''
             return (
               <li key={gene.id}>
                 {gene.symbol}
