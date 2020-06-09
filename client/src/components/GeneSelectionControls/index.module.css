@@ -1,0 +1,6 @@
+.container {
+  margin-left: 20px;
+  display: inline-flex;
+  justify-content: space-evenly;
+  width: 35rem;
+}

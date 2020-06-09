@@ -45,6 +45,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   // studied table.
 
   const filteredGeneResults = differenceBy(geneResults, genesStudied, 'id')
+
   /**
    * Event handler to add genes to the list of genes studied.
    *
@@ -67,18 +68,10 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
    * @param gene <object> - Gene object to remove from the studied list.
    */
   const removeFromGenesStudied = (gene = {}) => {
-    // Get the array index of the gene to remove.
-    const geneIndex = genesStudied.findIndex(
-      (geneStudied) => geneStudied.id === gene.id
-    )
-    if (geneIndex !== -1) {
-      // Copy array to avoid mutating state directly.
-      const copyOfGenesStudied = [...genesStudied]
-      // Remove gene from array copy.
-      copyOfGenesStudied.splice(geneIndex, 1)
-      // Set the copy as the new list in state.
-      setGenesStudied(copyOfGenesStudied)
-    }
+    const genesToRemove = new Set(Array.isArray(gene) ? gene : [gene])
+    const copyOfGenesStudied = new Set(genesStudied)
+    genesToRemove.forEach((g) => copyOfGenesStudied.delete(g))
+    setGenesStudied([...copyOfGenesStudied])
   }
 
   /**
@@ -92,18 +85,17 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   }, [genesStudied, send])
 
   /**
-   * Every time the validIds array changes, send an event to synchronize
-   * the list with the submission in the parent machine.
-   *
-   * This keeps the local and global submission state in sync.
+   * When the validIds or updatedIds arrays change, update the genesStudied
+   * local state.
    */
   useEffect(() => {
-    if (validIds.length > 0) {
-      addToGenesStudied(validIds)
+    const validAndUpdatedIds = [...validIds, ...updatedIds]
+    if (validAndUpdatedIds.length > 0) {
+      addToGenesStudied(validAndUpdatedIds)
     }
     // TODO Figure out how best to handle this with useCallback
     // eslint-disable-next-line
-  }, [validIds])
+  }, [validIds, updatedIds])
 
   /**
    * Function to handle when a user types in the input field.

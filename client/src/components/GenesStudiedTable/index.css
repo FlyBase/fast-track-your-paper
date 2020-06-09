@@ -19,6 +19,6 @@ table thead tr:last-child {
   text-align: center;
   vertical-align: middle;
 }
-table thead tr th:first-child {
+table thead tr th:nth-child(2) {
   text-align: left;
 }

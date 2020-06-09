@@ -66,7 +66,7 @@ const GeneBatchResults = ({
           <div>
             <div>Current:</div>
             <div>{validIds?.length ?? 0}</div>
-            <div>{validIds?.length ? 'Added to List' : ''}</div>
+            <div>{validIds?.length ? <i className="fa fa-check" /> : ''}</div>
           </div>
           <div>
             <div>
@@ -77,9 +77,7 @@ const GeneBatchResults = ({
               />
             </div>
             <div>{updatedIds?.length ?? 0} </div>
-            <div>
-              <Add ids={updatedIds} handleOnClick={onAdd} />
-            </div>
+            <div>{updatedIds?.length ? <i className="fa fa-check" /> : ''}</div>
           </div>
           <div>
             <div>Splits:</div>

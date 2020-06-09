@@ -27,7 +27,13 @@ const GeneSearchInput = ({
         style={{ marginBottom: '1em' }}>
         <label htmlFor="gene">Gene Search:</label>
         <div>
-          <Input type="text" id="gene" name="gene" onChange={handleOnChange} />
+          <Input
+            type="text"
+            id="gene"
+            name="gene"
+            onChange={handleOnChange}
+            autoComplete="off"
+          />
           &emsp;
           <span className="small">
             Matches to synonyms will be shown <i>in italics</i>.

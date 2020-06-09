@@ -18,8 +18,17 @@ const GeneStudiedRow = ({
   abcell = '',
   onDelete = () => {},
   onAbClick = () => {},
+  isSelected = false,
+  onSelect = () => {},
 }) => (
   <tr>
+    <th>
+      <input
+        type="checkbox"
+        checked={isSelected}
+        onClick={() => onSelect(!isSelected, gene)}
+      />
+    </th>
     <th>
       <a href={`/reports/${gene.id}`} target="_blank" rel="noopener noreferrer">
         {gene.symbol}
