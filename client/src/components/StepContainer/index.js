@@ -232,6 +232,7 @@ function StepContainer() {
     step = (
       <ConfirmStepWrapper
         submission={current.context.submission}
+        send={send}
         prevClick={() => send('PREV')}
         nextClick={() => send('NEXT', { client })}
       />

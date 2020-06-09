@@ -43,24 +43,29 @@ const flags2HTMLstring = {
     'evidence that a gene is a new member or direct regulator of a receptor signaling pathway',
 }
 
-const ConfirmStep = ({ submission = {}, children }) => {
+const ConfirmStep = ({ submission = {}, send = () => {}, children }) => {
   let pubcite = submission.publication ? (
     <>
       <h4>
-        Publication ({submission.publication.type.name}):
-        <button className="btn btn-default">Edit</button>
+        Publication ({submission?.publication?.type?.name}):
+        <button onClick={() => send('PUB')} className="btn btn-default">
+          Edit
+        </button>
       </h4>
       <p>
-        <i>submission.publication.title</i> submission.publication.miniref
+        <i>{submission?.publication?.title}</i>
       </p>
+      <p>{submission?.publication?.miniref}</p>
     </>
   ) : (
     <>
       <h4>
         Citation:
-        <button className="btn btn-default">Edit</button>
+        <button onClick={() => send('PUB')} className="btn btn-default">
+          Edit
+        </button>
       </h4>
-      <p>{submission.citation}</p>
+      <p>{submission?.citation}</p>
       <p>
         You did not find this publication when you searched our bibliography.
       </p>
@@ -73,7 +78,9 @@ const ConfirmStep = ({ submission = {}, children }) => {
         {pubcite}
         <h4>
           Contact Information:
-          <button className="btn btn-default">Edit</button>
+          <button onClick={() => send('AUTHOR')} className="btn btn-default">
+            Edit
+          </button>
         </h4>
         <p>
           {submission.contact.name} &lang;{submission.contact.email}&rang;
@@ -85,7 +92,9 @@ const ConfirmStep = ({ submission = {}, children }) => {
         </p>
         <h4>
           Types of data:
-          <button className="btn btn-default">Edit</button>
+          <button onClick={() => send('FLAGS')} className="btn btn-default">
+            Edit
+          </button>
         </h4>
         <ul>
           {Object.keys(flags2HTMLstring).map((flag) => {
@@ -162,7 +171,9 @@ const ConfirmStep = ({ submission = {}, children }) => {
         </ul>
         <h4>
           Genes Studied ({submission.genes.length}):
-          <button className="btn btn-default">Edit</button>
+          <button onClick={() => send('GENES')} className="btn btn-default">
+            Edit
+          </button>
         </h4>
         <ul id="confirmationGenesList" className="bg-warning">
           {submission.genes.map((gene) => {

@@ -151,6 +151,10 @@ export const createStepMachine = () => {
             confirm: {
               entry: ['persist'],
               on: {
+                PUB: 'pub',
+                AUTHOR: 'author',
+                FLAGS: 'flags',
+                GENES: 'genes',
                 NEXT: {
                   actions: ['confirmSubmission', 'persist'],
                   target: '#ftyp.submitted.sending',
