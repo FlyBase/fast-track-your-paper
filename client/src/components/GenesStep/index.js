@@ -254,7 +254,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
                     genes={filteredGeneResults}
                     onGeneClick={addToGenesStudied}
                     totalCount={totalCount}
-                    handleDismiss={() => send('CLEAR')}
+                    onDismiss={() => send('CLEAR')}
                   />
                   <GeneSearchMessage
                     searchCount={geneResults.length}
