@@ -18,6 +18,8 @@ const GenesStudiedTable = ({
   const allGenesSelected = selectedGenes.size === genes.length
   const numGenesUpdated =
     genes.filter((gene) => gene.status === 'updated').length ?? 0
+  const numGenesSplit =
+    genes.filter((gene) => gene.status === 'split').length ?? 0
 
   const handleGeneSelect = (isSelected, gene) => {
     const copySelectedGenes = new Set(selectedGenes)
@@ -45,6 +47,10 @@ const GenesStudiedTable = ({
 
   const handleSelectUpdated = () => {
     setSelectedGenes(new Set(genes.filter((gene) => gene.status === 'updated')))
+  }
+
+  const handleSelectSplit = () => {
+    setSelectedGenes(new Set(genes.filter((gene) => gene.status === 'split')))
   }
 
   return (
@@ -77,8 +83,10 @@ const GenesStudiedTable = ({
               numGenes={genes.length}
               numSelected={selectedGenes.size}
               numUpdated={numGenesUpdated}
+              numSplit={numGenesSplit}
               onSelectAll={handleSelectAll}
               onSelectUpdated={handleSelectUpdated}
+              onSelectSplit={handleSelectSplit}
               onDelete={() => onGeneDelete([...selectedGenes])}
             />
           </th>

@@ -1,7 +1,17 @@
 import React, { useState } from 'react'
+import Button from 'react-bootstrap/lib/Button'
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger'
+import Popover from 'react-bootstrap/lib/Popover'
 import IconHelp from 'components/IconHelp'
+import CopyText from '../CopyText'
+import styled from 'styled-components/macro'
 
 import './index.css'
+
+const ScrollablePre = styled.pre`
+  overflow: auto;
+  max-height: 50vh;
+`
 
 /**
  *  Component to display results of Batch ID uploading / validation.
@@ -32,9 +42,9 @@ import './index.css'
  *  symbol - Current FlyBase symbol (if applicable).
  *
  * @param validIds - Array of ID validation objects that are current.
- * @param updatedIds - Array of updated IDs that were cleanly updated.
- * @param splitIds - Array of IDs that have been split and should be review.
- * @param invalidIds - Array of IDs that are invalid.
+ * @param updatedIds - Array of updated ID validation objects that were cleanly updated.
+ * @param splitIds - Array of ID validation objects that have been split and should be reviewed.
+ * @param invalidIds - Array of ID validation objects that are invalid.
  *
  */
 const GeneBatchResults = ({
@@ -52,6 +62,16 @@ const GeneBatchResults = ({
    * 4. Add export to ID Validator for invalid entities.
    */
   const [showAllHelp] = useState(false)
+
+  const invalidIdText =
+    invalidIds.map((gene) => gene.submittedId).join('\n') ?? null
+  const unknownIds = (
+    <Popover id="unknown-id-list" title="Unknown IDs">
+      <CopyText text={invalidIdText} />
+      <ScrollablePre>{invalidIdText}</ScrollablePre>
+    </Popover>
+  )
+
   return (
     <div id="batch-results">
       <label
@@ -87,9 +107,19 @@ const GeneBatchResults = ({
             </div>
           </div>
           <div>
-            <div>Invalid:</div>
+            <div>Unknown:</div>
             <div>{invalidIds?.length ?? 0}</div>
-            <div></div>
+            <div>
+              {invalidIds?.length ? (
+                <OverlayTrigger
+                  trigger="click"
+                  rootClose
+                  placement="bottom"
+                  overlay={unknownIds}>
+                  <Button>View</Button>
+                </OverlayTrigger>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
@@ -101,7 +131,7 @@ const Add = ({ ids = [], handleOnClick, ...props }) => {
   if (ids.length !== 0) {
     return (
       <button
-        className="btn btn-xs"
+        className="btn btn-default btn-xs"
         type="button"
         {...props}
         onClick={() => handleOnClick(ids)}>

@@ -20,7 +20,7 @@ const CellLineFlag = ({
   let cellLineInputRows = []
   for (let i = 1; i <= 10; i++) {
     cellLineInputRows.push(
-      <div className="form-group" style={{ marginBottom: 0 }}>
+      <div key={i} className="form-group" style={{ marginBottom: 0 }}>
         <label className="col-xs-1 control-label">{i}</label>
         <div className="col-xs-4">
           <DataFlagTxtInput

@@ -24,10 +24,10 @@ const validationSchema = Yup.object().shape({
 })
 
 const GeneBatchForm = ({ onSubmit, ...props }) => {
-  const preSubmit = ({ ids: idField }) => {
+  const preSubmit = ({ ids: idField = '' }) => {
     try {
       // Convert string field into an array of IDs.
-      const ids = idField.split(/[\s,]+/)
+      const ids = idField.split(/[\s,]+/).filter((id) => /^\w+$/.test(id))
       // Pass IDs to user function.
       onSubmit(ids)
     } catch (error) {

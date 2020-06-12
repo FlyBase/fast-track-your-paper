@@ -55,10 +55,10 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   const addToGenesStudied = (genes = {}) => {
     if (Array.isArray(genes)) {
       // Append genes from batch upload to list and update the local state.
-      setGenesStudied(unionBy(genesStudied, genes, 'id'))
+      setGenesStudied(unionBy(genes, genesStudied, 'id'))
     } else {
       // Append gene to list and update the local state.
-      setGenesStudied(unionBy(genesStudied, [genes], 'id'))
+      setGenesStudied(unionBy([genes], genesStudied, 'id'))
     }
   }
 
@@ -89,7 +89,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
    * local state.
    */
   useEffect(() => {
-    const validAndUpdatedIds = [...validIds, ...updatedIds]
+    const validAndUpdatedIds = [...updatedIds, ...validIds]
     if (validAndUpdatedIds.length > 0) {
       addToGenesStudied(validAndUpdatedIds)
     }
@@ -168,154 +168,152 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
 
   return (
     <div className="container">
-      <form>
-        <div id="genesStepPanel" className="panel panel-primary">
-          <div className="panel-heading">
-            <h3 className="panel-title">
-              Associate Genes
-              <button
-                type="button"
-                className="pull-right btn btn-default btn-xs"
-                onClick={() => setShowAllHelp(!showAllHelp)}>
-                {showAllHelp ? 'Hide' : 'Show'} All Help Messages
-              </button>
-            </h3>
-          </div>
-          <div className="panel-body">
-            <div className="form-group">
-              <div className="col-sm-12 control-label">
-                <div className="radio">
-                  <label>
-                    <input
-                      type="radio"
-                      name="input-method"
-                      id="optionsRadios1"
-                      value="option1"
-                      checked={current.matches('search')}
-                      onChange={() => send('SEARCH')}
-                    />
-                    Use the FTYP gene search form to find{' '}
-                    <b>one or a few genes</b>
-                  </label>
-                  <IconHelp
-                    initial={showAllHelp}
-                    message="You will be selecting genes from search results to be connected to this publication."
+      <div id="genesStepPanel" className="panel panel-primary">
+        <div className="panel-heading">
+          <h3 className="panel-title">
+            Associate Genes
+            <button
+              type="button"
+              className="pull-right btn btn-default btn-xs"
+              onClick={() => setShowAllHelp(!showAllHelp)}>
+              {showAllHelp ? 'Hide' : 'Show'} All Help Messages
+            </button>
+          </h3>
+        </div>
+        <div className="panel-body">
+          <div className="form-group">
+            <div className="col-sm-12 control-label">
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    name="input-method"
+                    id="optionsRadios1"
+                    value="option1"
+                    checked={current.matches('search')}
+                    onChange={() => send('SEARCH')}
                   />
-                </div>
-                <div className="radio">
-                  <label>
-                    <input
-                      type="radio"
-                      name="input-method"
-                      id="optionsRadios2"
-                      value="option2"
-                      checked={current.matches('batch')}
-                      onChange={() => send('BATCH')}
-                    />
-                    Use the FTYP gene bulk upload form to submit{' '}
-                    <b>a large list of FlyBase gene IDs</b> (<i>e.g.</i>,
-                    FBgn0000490)
-                  </label>
-                  <IconHelp
-                    initial={showAllHelp}
-                    message="You will be entering a list of FlyBase gene identifiers (FBgn) to be connected to this publication."
+                  Use the FTYP gene search form to find{' '}
+                  <b>one or a few genes</b>
+                </label>
+                <IconHelp
+                  initial={showAllHelp}
+                  message="You will be selecting genes from search results to be connected to this publication."
+                />
+              </div>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    name="input-method"
+                    id="optionsRadios2"
+                    value="option2"
+                    checked={current.matches('batch')}
+                    onChange={() => send('BATCH')}
                   />
-                </div>
-
-                <div className="radio">
-                  <label>
-                    <input
-                      type="radio"
-                      name="input-method"
-                      id="optionsRadios3"
-                      value="option3"
-                      checked={current.matches('none')}
-                      onChange={() => send('NONE')}
-                    />
-                    <b>No genes</b> studied in this publication
-                  </label>
-                  <IconHelp
-                    initial={showAllHelp}
-                    message="You confirm that there should be no genes connected to this publication."
-                  />
-                </div>
+                  Use the FTYP gene bulk upload form to submit{' '}
+                  <b>a large list of FlyBase gene IDs</b> (<i>e.g.</i>,
+                  FBgn0000490)
+                </label>
+                <IconHelp
+                  initial={showAllHelp}
+                  message="You will be entering a list of FlyBase gene identifiers (FBgn) to be connected to this publication."
+                />
               </div>
 
-              <div className="col-sm-4"></div>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    name="input-method"
+                    id="optionsRadios3"
+                    value="option3"
+                    checked={current.matches('none')}
+                    onChange={() => send('NONE')}
+                  />
+                  <b>No genes</b> studied in this publication
+                </label>
+                <IconHelp
+                  initial={showAllHelp}
+                  message="You confirm that there should be no genes connected to this publication."
+                />
+              </div>
             </div>
-          </div>
-          {/* end panel body */}
 
-          {current.matches('search') && (
-            <GeneSearchInput onChange={handleOnChange}>
-              {current.matches('search.loaded') && (
-                <>
-                  <GeneSearchResults
-                    genes={filteredGeneResults}
-                    onGeneClick={addToGenesStudied}
-                    totalCount={totalCount}
-                    onDismiss={() => send('CLEAR')}
-                  />
-                  <GeneSearchMessage
-                    searchCount={geneResults.length}
-                    filteredCount={filteredGeneResults.length}
-                  />
-                </>
-              )}
-            </GeneSearchInput>
-          )}
-          {current.matches('batch') && (
+            <div className="col-sm-4"></div>
+          </div>
+        </div>
+        {/* end panel body */}
+
+        {current.matches('search') && (
+          <GeneSearchInput onChange={handleOnChange}>
+            {current.matches('search.loaded') && (
+              <>
+                <GeneSearchResults
+                  genes={filteredGeneResults}
+                  onGeneClick={addToGenesStudied}
+                  totalCount={totalCount}
+                  onDismiss={() => send('CLEAR')}
+                />
+                <GeneSearchMessage
+                  searchCount={geneResults.length}
+                  filteredCount={filteredGeneResults.length}
+                />
+              </>
+            )}
+          </GeneSearchInput>
+        )}
+        {current.matches('batch') && (
+          <div
+            css={`
+              display: flex;
+              flex-flow: row wrap;
+              justify-content: space-evenly;
+              form {
+                flex: 0 1 300px;
+              }
+            `}>
+            <GeneBatchForm onSubmit={handleOnUpload} />
             <div
               css={`
-                display: flex;
-                flex-flow: row wrap;
-                justify-content: space-evenly;
-                form {
-                  flex: 0 1 300px;
-                }
+                flex: 0 1 300px;
               `}>
-              <GeneBatchForm onSubmit={handleOnUpload} />
-              <div
-                css={`
-                  flex: 0 1 300px;
-                `}>
-                {current.matches({ batch: 'loaded' }) && (
-                  <GeneBatchResults
-                    validIds={validIds}
-                    invalidIds={invalidIds}
-                    updatedIds={updatedIds}
-                    splitIds={splitIds}
-                    onAdd={addToGenesStudied}
-                  />
-                )}
-                {current.matches({ batch: 'loading' }) && <h3>Uploading...</h3>}
-              </div>
+              {current.matches({ batch: 'loaded' }) && (
+                <GeneBatchResults
+                  validIds={validIds}
+                  invalidIds={invalidIds}
+                  updatedIds={updatedIds}
+                  splitIds={splitIds}
+                  onAdd={addToGenesStudied}
+                />
+              )}
+              {current.matches({ batch: 'loading' }) && <h3>Uploading...</h3>}
             </div>
-          )}
-          {!current.matches('none') && (
-            <GenesStudiedTable
-              genes={genesStudied}
-              onGeneDelete={removeFromGenesStudied}
-              onAbClick={setGeneAntibody}
-              showAbs={showAntibodyCells}>
-              <div className="checkbox" style={{ float: 'right', margin: 0 }}>
-                <label htmlFor="showAb" className="control-label">
-                  <input
-                    id="showAb"
-                    name="showAb"
-                    type="checkbox"
-                    onClick={() => setShowAntibodyCells(!showAntibodyCells)}
-                    defaultChecked={showAntibodyCells}
-                  />
-                  <b>antibodies&nbsp;generated</b>
-                </label>
-              </div>
-            </GenesStudiedTable>
-          )}
-          {children}
-        </div>
-        {/* end panel */}
-      </form>
+          </div>
+        )}
+        {!current.matches('none') && (
+          <GenesStudiedTable
+            genes={genesStudied}
+            onGeneDelete={removeFromGenesStudied}
+            onAbClick={setGeneAntibody}
+            showAbs={showAntibodyCells}>
+            <div className="checkbox" style={{ float: 'right', margin: 0 }}>
+              <label htmlFor="showAb" className="control-label">
+                <input
+                  id="showAb"
+                  name="showAb"
+                  type="checkbox"
+                  onClick={() => setShowAntibodyCells(!showAntibodyCells)}
+                  defaultChecked={showAntibodyCells}
+                />
+                <b>antibodies&nbsp;generated</b>
+              </label>
+            </div>
+          </GenesStudiedTable>
+        )}
+        {children}
+      </div>
+      {/* end panel */}
     </div>
   )
 }
