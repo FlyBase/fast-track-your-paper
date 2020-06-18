@@ -1,6 +1,9 @@
 import React from 'react'
 import IconHelp from '../IconHelp'
 
+import './index.css'
+
+
 const ResultMsg = ({ numPubs = 0, totalPubs = 0, keywords = '' }) => {
   if (numPubs === totalPubs) {
     return (
@@ -45,33 +48,37 @@ const PubResults = ({
                     totalPubs={totalPubs}
                     keywords={keywords}
                   />
-                  <div style={{ float: 'right' }}>
-                    {' '}
-                    curation
-                    <br />
-                    status{' '}
-                  </div>
+                  <div style={{ float: 'right' }}>curated</div>
                 </>
               )}
               <IconHelp initial={false}>
                 <div className="well well-sm">
                   Search results from the FlyBase bibliography database may
                   include papers or reviews, but other publication types are
-                  excluded here. Papers appear in blue, reviews in gold.
+                  excluded here. Papers available for annotation{' '}
+                  <b className="text-info">appear in blue</b>,{' '}
+                  <b className="text-warning">reviews in gold</b>.
                   <br />
-                  The 'curated' column indicates which publications in the
-                  search results have already been evaluated by FlyBase
-                  curators. Only those publications which have not yet been
-                  processed are available for submission through the Fast-Track
-                  Your Paper tool.
+                  The 'curated' column indicates which publications in
+                  the search results have already been annotated by FlyBase
+                  curators, or by other Fast-Track contributors.
+                  <br />
+                  Publications which have already been curated cannot be
+                  selected for further annotation in the Fast-Track Your Paper
+                  tool.
+                  <br />
+                  If you would like to suggest changes to the annotations
+                  on a paper which has already been curated, please make a{' '}
+                  <a href="/contact/email?subject=comm">Personal Communication to FlyBase</a>.
                 </div>
               </IconHelp>
             </div>
 
             {pubs.length > 0 && (
-              <div style={{ maxHeight: 300, overflowY: 'auto' }}>
+              <div className="panel-table">
                 <table
-                  className="table table-compact table-hover table-striped"
+                  id="PubResultsTable"
+                  className="table table-compact table-striped"
                   style={{ marginBottom: 0 }}>
                   <tbody>
                     {pubs.map((p, i) => (
@@ -80,7 +87,9 @@ const PubResults = ({
                         role="button"
                         tabIndex="0"
                         data-pub-idx={i}
-                        onClick={handleOnPubClick}>
+                        className={p.curationStatus ? 'disabled' : ''}
+                        title={p.curationStatus ? 'This publication has been '+p.curationStatus+' curated.' : ''}
+                        onClick={p.curationStatus ? handleOnPubClick : ''}>
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td
                           className={
@@ -88,14 +97,14 @@ const PubResults = ({
                               ? 'text-warning'
                               : 'text-info'
                           }>
-                          <b>{p?.type?.name}</b>: {p.miniref} <br />{' '}
+                          {/*<b>{p?.type?.name}</b>: */}{p.miniref} <br />{' '}
+                          {/*<b dangerouslySetInnerHTML={ { __html: p.title } } />*/}
                           <b>{p.title}</b>
                         </td>
                         <td>
                           {p.curationStatus ? (
-                            <span>{p.curationStatus}</span>
+                            <i className="fa fa-check"></i>
                           ) : (
-                            // <i className="fa fa-times"></i>
                             <span></span>
                           )}
                         </td>
@@ -109,8 +118,8 @@ const PubResults = ({
             <div className="panel-footer small">
               <strong>Can't find what you are looking for?</strong>
               <br />
-              FlyBase only incorporates and curates papers that are 'fully
-              published'. This means the paper must be available in its final,
+              FlyBase only incorporates and curates papers that are "fully
+              published." This means the paper must be available in its final,
               properly formatted version and have been assigned volume and page
               numbers. Publications that have not yet reached this stage will
               not be included in the FlyBase bibliography. Please wait until
@@ -120,12 +129,7 @@ const PubResults = ({
               If the above does not apply to you, you can still{' '}
               <button
                 className="btn btn-sm btn-link"
-                onClick={onCitationClick}
-                style={{
-                  padding: 0,
-                  borderWidth: 0,
-                  verticalAlign: 'initial',
-                }}>
+                onClick={onCitationClick}>
                 make a submission with a publication unknown to FlyBase.
               </button>{' '}
             </div>
