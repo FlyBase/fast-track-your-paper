@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import GeneStudiedRow from 'components/GenesStudiedRow'
 
 import './index.css'
+import GeneSelectionControls from '../GeneSelectionControls'
 
 const GenesStudiedTable = ({
   showAbs = false,
@@ -13,28 +14,82 @@ const GenesStudiedTable = ({
 }) => {
   let abcell = showAbs ? '' : 'abcell'
 
+  const [selectedGenes, setSelectedGenes] = useState(new Set())
+  const allGenesSelected = selectedGenes.size === genes.length
+  const numGenesUpdated =
+    genes.filter((gene) => gene.status === 'updated').length ?? 0
+  const numGenesSplit =
+    genes.filter((gene) => gene.status === 'split').length ?? 0
+
+  const handleGeneSelect = (isSelected, gene) => {
+    const copySelectedGenes = new Set(selectedGenes)
+    if (isSelected) {
+      copySelectedGenes.add(gene)
+    } else {
+      copySelectedGenes.delete(gene)
+    }
+    setSelectedGenes(copySelectedGenes)
+  }
+
+  /**
+   * Function for toggling all genes on / off.
+   */
+  const handleSelectAll = () => {
+    // If all genes are already on deselect all.
+    if (allGenesSelected) {
+      setSelectedGenes(new Set())
+    }
+    // Select all genes.
+    else {
+      setSelectedGenes(new Set(genes))
+    }
+  }
+
+  const handleSelectUpdated = () => {
+    setSelectedGenes(new Set(genes.filter((gene) => gene.status === 'updated')))
+  }
+
+  const handleSelectSplit = () => {
+    setSelectedGenes(new Set(genes.filter((gene) => gene.status === 'split')))
+  }
+
   return (
     <table className="table table-striped table-hover table-condensed">
       {showAbs ? (
         <colgroup>
+          <col style={{ width: '10px' }} />
           <col />
-          <col style={{ width: '8em' }} />
-          <col style={{ width: '8em' }} />
+          <col span="2" style={{ width: '8em' }} />
           <col style={{ width: '6em' }} />
         </colgroup>
       ) : (
         <colgroup>
+          <col style={{ width: '10px' }} />
           <col />
           <col style={{ width: '6em' }} />
         </colgroup>
       )}
       <thead>
         <tr>
+          <th />
           <th>Genes studied in this publication</th>
-          <th colSpan={showAbs ? '3' : '1'}>{children}</th>
+          <th colSpan={showAbs ? '4' : '2'}>{children}</th>
         </tr>
         <tr className="info">
-          <th>Gene</th>
+          <th />
+          <th>
+            Gene
+            <GeneSelectionControls
+              numGenes={genes.length}
+              numSelected={selectedGenes.size}
+              numUpdated={numGenesUpdated}
+              numSplit={numGenesSplit}
+              onSelectAll={handleSelectAll}
+              onSelectUpdated={handleSelectUpdated}
+              onSelectSplit={handleSelectSplit}
+              onDelete={() => onGeneDelete([...selectedGenes])}
+            />
+          </th>
           <th className={abcell}>monoclonal antibody</th>
           <th className={abcell}>polyclonal antibody</th>
           <th style={{ textAlign: 'center' }}>remove gene</th>
@@ -48,6 +103,8 @@ const GenesStudiedTable = ({
             gene={gene}
             onAbClick={onAbClick}
             onDelete={onGeneDelete}
+            isSelected={selectedGenes.has(gene)}
+            onSelect={handleGeneSelect}
           />
         ))}
       </tbody>

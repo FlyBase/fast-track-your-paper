@@ -151,6 +151,10 @@ export const createStepMachine = () => {
             confirm: {
               entry: ['persist'],
               on: {
+                PUB: 'pub',
+                AUTHOR: 'author',
+                FLAGS: 'flags',
+                GENES: 'genes',
                 NEXT: {
                   actions: ['confirmSubmission', 'persist'],
                   target: '#ftyp.submitted.sending',
@@ -182,7 +186,7 @@ export const createStepMachine = () => {
             success: {
               // When we leave this step we reset the context so the user
               // doesn't resubmit their data again.
-              exit: ['resetContext'],
+              exit: ['resetContext', 'resetLocalFlags'],
               on: {
                 START_OVER: { target: '#ftyp' },
               },
@@ -236,6 +240,12 @@ export const createStepMachine = () => {
             pubMachine,
           }
         }),
+        /**
+         * This function removes the local storage for the data flags step
+         */
+        resetLocalFlags: () => {
+          localStorage.removeItem('flag-step')
+        },
         confirmSubmission: assign({ confirmed: true }),
         // Spins up a pub step machine and assigns it to the local context.
         spawnPubMachine: assign((context, event) => {
