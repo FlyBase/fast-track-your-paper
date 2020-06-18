@@ -38,10 +38,9 @@ const ChosenPub = ({ pub, citation }) => {
               order to provide users with the most up-to-date information. Data
               in this internal database is 3-12 weeks ahead of the data
               displayed on the current release of the FlyBase website. This
-              means that a paper that is <i>unknown</i> or <i>uncurated</i>{' '}
-              according to the FlyBase website may actually already be known to
-              FlyBase and/or show a curated status when using the Fast-Track
-              Your Paper tool.
+              means that a paper that the FlyBase website indicates is unknown
+              or uncurated may actually already be known to FlyBase and/or show
+              a curated status when using the Fast-Track Your Paper tool.
             </p>
             <p>
               If you feel that there is an error, please{' '}
