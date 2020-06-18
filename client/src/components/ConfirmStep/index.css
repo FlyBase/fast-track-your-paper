@@ -13,3 +13,10 @@
 #confirmationGenesList li i {
   float: right;
 }
+li h5 {
+  padding-top: 8px;
+}
+li.datasetli {
+  list-style-type: none;
+  padding-left: 1em;
+}

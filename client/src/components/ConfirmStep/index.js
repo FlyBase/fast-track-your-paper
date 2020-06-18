@@ -66,6 +66,10 @@ const ConfirmStep = ({ submission = {}, children }) => {
       </p>
     </>
   )
+  let madeAbs = '; no antibodies generated';
+  for( let g=0; g<submission.genes.length; g++ ) {
+      if( submission.genes[g].antibody ) madeAbs = '';
+  }
   return (
     <>
       <h3>Confirmation</h3>
@@ -93,6 +97,28 @@ const ConfirmStep = ({ submission = {}, children }) => {
               /* logic here to parse Boolean flags, text, and arrays */
               let dataFlag = flags2HTMLstring[flag]
               let listyle = {}
+              if ( flag.match(/_line/) ) {
+                /* handle these after the map */
+                return false;
+              }
+              if ( flag.match(/dataset/) ) {
+                /* dataset_pheno and dataset_accessions are both sub-Booleans; dataset_accession_numbers is a list, maybe? */
+                /* handle these after the map */
+                /*if( submission.flags.dataset ) {
+									listyle = {
+										listStyleType: 'none',
+										paddingLeft: '1em',
+										fontWeight: 'bold',
+									}
+                }*/
+                return false;
+              }
+              if ( flag.match(/_disease/) ) {
+                if( !submission.flags.human_disease ) {
+                  return false;
+                }
+                {/* else handle normally below */}
+              }
               if (dataFlag === '') {
                 dataFlag =
                   '<b>' +
@@ -101,14 +127,6 @@ const ConfirmStep = ({ submission = {}, children }) => {
                   submission.flags[flag] +
                   '</pre>'
                 listyle = { listStyleType: 'none', margin: 0 }
-              }
-              if (flag.match(/dataset_/)) {
-                /* dataset_pheno and dataset_accessions are both sub-Booleans; dataset_accession_numbers is a list, maybe? */
-                listyle = {
-                  listStyleType: 'none',
-                  paddingLeft: '1em',
-                  fontWeight: 'bold',
-                }
               }
               if (typeof dataFlag == 'object') {
                 dataFlag =
@@ -125,22 +143,28 @@ const ConfirmStep = ({ submission = {}, children }) => {
               )
             }
           })}
-          {/*special handling for specific flag groups*/}
+          {/* special handling for specific flag groups */}
+          {/*   cell line flags   */}
           { submission.flags.cell_line && <li key="cell_line" dangerouslySetInnerHTML={{ __html: flags2HTMLstring.cell_line }} /> }
-          { submission.flags.stable_line && <li key="stable_line" dangerouslySetInnerHTML={{ __html: flags2HTMLstring.stable_line }} /> }
-          { submission.flags.commercial_line && <li key="commercial_line" dangerouslySetInnerHTML={{ __html: flags2HTMLstring.commercial_line }} /> }
-          { (submission.flags.cell_line_names || submission.flags.cell_line_sources) &&
+          { submission.flags.cell_line && submission.flags.stable_line && <li key="stable_line" dangerouslySetInnerHTML={{ __html: flags2HTMLstring.stable_line }} /> }
+          { submission.flags.cell_line && submission.flags.commercial_line && <li key="commercial_line" dangerouslySetInnerHTML={{ __html: flags2HTMLstring.commercial_line }} /> }
+          { submission.flags.cell_line && (submission.flags.cell_line_names || submission.flags.cell_line_sources) &&
             <li key="cell_line" style={{listStyleType: 'none'}}>
               <h5>Cell Lines Used:</h5>
               <table className="table">
                 <tr><th>Name</th><th>Source</th></tr>
-                
               </table>
             </li>
           }
+          {/*   dataset flags   */}
+          { submission.flags.dataset && <li key="dataset" dangerouslySetInnerHTML={{ __html: flags2HTMLstring.dataset }} /> }
+          { submission.flags.dataset && submission.flags.dataset_pheno &&
+            <li className="datasetli" key="dataset_pheno" dangerouslySetInnerHTML={{ __html: "<b>"+flags2HTMLstring.dataset_pheno+"</b>" }} />}
+          { submission.flags.dataset && submission.flags.dataset_accessions &&
+            <li className="datasetli" key="dataset_accessions" dangerouslySetInnerHTML={{ __html: "<b>dataset repository IDs: </b>"+submission.flags.dataset_accession_numbers }} />}
         </ul>
         <h4>
-          Genes Studied ({submission.genes.length}):
+          Genes Studied ({submission.genes.length}{madeAbs}):
           <button className="btn btn-default">Edit</button>
         </h4>
         <ul id="confirmationGenesList" className='bg-warning'>
