@@ -97,7 +97,7 @@ const PubResults = ({
                               ' curated.'
                             : ''
                         }
-                        onClick={p.curationStatus ? handleOnPubClick : ''}>
+                        onClick={!p?.curationStatus ? handleOnPubClick : null}>
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td
                           className={
