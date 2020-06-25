@@ -3,7 +3,6 @@ import IconHelp from '../IconHelp'
 
 import './index.css'
 
-
 const ResultMsg = ({ numPubs = 0, totalPubs = 0, keywords = '' }) => {
   if (numPubs === totalPubs) {
     return (
@@ -59,17 +58,20 @@ const PubResults = ({
                   <b className="text-info">appear in blue</b>,{' '}
                   <b className="text-warning">reviews in gold</b>.
                   <br />
-                  The 'curated' column indicates which publications in
-                  the search results have already been annotated by FlyBase
+                  The 'curated' column indicates which publications in the
+                  search results have already been annotated by FlyBase
                   curators, or by other Fast-Track contributors.
                   <br />
                   Publications which have already been curated cannot be
                   selected for further annotation in the Fast-Track Your Paper
                   tool.
                   <br />
-                  If you would like to suggest changes to the annotations
-                  on a paper which has already been curated, please make a{' '}
-                  <a href="/contact/email?subject=comm">Personal Communication to FlyBase</a>.
+                  If you would like to suggest changes to the annotations on a
+                  paper which has already been curated, please make a{' '}
+                  <a href="/contact/email?subject=comm">
+                    Personal Communication to FlyBase
+                  </a>
+                  .
                 </div>
               </IconHelp>
             </div>
@@ -88,7 +90,13 @@ const PubResults = ({
                         tabIndex="0"
                         data-pub-idx={i}
                         className={p.curationStatus ? 'disabled' : ''}
-                        title={p.curationStatus ? 'This publication has been '+p.curationStatus+' curated.' : ''}
+                        title={
+                          p.curationStatus
+                            ? 'This publication has been ' +
+                              p.curationStatus +
+                              ' curated.'
+                            : ''
+                        }
                         onClick={p.curationStatus ? handleOnPubClick : ''}>
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td
@@ -97,7 +105,8 @@ const PubResults = ({
                               ? 'text-warning'
                               : 'text-info'
                           }>
-                          {/*<b>{p?.type?.name}</b>: */}{p.miniref} <br />{' '}
+                          {/*<b>{p?.type?.name}</b>: */}
+                          {p.miniref} <br />{' '}
                           {/*<b dangerouslySetInnerHTML={ { __html: p.title } } />*/}
                           <b>{p.title}</b>
                         </td>
@@ -127,9 +136,7 @@ const PubResults = ({
               using the Fast-Track Your Paper tool.
               <br />
               If the above does not apply to you, you can still{' '}
-              <button
-                className="btn btn-sm btn-link"
-                onClick={onCitationClick}>
+              <button className="btn btn-sm btn-link" onClick={onCitationClick}>
                 make a submission with a publication unknown to FlyBase.
               </button>{' '}
             </div>
