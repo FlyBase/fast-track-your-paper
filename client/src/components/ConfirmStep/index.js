@@ -86,9 +86,7 @@ const ConfirmStep = ({ submission = {}, send = () => {}, children }) => {
                 if (!submission.flags.human_disease) {
                   return false
                 }
-                {
-                  /* else handle normally below */
-                }
+                /* else handle normally below */
               }
               if (dataFlag === '') {
                 dataFlag =
