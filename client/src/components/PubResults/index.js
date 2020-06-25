@@ -26,10 +26,12 @@ const PubResults = ({
   onPubClick = () => {},
   onCitationClick = () => {},
 }) => {
-  const handleOnPubClick = (e) => {
-    const idx = e.currentTarget.getAttribute('data-pub-idx')
-    const pub = pubs[idx]
-    onPubClick(pub, e)
+  const handleOnPubClick = (e, curationStatus) => {
+    if (!curationStatus) {
+      const idx = e.currentTarget.getAttribute('data-pub-idx')
+      const pub = pubs[idx]
+      onPubClick(pub, e)
+    }
   }
   return (
     <div style={{ paddingTop: '1em' }}>
@@ -97,7 +99,7 @@ const PubResults = ({
                               ' curated.'
                             : ''
                         }
-                        onClick={p.curationStatus ? handleOnPubClick : ''}>
+                        onClick={(e) => handleOnPubClick(e, p.curationStatus)}>
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td
                           className={
