@@ -1,4 +1,5 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 import { useMachine } from '@xstate/react'
 import { Divider } from 'antd'
 import { useApolloClient } from '@apollo/client'
@@ -8,6 +9,7 @@ import styled from 'styled-components/macro'
 import { getInitialContext, createStepMachine } from 'machines/StepMachine'
 
 import PubStep from 'components/PubStep'
+import EmailStep from 'components/EmailStep'
 import AuthorStep from 'components/AuthorStep'
 import FlagsStep from 'components/FlagsStep'
 import GenesStep from 'components/GenesStep'
@@ -39,6 +41,21 @@ const PubStepWrapper = ({ nextClick, ...props }) => (
       </Next>
     </StepNavigation>
   </PubStep>
+)
+
+const EmailStepWrapper = ({ prevClick, nextClick, ...props }) => (
+  <EmailStep {...props}>
+    <StepNavigation>
+      <Prev onClick={prevClick} aria-labelledby="startover">
+        <span id="startover">Select another publication</span>
+      </Prev>
+      <Next onClick={nextClick} aria-labelledby="authorstep">
+        <span id="authorstep">
+          <b>Save</b> Publication step and go to Contact step
+        </span>
+      </Next>
+    </StepNavigation>
+  </EmailStep>
 )
 
 const AuthorStepWrapper = ({ prevClick, nextClick, ...props }) => (
@@ -99,40 +116,60 @@ const SubmitStepWrapper = ({ nextClick, ...props }) => (
   </SubmitStep>
 )
 
-const localStorageKey = 'ftyp-state'
-const localStorageState = fetchFromLocalStorage(
-  localStorageKey,
-  getInitialContext()
-)
-
-let hydratedMachine
-try {
-  hydratedMachine = createStepMachine().withConfig(
-    {
-      actions: {
-        persist: (context) => {
-          storeToLocalStorage(localStorageKey, context)
-        },
-      },
-    },
-    localStorageState
-  )
-} catch (error) {
-  hydratedMachine = createStepMachine().withConfig(
-    {
-      actions: {
-        persist: (context) => {
-          storeToLocalStorage(localStorageKey, context)
-        },
-      },
-    },
+/**
+ * Insantiaties a new step machine using either the initial state context
+ * or a context that has been hydrated from the local stroage data.
+ *
+ * @returns {*} - The hydrated Xstate state machine.
+ */
+const getHydratedMachine = () => {
+  const localStorageKey = 'ftyp-state'
+  const localStorageState = fetchFromLocalStorage(localStorageKey, () =>
     getInitialContext()
   )
+  const persistAction = {
+    actions: {
+      persist: (context) => {
+        storeToLocalStorage(localStorageKey, context)
+      },
+    },
+  }
+
+  let hydratedMachine
+  try {
+    hydratedMachine = createStepMachine().withConfig(
+      persistAction,
+      localStorageState
+    )
+  } catch (error) {
+    hydratedMachine = createStepMachine().withConfig(
+      persistAction,
+      getInitialContext()
+    )
+  }
+  return hydratedMachine
 }
 
 function StepContainer() {
-  const [current, send] = useMachine(hydratedMachine)
+  const { fbrf: fbrfUrl, email } = useParams()
+  const history = useHistory()
   const client = useApolloClient()
+  const [current, send] = useMachine(getHydratedMachine())
+
+  /**
+   * This useEffect hook sets the FBrf and email from
+   * the URL when a user comes into the tool via a path like
+   *
+   *  /FBrf12345/john.doe@nowhere.com
+   *
+   *  It only runs when the email, fbrfUrl or send function change
+   *  and if the fbrf and email are defined.
+   */
+  useEffect(() => {
+    if (fbrfUrl && email) {
+      send('SET_FBRF_EMAIL', { fbrf: fbrfUrl, email })
+    }
+  }, [email, fbrfUrl, send])
 
   // Reference to the Formik bag object.
   // This lets us trigger a submit from outside the form, which is needed
@@ -145,6 +182,7 @@ function StepContainer() {
     authorMachine,
     geneMachine,
     submission: { publication, citation, contact, flags, genes },
+    fbrf,
     output,
     error,
   } = current.context
@@ -155,19 +193,35 @@ function StepContainer() {
    */
   const currentStepIdx = steps.findIndex((s) => {
     // Check for nested pending state
-    if (current.value.pending) {
-      return s.name === current.value.pending
+    if (current.matches('pending')) {
+      if (current.matches('pending.email')) {
+        return s.name === 'pub'
+      } else {
+        return current.matches(`pending.${s.name}`)
+      }
     }
-    return s.name === current.value.submitted
+    return current.matches(`submitted.${s.name}`)
   })
   let step
 
-  if (current.matches({ pending: 'pub' })) {
+  if (current.matches('pending.pub')) {
     step = (
       <PubStepWrapper
         service={pubMachine}
-        selected={publication}
+        selectedPub={publication}
         citation={citation}
+        nextClick={() => send('NEXT')}
+      />
+    )
+  } else if (current.matches('pending.email')) {
+    step = (
+      <EmailStepWrapper
+        dispatch={send}
+        fbrf={fbrfUrl ?? fbrf}
+        prevClick={() => {
+          send('RESET')
+          history.push('/')
+        }}
         nextClick={() => send('NEXT')}
       />
     )
@@ -232,7 +286,7 @@ function StepContainer() {
     step = (
       <ConfirmStepWrapper
         submission={current.context.submission}
-        send={send}
+        dispatch={send}
         prevClick={() => send('PREV')}
         nextClick={() => send('NEXT', { client })}
       />
@@ -256,7 +310,11 @@ function StepContainer() {
   }
 
   return (
-    <div>
+    <div
+      css={`
+        min-width: 60vw;
+        padding: 2em 0;
+      `}>
       <StepIndicator steps={steps} currentStep={currentStepIdx} />
       <Divider />
       <div

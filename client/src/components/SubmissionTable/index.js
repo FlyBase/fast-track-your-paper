@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import {
   DataTypeProvider,
   SortingState,
@@ -32,6 +33,7 @@ const columns = [
     getCellValue: (row) => (row?.userData?.genes ?? []).length,
   },
 ]
+
 const FilterIcon = ({ type }) => {
   if (type === 'month') {
     return <i className="glyphicon glyphicon-calendar" />
@@ -39,10 +41,19 @@ const FilterIcon = ({ type }) => {
   return <TableFilterRow.Icon type={type} />
 }
 
+const FBrfFormatter = ({ value: fbrf }) => (
+  <Link to={`/admin/${fbrf}`}>{fbrf}</Link>
+)
+
+const FBrfTypeProvider = (props) => (
+  <DataTypeProvider formatterComponent={FBrfFormatter} {...props} />
+)
+
 const SubmissionTable = ({ rows }) => {
   return (
     <div>
       <Grid rows={rows} columns={columns}>
+        <FBrfTypeProvider for={['fbrf']} />
         <DataTypeProvider
           for={['submittedToFlybase']}
           availableFilterOperations={[

@@ -3,12 +3,12 @@ import { flags2HTMLstring } from './flagText'
 
 import './index.css'
 
-const ConfirmStep = ({ submission = {}, send = () => {}, children }) => {
+const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
   let pubcite = submission.publication ? (
     <>
       <h4>
         Publication ({submission?.publication?.type?.name}):
-        <button onClick={() => send('PUB')} className="btn btn-default">
+        <button onClick={() => dispatch('PUB')} className="btn btn-default">
           Edit
         </button>
       </h4>
@@ -21,7 +21,7 @@ const ConfirmStep = ({ submission = {}, send = () => {}, children }) => {
     <>
       <h4>
         Citation:
-        <button onClick={() => send('PUB')} className="btn btn-default">
+        <button onClick={() => dispatch('PUB')} className="btn btn-default">
           Edit
         </button>
       </h4>
@@ -42,7 +42,9 @@ const ConfirmStep = ({ submission = {}, send = () => {}, children }) => {
         {pubcite}
         <h4>
           Contact Information:
-          <button onClick={() => send('AUTHOR')} className="btn btn-default">
+          <button
+            onClick={() => dispatch('AUTHOR')}
+            className="btn btn-default">
             Edit
           </button>
         </h4>
@@ -56,7 +58,7 @@ const ConfirmStep = ({ submission = {}, send = () => {}, children }) => {
         </p>
         <h4>
           Types of data:
-          <button onClick={() => send('FLAGS')} className="btn btn-default">
+          <button onClick={() => dispatch('FLAGS')} className="btn btn-default">
             Edit
           </button>
         </h4>

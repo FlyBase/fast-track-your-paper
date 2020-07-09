@@ -11,7 +11,7 @@ const NoPubWarning = () => (
 
 const PubStep = ({
   service,
-  selected = undefined,
+  selectedPub = undefined,
   citation = undefined,
   children,
 }) => {
@@ -49,9 +49,9 @@ const PubStep = ({
             {current.matches('nopub') && <NoPubWarning />}
             {!current.matches('citation') && <PubSearchForm send={send} />}
             {current.matches('citation') && <Citation send={send} />}
-            {(selected || citation) && (
+            {(selectedPub || citation) && (
               <>
-                <ChosenPub pub={selected} citation={citation} />
+                <ChosenPub pub={selectedPub} citation={citation} />
                 {children}
               </>
             )}

@@ -6,11 +6,11 @@
  * @param defaultVal - The value to use should it not exist or fail to parse.
  * @returns {{}|any}
  */
-export const fetchFromLocalStorage = (key, defaultVal = {}) => {
+export const fetchFromLocalStorage = (key, getDefaultVal = () => {}) => {
   try {
-    return JSON.parse(localStorage.getItem(key)) ?? defaultVal
+    return JSON.parse(localStorage.getItem(key)) ?? getDefaultVal()
   } catch (e) {
-    return defaultVal
+    return getDefaultVal()
   }
 }
 

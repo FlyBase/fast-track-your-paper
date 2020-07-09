@@ -40,10 +40,14 @@ const initialContext = {
     flags: {},
     // Genes
     genes: [],
+    // FBrf from URL
+    fbrf: null,
   },
 }
 
-export const getInitialContext = () => cloneDeep(initialContext)
+export const getInitialContext = () => {
+  return cloneDeep(initialContext)
+}
 
 export const createStepMachine = () => {
   // Main FTYP machine configuration.
@@ -67,7 +71,10 @@ export const createStepMachine = () => {
           entry: ['initStepMachine'],
           on: {
             // Machine initialized, go to pending state.
-            '': 'pending',
+            '': [
+              { target: 'pending.email', cond: 'isFromEmail' },
+              { target: 'pending' },
+            ],
           },
         },
         pending: {
@@ -77,11 +84,29 @@ export const createStepMachine = () => {
            * Handles resetting the machine state.
            */
           on: {
+            SET_FBRF_EMAIL: {
+              target: '.email',
+              actions: ['setEmailFbrf', 'persist'],
+            },
             RESET: { target: '.pub', actions: ['resetContext', 'persist'] },
           },
           // Sub states of the top level pending state.
           states: {
             // Pub state
+            email: {
+              entry: ['persist'],
+              on: {
+                // Event for selecting a publication.
+                SET_PUB: {
+                  actions: ['setPub', 'persist'],
+                },
+                NEXT: {
+                  target: 'author',
+                  actions: ['persist'],
+                  cond: 'hasPublication',
+                },
+              },
+            },
             pub: {
               // Call the 'persist' action to store app state to localstorage
               // or whatever the persist action implements.
@@ -238,6 +263,7 @@ export const createStepMachine = () => {
           return {
             submission,
             pubMachine,
+            fbrf: null,
           }
         }),
         /**
@@ -338,6 +364,14 @@ export const createStepMachine = () => {
             },
           }
         }),
+        setEmailFbrf: assign((context, event) => {
+          const { submission } = context
+          submission.contact.email = event.email
+          return {
+            fbrf: event.fbrf,
+            ...submission,
+          }
+        }),
         /*
         Lets the pub step machine know that an error occurred.
          */
@@ -352,6 +386,12 @@ export const createStepMachine = () => {
             (submission.publication && submission.publication.uniquename) ||
             submission.citation
           )
+        },
+        isFromEmail: (context, event) => {
+          const fbrf = context?.fbrf
+          const email = context?.submission?.contact?.email
+          console.log('isFromEmail', fbrf, email)
+          return fbrf && email
         },
         hasContact: (context, event) => {
           const {
