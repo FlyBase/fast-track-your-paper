@@ -334,10 +334,36 @@ export const createStepMachine = () => {
         }),
         setFlags: assign((context, event) => {
           const { submission } = context
+          const { flags = {} } = event
+          if (!flags?.cell_line) {
+            /**
+             * Remove any cell line data that was entered if the cell_line flag
+             * is unchecked.
+             */
+            flags.cell_lines = []
+            flags.stable_line = false
+            flags.commercial_line = false
+          }
+          if (!flags?.human_disease) {
+            /**
+             * Remove any human disease text that was entered if the human_disease flag
+             * is unchecked.
+             */
+            flags.human_disease_text = ''
+          }
+          if (!flags?.dataset) {
+            /**
+             * Remove any dataset flags that were entered if the dataset flag
+             * is unchecked.
+             */
+            flags.dataset_pheno = false
+            flags.dataset_accessions = false
+            flags.dataset_accession_numbers = ''
+          }
           return {
             submission: {
               ...submission,
-              flags: event?.flags ?? {},
+              flags,
             },
           }
         }),
