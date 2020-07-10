@@ -205,6 +205,7 @@ function StepContainer() {
       <FlagsStepWrapper
         setFlags={(data) => send('SET_FLAGS', data)}
         flags={flags}
+        isReview={publication?.type?.name === 'review'}
         bagRef={flagsFormikBagRef}
         prevClick={async () => {
           /**
