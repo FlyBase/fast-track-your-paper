@@ -2,7 +2,7 @@ import { useField } from 'formik'
 import React from 'react'
 
 const DataFlagTxtInput = ({ ...props }) => {
-  const [field, meta] = useField({ ...props, type: 'textarea' })
+  const [field, meta] = useField({ ...props, type: 'input' })
 
   return (
     <>
