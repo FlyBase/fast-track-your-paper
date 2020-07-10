@@ -44,12 +44,12 @@ const GeneSearchResults = ({
   onDismiss = () => {},
   z = '',
 }) => (
-  <div id="geneSearchSuggestions" onMouseLeave={onDismiss}>
+  <div id="geneSearchSuggestions" >{/*onMouseLeave={onDismiss}*/}
     <div id="geneSearchSuggestionsContainer">
-      <button onClick={onDismiss}>
-        <i id="geneSearchSuggestionsDismiss" className="fa fa-times-circle"></i>
-      </button>
       <div id="geneSearchSuggestionsSummary" className="bg-info">
+        <button id="geneSearchSuggestionsDismiss" onClick={onDismiss}>
+          <i className="fa fa-times-circle"></i>
+        </button>
         Showing {genes.length} of {totalCount} matches.&emsp;
       </div>
       <ul>
