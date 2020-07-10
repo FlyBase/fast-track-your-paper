@@ -79,7 +79,7 @@ const GeneBatchResults = ({
         css={`
           margin: 0;
         `}>
-        Uploaded Genes
+        Uploaded Gene IDs
       </label>
       <div className="panel panel-default">
         <div className="panel-body">
