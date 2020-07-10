@@ -390,7 +390,6 @@ export const createStepMachine = () => {
         isFromEmail: (context, event) => {
           const fbrf = context?.fbrf
           const email = context?.submission?.contact?.email
-          console.log('isFromEmail', fbrf, email)
           return fbrf && email
         },
         hasContact: (context, event) => {
