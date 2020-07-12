@@ -180,20 +180,6 @@ BEGIN
 END
 $$ LANGUAGE plpgsql STABLE;
 
-/*
- * Postgraphile computed field: pub.has_submission or pub.hasSubmission in GraphQL
- *
- * This function is used by Postgraphile to autogenerate a computed field for the pub table.
- * The GraphQL API exposes this function as a field along with all the
- * other fields of the pub table.
- *
- * This field indicates whether the pub submitted as an argument already has a submission.
- * on record.
- *
- */
-CREATE OR REPLACE FUNCTION public.pub_has_submission(pub pub) RETURNS bool AS $$
-SELECT count(*) = 1 FROM ftyp_hidden.submissions WHERE ftyp_hidden.submissions.fbrf = $1.uniquename;
-$$ LANGUAGE sql STABLE;
 
 CREATE OR REPLACE FUNCTION ftyp_hidden.array_unique_stable(p_input ANYARRAY)
     RETURNS ANYARRAY
@@ -405,6 +391,21 @@ CREATE INDEX fbrf_idx ON ftyp_hidden.submissions (fbrf);
 CREATE INDEX submitted_to_flybase_idx ON ftyp_hidden.submissions (submitted_to_flybase);
 CREATE INDEX date_processed ON ftyp_hidden.submissions (date_processed);
 CREATE INDEX user_data_idx1 ON ftyp_hidden.submissions USING GIN (user_data);
+
+/*
+ * Postgraphile computed field: pub.has_submission or pub.hasSubmission in GraphQL
+ *
+ * This function is used by Postgraphile to autogenerate a computed field for the pub table.
+ * The GraphQL API exposes this function as a field along with all the
+ * other fields of the pub table.
+ *
+ * This field indicates whether the pub submitted as an argument already has a submission.
+ * on record.
+ *
+ */
+CREATE OR REPLACE FUNCTION public.pub_has_submission(pub pub) RETURNS bool AS $$
+SELECT count(*) = 1 FROM ftyp_hidden.submissions WHERE ftyp_hidden.submissions.fbrf = $1.uniquename;
+$$ LANGUAGE sql STABLE;
 
 CREATE OR REPLACE FUNCTION ftyp.submit_paper(submission jsonb) RETURNS timestamptz AS $$
   INSERT INTO ftyp_hidden.submissions
