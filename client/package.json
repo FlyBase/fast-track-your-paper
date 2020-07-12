@@ -4,17 +4,17 @@
   "private": true,
   "proxy": "http://localhost:8888",
   "dependencies": {
-    "@apollo/client": "^3.0.0-beta.50",
-    "@devexpress/dx-react-core": "^2.6.3",
-    "@devexpress/dx-react-grid": "^2.6.3",
-    "@devexpress/dx-react-grid-bootstrap3": "^2.6.3",
+    "@apollo/client": "^3.0.0-rc.11",
+    "@devexpress/dx-react-core": "^2.6.4",
+    "@devexpress/dx-react-grid": "^2.6.4",
+    "@devexpress/dx-react-grid-bootstrap3": "^2.6.4",
     "@rooks/use-localstorage": "^3.6.0",
-    "@sentry/browser": "^5.15.5",
+    "@sentry/browser": "^5.19.1",
     "@xstate/react": "^0.8.1",
-    "antd": "^4.2.4",
+    "antd": "^4.4.1",
     "formik": "^2.1.4",
     "formik-persist": "^1.1.0",
-    "graphql": "^15.0.0",
+    "graphql": "^15.3.0",
     "graphql.macro": "^1.4.2",
     "lodash.clonedeep": "^4.5.0",
     "lodash.differenceby": "^4.8.0",
@@ -27,10 +27,10 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.1",
-    "styled-components": "^5.1.0",
+    "styled-components": "^5.1.1",
     "use-clipboard-copy": "^0.1.2",
-    "xstate": "^4.10.0",
-    "yup": "^0.29.0"
+    "xstate": "^4.11.0",
+    "yup": "^0.29.1"
   },
   "scripts": {
     "prestart": "yarn run format",
@@ -57,10 +57,10 @@
     "extends": "react-app"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.8.0",
-    "@testing-library/react": "^10.0.4",
+    "@testing-library/jest-dom": "^5.11.0",
+    "@testing-library/react": "^10.4.5",
     "prettier": "^2.0.2",
-    "react-axe": "^3.4.1"
+    "react-axe": "^3.5.3"
   },
   "prettier": {
     "semi": false,

@@ -40,10 +40,14 @@ const initialContext = {
     flags: {},
     // Genes
     genes: [],
+    // FBrf from URL
+    fbrf: null,
   },
 }
 
-export const getInitialContext = () => cloneDeep(initialContext)
+export const getInitialContext = () => {
+  return cloneDeep(initialContext)
+}
 
 export const createStepMachine = () => {
   // Main FTYP machine configuration.
@@ -67,7 +71,10 @@ export const createStepMachine = () => {
           entry: ['initStepMachine'],
           on: {
             // Machine initialized, go to pending state.
-            '': 'pending',
+            '': [
+              { target: 'pending.email', cond: 'isFromEmail' },
+              { target: 'pending' },
+            ],
           },
         },
         pending: {
@@ -77,11 +84,29 @@ export const createStepMachine = () => {
            * Handles resetting the machine state.
            */
           on: {
+            SET_FBRF_EMAIL: {
+              target: '.email',
+              actions: ['setEmailFbrf', 'persist'],
+            },
             RESET: { target: '.pub', actions: ['resetContext', 'persist'] },
           },
           // Sub states of the top level pending state.
           states: {
             // Pub state
+            email: {
+              entry: ['persist'],
+              on: {
+                // Event for selecting a publication.
+                SET_PUB: {
+                  actions: ['setPub', 'persist'],
+                },
+                NEXT: {
+                  target: 'author',
+                  actions: ['persist'],
+                  cond: 'hasPublication',
+                },
+              },
+            },
             pub: {
               // Call the 'persist' action to store app state to localstorage
               // or whatever the persist action implements.
@@ -238,6 +263,7 @@ export const createStepMachine = () => {
           return {
             submission,
             pubMachine,
+            fbrf: null,
           }
         }),
         /**
@@ -308,10 +334,36 @@ export const createStepMachine = () => {
         }),
         setFlags: assign((context, event) => {
           const { submission } = context
+          const { flags = {} } = event
+          if (!flags?.cell_line) {
+            /**
+             * Remove any cell line data that was entered if the cell_line flag
+             * is unchecked.
+             */
+            flags.cell_lines = []
+            flags.stable_line = false
+            flags.commercial_line = false
+          }
+          if (!flags?.human_disease) {
+            /**
+             * Remove any human disease text that was entered if the human_disease flag
+             * is unchecked.
+             */
+            flags.human_disease_text = ''
+          }
+          if (!flags?.dataset) {
+            /**
+             * Remove any dataset flags that were entered if the dataset flag
+             * is unchecked.
+             */
+            flags.dataset_pheno = false
+            flags.dataset_accessions = false
+            flags.dataset_accession_numbers = ''
+          }
           return {
             submission: {
               ...submission,
-              flags: event?.flags ?? {},
+              flags,
             },
           }
         }),
@@ -338,6 +390,14 @@ export const createStepMachine = () => {
             },
           }
         }),
+        setEmailFbrf: assign((context, event) => {
+          const { submission } = context
+          submission.contact.email = event.email
+          return {
+            fbrf: event.fbrf,
+            ...submission,
+          }
+        }),
         /*
         Lets the pub step machine know that an error occurred.
          */
@@ -352,6 +412,11 @@ export const createStepMachine = () => {
             (submission.publication && submission.publication.uniquename) ||
             submission.citation
           )
+        },
+        isFromEmail: (context, event) => {
+          const fbrf = context?.fbrf
+          const email = context?.submission?.contact?.email
+          return fbrf && email
         },
         hasContact: (context, event) => {
           const {

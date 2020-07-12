@@ -1,22 +1,30 @@
 import React from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import StepContainer from 'components/StepContainer'
 import FtypAdmin from 'components/FtypAdmin'
+import SubmissionView from '../SubmissionView'
 
 function App() {
   return (
     <div>
       <Router>
-        <Route exact path="/" component={StepContainer} />
-        <Route path="/admin" component={FtypAdmin} />
-        <Route path="/:fbrf/:email" component={EmailSubmission} />
+        <Switch>
+          <Route exact path="/">
+            <StepContainer />
+          </Route>
+          <Route path="/admin/:fbrf">
+            <SubmissionView />
+          </Route>
+          <Route path="/admin">
+            <FtypAdmin />
+          </Route>
+          <Route path="/:fbrf/:email">
+            <StepContainer />
+          </Route>
+        </Switch>
       </Router>
     </div>
   )
 }
-
-const EmailSubmission = () => (
-  <div>This is where the email link handling will go</div>
-)
 
 export default App

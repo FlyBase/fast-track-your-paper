@@ -18,13 +18,13 @@ const CellLineFlag = ({
   ...props
 }) => {
   let cellLineInputRows = []
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 0; i <= 9; i++) {
     cellLineInputRows.push(
       <div key={i} className="form-group" style={{ marginBottom: 0 }}>
-        <label className="col-xs-1 control-label">{i}</label>
+        <label className="col-xs-1 control-label">{i + 1}</label>
         <div className="col-xs-4">
           <DataFlagTxtInput
-            name={'cell_line_name_' + i}
+            name={`cell_lines.${i}.name`}
             placeholder="e.g. S2-DGRC, S2-cdi-GFP"
             disabled={disabled}
             style={textInputStyle}
@@ -32,7 +32,7 @@ const CellLineFlag = ({
         </div>
         <div className="col-xs-6">
           <DataFlagTxtInput
-            name={'cell_line_source_' + i}
+            name={`cell_lines.${i}.source`}
             placeholder="e.g. DGRC, this study"
             disabled={disabled}
             style={textInputStyle}

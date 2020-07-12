@@ -89,7 +89,11 @@ const PubResults = ({
                         role="button"
                         tabIndex="0"
                         data-pub-idx={i}
-                        className={p.curationStatus ? 'disabled' : ''}
+                        className={
+                          p?.curationStatus || p?.hasSubmission
+                            ? 'disabled'
+                            : ''
+                        }
                         title={
                           p.curationStatus
                             ? 'This publication has been ' +
@@ -97,7 +101,11 @@ const PubResults = ({
                               ' curated.'
                             : ''
                         }
-                        onClick={p.curationStatus ? null : handleOnPubClick}>
+                        onClick={
+                          !(p?.curationStatus || p.hasSubmission)
+                            ? handleOnPubClick
+                            : null
+                        }>
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td
                           className={

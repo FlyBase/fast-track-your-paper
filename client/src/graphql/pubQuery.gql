@@ -6,6 +6,7 @@ query PubQuery($terms: String) {
       miniref
       title
       curationStatus
+      hasSubmission
       type {
         name
       }

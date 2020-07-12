@@ -1,0 +1,19 @@
+# This query is used to pull a single pub by FBrf out of
+# the database.  This is currently used for the email
+# link where authors follow a direct link into the tool
+# and we prepopulate their subbmision based on the FBrf
+# in the link.
+query GetPub($fbrf: String!) {
+  pubs(condition: { uniquename: $fbrf }, first: 1) {
+    nodes {
+      uniquename
+      miniref
+      title
+      curationStatus
+      hasSubmission
+      type {
+        name
+      }
+    }
+  }
+}

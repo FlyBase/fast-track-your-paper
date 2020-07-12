@@ -1,4 +1,5 @@
 DATA_DIR   = db/data
+SUBMISSION_JSON = $(DATA_DIR)/ftyp-submissions.json
 
 all: pull-data load-data build-client
 
@@ -37,5 +38,12 @@ load-data: up
 
 $(DATA_DIR)/chado_feature.tsv $(DATA_DIR)/chado $(DATA_DIR)/feature:
 	cd db; mkdir -p data && scripts/pull_chado_data.sh
+
+dump-submissions:$(SUBMISSION_JSON)
+
+$(SUBMISSION_JSON):
+	docker-compose exec -T -u postgres db psql ftyp -c "select json_agg(row_to_json(row)) from (select * from ftyp_hidden.submissions) as row;" -t  > $(SUBMISSION_JSON)
+
+
 
 .PHONY: up down clean load-data start stop pull-images
