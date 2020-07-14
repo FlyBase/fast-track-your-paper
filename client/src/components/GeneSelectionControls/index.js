@@ -20,21 +20,21 @@ const GeneSelectionControls = ({
         bsSize="xsmall"
         type="button"
         onClick={onSelectAll}
-        disabled={numGenes === 0 ? 'disabled' : ''}>
+        disabled={numGenes === 0}>
         {allSelected ? 'Deselect All' : 'Select All'}
       </Button>
       <Button
         bsSize="xsmall"
         type="button"
         onClick={onSelectUpdated}
-        disabled={numUpdated === 0 ? 'disabled' : ''}>
+        disabled={numUpdated === 0}>
         Select Updated
       </Button>
       <Button
         bsSize="xsmall"
         type="button"
         onClick={onSelectSplit}
-        disabled={numSplit === 0 ? 'disabled' : ''}>
+        disabled={numSplit === 0}>
         Select Gene Splits
       </Button>
       <Button
@@ -42,7 +42,7 @@ const GeneSelectionControls = ({
         bsSize="xsmall"
         type="button"
         onClick={onDelete}
-        disabled={numGenes === 0 || numSelected === 0 ? 'disabled' : ''}>
+        disabled={numGenes === 0 || numSelected === 0}>
         <Glyphicon glyph="trash" /> Delete Selected
       </Button>
     </div>

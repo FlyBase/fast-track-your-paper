@@ -250,7 +250,7 @@ function StepContainer() {
         }}
         nextClick={async () => {
           await authorFormikBagRef.current.submitForm()
-          send('NEXT')
+          send('NEXT', { client })
         }}
       />
     )
