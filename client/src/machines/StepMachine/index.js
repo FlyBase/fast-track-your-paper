@@ -174,7 +174,7 @@ export const createStepMachine = () => {
                 SET_FLAGS: {
                   actions: ['setFlags', 'persist'],
                 },
-                NEXT: { target: 'genes' },
+                NEXT: { target: 'genes', cond: 'isFlagsValid' },
                 PREV: { target: 'author' },
               },
             },
@@ -463,13 +463,21 @@ export const createStepMachine = () => {
           const email = context?.submission?.contact?.email
           return fbrf && email
         },
+        isFlagsValid: (context, event) => {
+          // Here we receive the formik bag object and check if it has validated.
+          // API of object is https://formik.org/docs/api/formik
+          return event?.form?.isValid ?? false
+        },
         hasContact: (context, event) => {
           const {
             submission: {
               contact: { name, email },
             },
           } = context
-          return name && email
+          // Here we receive the formik bag object and check if it has validated.
+          // API of object is https://formik.org/docs/api/formik
+          const isFormValid = event?.form?.isValid ?? false
+          return name && email && isFormValid
         },
         isConfirmed: (context) => context.confirmed,
       },
