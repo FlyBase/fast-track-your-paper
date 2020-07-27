@@ -8,6 +8,8 @@ import DiseaseTextArea from 'components/DiseaseTextArea'
 import CellLineFlag from 'components/CellLineFlag'
 import DatasetFlag from 'components/DatasetFlag'
 
+import { DataFlagsSchema } from './validation'
+
 const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
   const [showAllHelp, setShowAllHelp] = useState(false)
   return (
@@ -26,6 +28,7 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
         </div>
         <div className="panel-body">
           <Formik
+            enableReinitialize={true}
             initialValues={{
               new_allele: flags?.new_allele ?? false,
               new_transgene: flags?.new_transgene ?? false,
@@ -58,6 +61,7 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
              * for details
              */
             innerRef={bagRef}
+            validationSchema={DataFlagsSchema}
             onSubmit={(values, actions) => {
               setFlags({ flags: { ...values } })
             }}>

@@ -417,9 +417,28 @@ CREATE OR REPLACE FUNCTION ftyp.list_submissions() RETURNS SETOF ftyp_hidden.sub
 SELECT * FROM ftyp_hidden.submissions;
 $$ LANGUAGE sql STABLE;
 
+-- TODO this likely needs to be modified to SETOF.
 CREATE OR REPLACE FUNCTION ftyp.get_submission(fbrf text) RETURNS ftyp_hidden.submissions AS $$
 SELECT * FROM ftyp_hidden.submissions WHERE ftyp_hidden.submissions.fbrf = $1;
 $$ LANGUAGE sql STABLE;
 
+/*
+* Create indices on the text mining flag table
+*/
+CREATE INDEX tf_epicycle_idx ON ftyp_hidden.text_mining_flag (epicycle);
+CREATE INDEX tf_fbrf_idx ON ftyp_hidden.text_mining_flag (fbrf);
+CREATE INDEX tf_data_type_idx ON ftyp_hidden.text_mining_flag (data_type);
+CREATE INDEX tf_flag_type_idx ON ftyp_hidden.text_mining_flag (flag_type);
 
+
+-- Select only high confidence flags except for disease.
+CREATE OR REPLACE FUNCTION ftyp.get_text_mining_flags(fbrf text) RETURNS SETOF ftyp_hidden.text_mining_flag AS $$
+SELECT * FROM ftyp_hidden.text_mining_flag
+         WHERE ftyp_hidden.text_mining_flag.fbrf = $1
+           AND (
+            ftyp_hidden.text_mining_flag.data_type LIKE '%:high'
+              OR
+            ftyp_hidden.text_mining_flag.data_type LIKE 'disease:%'
+           );
+$$ LANGUAGE sql STABLE;
 

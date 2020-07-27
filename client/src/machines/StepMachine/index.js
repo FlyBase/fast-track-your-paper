@@ -12,6 +12,7 @@ const { assign } = actions
 
 // The GraphQL query to search all publication data.
 const submissionMutation = loader('graphql/submitPaper.gql')
+const tmFlagsQuery = loader('graphql/getTmFlags.gql')
 
 // See the following for full details on how this machine is
 // configured.
@@ -69,13 +70,11 @@ export const createStepMachine = () => {
         initializing: {
           // Initialize step machine when machine is started.
           entry: ['initStepMachine'],
-          on: {
-            // Machine initialized, go to pending state.
-            '': [
-              { target: 'pending.email', cond: 'isFromEmail' },
-              { target: 'pending' },
-            ],
-          },
+          // Machine initialized, go to pending state.
+          always: [
+            { target: 'pending.email', cond: 'isFromEmail' },
+            { target: 'pending' },
+          ],
         },
         pending: {
           id: 'pending',
@@ -152,12 +151,30 @@ export const createStepMachine = () => {
             },
             // Data flags step
             flags: {
+              initial: 'loading',
               entry: ['persist'],
+              states: {
+                loading: {
+                  invoke: {
+                    id: 'getTmFlags',
+                    src: 'getTmFlags',
+                    onDone: {
+                      target: 'success',
+                      actions: ['setTmFlags'],
+                    },
+                    onError: {
+                      target: 'failure',
+                    },
+                  },
+                },
+                success: {},
+                failure: {},
+              },
               on: {
                 SET_FLAGS: {
                   actions: ['setFlags', 'persist'],
                 },
-                NEXT: { target: 'genes' },
+                NEXT: { target: 'genes', cond: 'isFlagsValid' },
                 PREV: { target: 'author' },
               },
             },
@@ -332,6 +349,34 @@ export const createStepMachine = () => {
             },
           }
         }),
+        setTmFlags: assign((context, event) => {
+          const submission = context?.submission
+          const flags = submission?.flags ?? {}
+          const tmFlags = event?.data?.data?.flags?.nodes ?? []
+          let newFlags = {}
+          tmFlags.forEach((flag) => {
+            if (flag.dataType.startsWith('new_al')) {
+              newFlags.new_allele = true
+            } else if (flag.dataType.startsWith('new_transg')) {
+              newFlags.new_transgene = true
+            } else if (flag.dataType.startsWith('phys_int')) {
+              newFlags.physical_interaction = true
+            } else if (flag.dataType.startsWith('disease')) {
+              newFlags.human_disease = true
+            }
+          })
+          /* Order is important here.
+           * Let existing flags override any text mining flag data.
+           * This should only happen when a user goes back to edit the flags step.
+           */
+          submission.flags = {
+            ...newFlags,
+            ...flags,
+          }
+          return {
+            submission,
+          }
+        }),
         setFlags: assign((context, event) => {
           const { submission } = context
           const { flags = {} } = event
@@ -418,13 +463,21 @@ export const createStepMachine = () => {
           const email = context?.submission?.contact?.email
           return fbrf && email
         },
+        isFlagsValid: (context, event) => {
+          // Here we receive the formik bag object and check if it has validated.
+          // API of object is https://formik.org/docs/api/formik
+          return event?.form?.isValid ?? false
+        },
         hasContact: (context, event) => {
           const {
             submission: {
               contact: { name, email },
             },
           } = context
-          return name && email
+          // Here we receive the formik bag object and check if it has validated.
+          // API of object is https://formik.org/docs/api/formik
+          const isFormValid = event?.form?.isValid ?? false
+          return name && email && isFormValid
         },
         isConfirmed: (context) => context.confirmed,
       },
@@ -436,6 +489,16 @@ export const createStepMachine = () => {
             mutation: submissionMutation,
             variables: { submission },
           })
+        },
+        getTmFlags: (context, event) => {
+          const { client } = event
+          // Get the FBrf out of the selected publication object.
+          const fbrf = context?.submission?.publication?.uniquename
+          if (client) {
+            // Send query to retrieve any text mining flags.
+            return client.query({ query: tmFlagsQuery, variables: { fbrf } })
+          }
+          return {}
         },
       },
     }

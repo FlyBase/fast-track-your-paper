@@ -250,7 +250,7 @@ function StepContainer() {
         }}
         nextClick={async () => {
           await authorFormikBagRef.current.submitForm()
-          send('NEXT')
+          send('NEXT', { client, form: authorFormikBagRef.current })
         }}
       />
     )
@@ -269,7 +269,7 @@ function StepContainer() {
         }}
         nextClick={async () => {
           await flagsFormikBagRef.current.submitForm()
-          send('NEXT')
+          send('NEXT', { form: flagsFormikBagRef.current })
         }}
       />
     )
