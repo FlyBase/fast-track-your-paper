@@ -21,12 +21,14 @@
     "lodash.isempty": "^4.4.0",
     "lodash.unionby": "^4.8.0",
     "prop-types": "^15.7.2",
+    "puppeteer": "^5.2.1",
     "react": "^16.13.1",
     "react-app-polyfill": "^1.0.6",
     "react-bootstrap": "0.33.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.1",
+    "simple-html-templates": "^1.0.3",
     "styled-components": "^5.1.1",
     "use-clipboard-copy": "^0.1.2",
     "xstate": "^4.11.0",
@@ -39,7 +41,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "prettier --write 'src/**/*.{js,gql,css}'"
+    "format": "prettier --write 'src/**/*.{js,gql,css}'",
+    "update-header-footer": "node scripts/fetch_header_footer.js",
+    "postupdate-header-footer": "sht-cli ./public/index.tmpl ./public/index.html"
   },
   "browserslist": {
     "production": [
