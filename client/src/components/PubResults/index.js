@@ -36,48 +36,54 @@ const PubResults = ({
       <div className="row" style={{ marginTop: '1em' }}>
         <div className="col-sm-12">
           <div className="panel panel-info">
-            <div className="panel-heading">
+            <div className="panel-heading" style={{display:'flex',justifyContent:'space-between'}}>
               {totalPubs === 0 && (
                 <span className="text-warning">No matching records found</span>
               )}
               {totalPubs > 0 && (
-                <>
-                  <ResultMsg
-                    numPubs={pubs.length}
-                    totalPubs={totalPubs}
-                    keywords={keywords}
-                  />
-                  <div style={{ float: 'right' }}>curated</div>
-                </>
-              )}
-              <IconHelp initial={false}>
-                <div className="well well-sm">
-                  Search results from the FlyBase bibliography database may
-                  include papers or reviews, but other publication types are
-                  excluded here. Papers available for annotation{' '}
-                  <b className="text-info">appear in blue</b>,{' '}
-                  <b className="text-warning">reviews in gold</b>.
-                  <br />
-                  The 'curated' column indicates which publications in the
-                  search results have already been annotated by FlyBase
-                  curators, or by other Fast-Track contributors.
-                  <br />
-                  Publications which have already been curated cannot be
-                  selected for further annotation in the Fast-Track Your Paper
-                  tool.
-                  <br />
-                  If you would like to suggest changes to the annotations on a
-                  paper which has already been curated, please make a{' '}
-                  <a href="/contact/email?subject=comm">
-                    Personal Communication to FlyBase
-                  </a>
-                  .
+              <>
+                <div style={{flex:'0 1 80%'}}>
+                <ResultMsg
+                  numPubs={pubs.length}
+                  totalPubs={totalPubs}
+                  keywords={keywords}
+                />
+                <IconHelp initial={false}>
+                  <div className="well well-sm">
+                    Search results from the FlyBase bibliography database may
+                    include papers or reviews, but other publication types are
+                    excluded here. Papers available for annotation{' '}
+                    <b className="text-info">appear in blue</b>,{' '}
+                    <b className="text-warning">reviews in gold</b>.
+                  </div>
+                </IconHelp>
                 </div>
-              </IconHelp>
+                <div>
+                <div style={{ float: 'right' }}>already curated</div>
+                <IconHelp initial={false} btnClasses="pull-right">
+                  <div className="well well-sm" style={{clear:'both'}}>
+                    A mark in the 'already curated' column indicates that a
+                    publication in the search results has already been annotated
+                    by FlyBase curators, or by other Fast-Track contributors.
+                    Publications which have already been curated cannot be
+                    selected for further annotation in the Fast-Track Your Paper
+                    tool.
+                    <br />
+                    If you would like to suggest changes to the annotations on a
+                    paper which has already been curated, please{' '}
+                    <a href="/contact/email?subject=ftyp">
+                      contact FlyBase
+                    </a>
+                    .
+                  </div>
+                </IconHelp>
+                </div>
+              </>
+              )}
             </div>
 
             {pubs.length > 0 && (
-              <div className="panel-table">
+              <div className="panel-table" style={{clear:'both'}}>
                 <table
                   id="PubResultsTable"
                   className="table table-compact table-striped"
@@ -135,18 +141,14 @@ const PubResults = ({
             <div className="panel-footer small">
               <strong>Can't find what you are looking for?</strong>
               <br />
-              FlyBase only incorporates and curates papers that are "fully
-              published." This means the paper must be available in its final,
-              properly formatted version and have been assigned volume and page
-              numbers. Publications that have not yet reached this stage will
-              not be included in the FlyBase bibliography. Please wait until
-              your paper is fully published before submitting it to FlyBase
-              using the Fast-Track Your Paper tool.
-              <br />
-              If the above does not apply to you, you can still{' '}
-              <button className="btn btn-sm btn-link" onClick={onCitationClick}>
-                make a submission with a publication unknown to FlyBase.
-              </button>{' '}
+              FlyBase only incorporates and curates publications that are
+              "fully published," meaning they have final volume and page
+              numbers. Publications that have not yet reached this stage
+              (including preprints) will not be included in the FlyBase
+              bibliography.  Please wait until your paper is fully published
+              before using this tool.  If your paper is recently
+              published and you cannot find it, please check back again soon;
+              the Fast-Track database is updated weekly.
             </div>
           </div>{' '}
           {/* end .panel */}

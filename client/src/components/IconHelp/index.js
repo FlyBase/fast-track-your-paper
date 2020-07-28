@@ -3,7 +3,7 @@ import './index.css'
 
 import { useStateFromProp } from '../../hooks/useStateFromProp'
 
-const IconHelp = ({ initial = true, message = '', children = null }) => {
+const IconHelp = ({ initial = true, message = '', btnClasses = '', children = null }) => {
   const [isVisible, setIsVisible] = useStateFromProp(initial)
 
   const handleOnClick = (e) => {
@@ -13,7 +13,7 @@ const IconHelp = ({ initial = true, message = '', children = null }) => {
 
   return (
     <>
-      <button className="btn btn-link" onClick={handleOnClick}>
+      <button className={"btn btn-link "+btnClasses} onClick={handleOnClick}>
         <i className="fa fa-question-circle"></i>
       </button>
       {isVisible && (

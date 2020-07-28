@@ -24,12 +24,13 @@ const ChosenPub = ({ pub, citation }) => {
                   bibliography.
                 </>
               ) : (
-                <>
-                  <strong>Publication selected:</strong>&emsp;
+                <h5>
+                  <strong>Publication selected:</strong><br />
+                  <i>{pub.title}</i>&ensp;
                   {pub.miniref}
                   <br />
-                  {cur_status_phrase_for[pub.curationStatus]}.
-                </>
+                  {cur_status_phrase_for[pub.curationStatus]}
+                </h5>
               )}
             </p>
             <p>
