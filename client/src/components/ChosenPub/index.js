@@ -25,7 +25,8 @@ const ChosenPub = ({ pub, citation }) => {
                 </>
               ) : (
                 <h5>
-                  <strong>Publication selected:</strong><br />
+                  <strong>Publication selected:</strong>
+                  <br />
                   <i>{pub.title}</i>&ensp;
                   {pub.miniref}
                   <br />

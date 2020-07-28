@@ -67,7 +67,6 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
             }}>
             {({ values, values: { no_flags: noneApply } }) => (
               <Form>
-
                 <div className="well well-sm text-info">
                   <em>
                     The following data types (new allele, new transgene,

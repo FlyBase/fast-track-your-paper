@@ -6,12 +6,11 @@ const DataFlagTxtInput = ({ ...props }) => {
 
   return (
     <>
-    {meta.touched && meta.error ? (
+      {meta.touched && meta.error ? (
         <div className="error">{meta.error}</div>
       ) : (
         <input className="form-control" {...field} {...props} />
-      )
-    }
+      )}
     </>
   )
 }

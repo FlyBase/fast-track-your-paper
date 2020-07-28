@@ -56,8 +56,8 @@ const PubSearchForm = ({ send = () => {} }) => {
         Or, try searching with a PubMed ID (PMID). For example, enter
         &ldquo;10731132&rdquo; (without the quotes).
         <br />
-        The database searched by this tool contains only items classified
-        as <b>papers</b> or <b>reviews</b>.
+        The database searched by this tool contains only items classified as{' '}
+        <b>papers</b> or <b>reviews</b>.
       </IconHelp>
     </form>
   )
