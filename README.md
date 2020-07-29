@@ -38,6 +38,7 @@ For full details see the db [README](./db/README.md).
 * clean - Stops the containers, removes the disk volumes, and removes all pulled DB data.
 * pull-data - Pulls data from the production Chado database.
 * load-data - Loads data from the pulled sources and stores it in the docker DB container.
+* build-client - Updates the header/footer and builds the compiled javascript client app.
 
 ## Docker containers
 

@@ -31,7 +31,9 @@ clean-client:
 	rm -rf client/node_modules/
 
 build-client:
-	cd client; yarn install && yarn run build
+	cd client; yarn install && \
+	yarn run update-header-footer && \
+	yarn run build
 
 pull-data:$(DATA_DIR)/chado_feature.tsv $(DATA_DIR)/chado $(DATA_DIR)/feature $(DATA_FLAGS_FILE)
 
