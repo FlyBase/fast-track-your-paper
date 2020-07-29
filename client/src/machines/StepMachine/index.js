@@ -91,7 +91,7 @@ export const createStepMachine = () => {
           },
           // Sub states of the top level pending state.
           states: {
-            // Pub state
+            // Handle email links.
             email: {
               entry: ['persist'],
               on: {
@@ -106,6 +106,7 @@ export const createStepMachine = () => {
                 },
               },
             },
+            // Pub state
             pub: {
               // Call the 'persist' action to store app state to localstorage
               // or whatever the persist action implements.
@@ -145,7 +146,10 @@ export const createStepMachine = () => {
                 SET_CONTACT: {
                   actions: ['setContact', 'persist'],
                 },
-                NEXT: { target: 'flags', cond: 'hasContact' },
+                NEXT: [
+                  { target: 'genes', cond: 'isReview' },
+                  { target: 'flags', cond: 'hasContact' },
+                ],
                 PREV: { target: 'pub' },
               },
             },
@@ -186,7 +190,10 @@ export const createStepMachine = () => {
                   actions: ['setGenes', 'persist'],
                 },
                 NEXT: { target: 'confirm' },
-                PREV: { target: 'flags' },
+                PREV: [
+                  { target: 'author', cond: 'isReview' },
+                  { target: 'flags' },
+                ],
               },
             },
             // Confirmation step
@@ -457,6 +464,9 @@ export const createStepMachine = () => {
             (submission.publication && submission.publication.uniquename) ||
             submission.citation
           )
+        },
+        isReview: (context, event) => {
+          return context?.submission?.publication?.type?.name === 'review'
         },
         isFromEmail: (context, event) => {
           const fbrf = context?.fbrf

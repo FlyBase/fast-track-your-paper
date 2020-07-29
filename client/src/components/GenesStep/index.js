@@ -16,7 +16,12 @@ import GeneBatchForm from 'components/GeneBatchForm'
 import GeneBatchResults from 'components/GeneBatchResults'
 import { useApolloClient } from '@apollo/client'
 
-const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
+const GenesStep = ({
+  service,
+  children,
+  genes: savedGenes = [],
+  showAntibodies = true,
+}) => {
   // Get the GraphQL client from the apollo context object.
   // https://reactjs.org/docs/hooks-reference.html#usecontext
   const client = useApolloClient()
@@ -27,7 +32,7 @@ const GenesStep = ({ service, children, genes: savedGenes = [] }) => {
   // Show antibody columns in genes studied table.
   const [showAntibodyCells, setShowAntibodyCells] = useLocalstorage(
     'show-antibodies',
-    false
+    showAntibodies
   )
   // Keep local array of genes studied that is pre-populated from saved data.
   const [genesStudied, setGenesStudied] = useState(savedGenes)
