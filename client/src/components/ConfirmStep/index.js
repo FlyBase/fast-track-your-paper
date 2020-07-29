@@ -56,128 +56,138 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
           {submission.contact.isAuthor || <b>not</b>} an author on this
           publication.
         </p>
-        <h4>
-          Types of data:
-          <button onClick={() => dispatch('FLAGS')} className="btn btn-default">
-            Edit
-          </button>
-        </h4>
-        <ul>
-          {Object.keys(flags2HTMLstring).map((flag) => {
-            if (submission.flags[flag]) {
-              /* logic here to parse Boolean flags, text, and arrays */
-              let dataFlag = flags2HTMLstring[flag]
-              let listyle = {}
-              if (flag.match(/_line/)) {
-                /* handle these after the map */
-                return false
-              }
-              if (flag.match(/dataset/)) {
-                /* dataset_pheno and dataset_accessions are both sub-Booleans; dataset_accession_numbers is a list, maybe? */
-                /* handle these after the map */
-                /*if( submission.flags.dataset ) {
+        {submission?.publication?.type?.name !== 'review' && (
+          <>
+            <h4>
+              Types of data:
+              <button
+                onClick={() => dispatch('FLAGS')}
+                className="btn btn-default">
+                Edit
+              </button>
+            </h4>
+            <ul>
+              {Object.keys(flags2HTMLstring).map((flag) => {
+                if (submission.flags[flag]) {
+                  /* logic here to parse Boolean flags, text, and arrays */
+                  let dataFlag = flags2HTMLstring[flag]
+                  let listyle = {}
+                  if (flag.match(/_line/)) {
+                    /* handle these after the map */
+                    return false
+                  }
+                  if (flag.match(/dataset/)) {
+                    /* dataset_pheno and dataset_accessions are both sub-Booleans; dataset_accession_numbers is a list, maybe? */
+                    /* handle these after the map */
+                    /*if( submission.flags.dataset ) {
                   listyle = {
                     listStyleType: 'none',
                     paddingLeft: '1em',
                     fontWeight: 'bold',
                   }
                 }*/
-                return false
-              }
-              if (flag.match(/_disease/)) {
-                if (!submission.flags.human_disease) {
-                  return false
+                    return false
+                  }
+                  if (flag.match(/_disease/)) {
+                    if (!submission.flags.human_disease) {
+                      return false
+                    }
+                    /* else handle normally below */
+                  }
+                  if (dataFlag === '') {
+                    dataFlag =
+                      '<b>' +
+                      flag.replace(/_/g, ' ') +
+                      '</b><pre style="margin:0; font-style:italic;">' +
+                      submission.flags[flag] +
+                      '</pre>'
+                    listyle = { listStyleType: 'none', margin: 0 }
+                  }
+                  if (typeof dataFlag == 'object') {
+                    dataFlag =
+                      /*(submission.flags[flag].length) ? submission.flags[flag].join(', ') :*/ submission
+                        .flags[flag]
+                    listyle = { listStyleType: 'none', paddingLeft: '1em' }
+                  }
+                  return (
+                    <li
+                      key={flag}
+                      style={listyle}
+                      dangerouslySetInnerHTML={{ __html: dataFlag }}
+                    />
+                  )
                 }
-                /* else handle normally below */
-              }
-              if (dataFlag === '') {
-                dataFlag =
-                  '<b>' +
-                  flag.replace(/_/g, ' ') +
-                  '</b><pre style="margin:0; font-style:italic;">' +
-                  submission.flags[flag] +
-                  '</pre>'
-                listyle = { listStyleType: 'none', margin: 0 }
-              }
-              if (typeof dataFlag == 'object') {
-                dataFlag =
-                  /*(submission.flags[flag].length) ? submission.flags[flag].join(', ') :*/ submission
-                    .flags[flag]
-                listyle = { listStyleType: 'none', paddingLeft: '1em' }
-              }
-              return (
+                return null
+              })}
+              {/* special handling for specific flag groups */}
+              {/*   cell line flags   */}
+              {submission.flags.cell_line && (
                 <li
-                  key={flag}
-                  style={listyle}
-                  dangerouslySetInnerHTML={{ __html: dataFlag }}
+                  key="cell_line"
+                  dangerouslySetInnerHTML={{
+                    __html: flags2HTMLstring.cell_line,
+                  }}
                 />
-              )
-            }
-            return null
-          })}
-          {/* special handling for specific flag groups */}
-          {/*   cell line flags   */}
-          {submission.flags.cell_line && (
-            <li
-              key="cell_line"
-              dangerouslySetInnerHTML={{ __html: flags2HTMLstring.cell_line }}
-            />
-          )}
-          {submission.flags.cell_line && submission.flags.stable_line && (
-            <li
-              key="stable_line"
-              dangerouslySetInnerHTML={{ __html: flags2HTMLstring.stable_line }}
-            />
-          )}
-          {submission.flags.cell_line && submission.flags.commercial_line && (
-            <li
-              key="commercial_line"
-              dangerouslySetInnerHTML={{
-                __html: flags2HTMLstring.commercial_line,
-              }}
-            />
-          )}
-          {submission.flags.cell_line &&
-            (submission.flags.cell_line_names ||
-              submission.flags.cell_line_sources) && (
-              <li key="cell_line" style={{ listStyleType: 'none' }}>
-                <h5>Cell Lines Used:</h5>
-                <table className="table">
-                  <tr>
-                    <th>Name</th>
-                    <th>Source</th>
-                  </tr>
-                </table>
-              </li>
-            )}
-          {/*   dataset flags   */}
-          {submission.flags.dataset && (
-            <li
-              key="dataset"
-              dangerouslySetInnerHTML={{ __html: flags2HTMLstring.dataset }}
-            />
-          )}
-          {submission.flags.dataset && submission.flags.dataset_pheno && (
-            <li
-              className="datasetli"
-              key="dataset_pheno"
-              dangerouslySetInnerHTML={{
-                __html: '<b>' + flags2HTMLstring.dataset_pheno + '</b>',
-              }}
-            />
-          )}
-          {submission.flags.dataset && submission.flags.dataset_accessions && (
-            <li
-              className="datasetli"
-              key="dataset_accessions"
-              dangerouslySetInnerHTML={{
-                __html:
-                  '<b>dataset repository IDs: </b>' +
-                  submission.flags.dataset_accession_numbers,
-              }}
-            />
-          )}
-        </ul>
+              )}
+              {submission.flags.cell_line && submission.flags.stable_line && (
+                <li
+                  key="stable_line"
+                  dangerouslySetInnerHTML={{
+                    __html: flags2HTMLstring.stable_line,
+                  }}
+                />
+              )}
+              {submission.flags.cell_line && submission.flags.commercial_line && (
+                <li
+                  key="commercial_line"
+                  dangerouslySetInnerHTML={{
+                    __html: flags2HTMLstring.commercial_line,
+                  }}
+                />
+              )}
+              {submission.flags.cell_line &&
+                (submission.flags.cell_line_names ||
+                  submission.flags.cell_line_sources) && (
+                  <li key="cell_line" style={{ listStyleType: 'none' }}>
+                    <h5>Cell Lines Used:</h5>
+                    <table className="table">
+                      <tr>
+                        <th>Name</th>
+                        <th>Source</th>
+                      </tr>
+                    </table>
+                  </li>
+                )}
+              {/*   dataset flags   */}
+              {submission.flags.dataset && (
+                <li
+                  key="dataset"
+                  dangerouslySetInnerHTML={{ __html: flags2HTMLstring.dataset }}
+                />
+              )}
+              {submission.flags.dataset && submission.flags.dataset_pheno && (
+                <li
+                  className="datasetli"
+                  key="dataset_pheno"
+                  dangerouslySetInnerHTML={{
+                    __html: '<b>' + flags2HTMLstring.dataset_pheno + '</b>',
+                  }}
+                />
+              )}
+              {submission.flags.dataset && submission.flags.dataset_accessions && (
+                <li
+                  className="datasetli"
+                  key="dataset_accessions"
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      '<b>dataset repository IDs: </b>' +
+                      submission.flags.dataset_accession_numbers,
+                  }}
+                />
+              )}
+            </ul>
+          </>
+        )}
         <h4>
           Genes Studied ({submission.genes.length}
           {madeAbs}):
