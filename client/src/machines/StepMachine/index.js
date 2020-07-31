@@ -97,7 +97,12 @@ export const createStepMachine = () => {
               on: {
                 // Event for selecting a publication.
                 SET_PUB: {
-                  actions: ['setPub', 'persist'],
+                  actions: [
+                    'resetContext',
+                    'resetLocalFlags',
+                    'setPub',
+                    'persist',
+                  ],
                 },
                 NEXT: {
                   target: 'author',
@@ -129,7 +134,12 @@ export const createStepMachine = () => {
                 ],
                 // Event for selecting a publication.
                 SET_PUB: {
-                  actions: ['setPub', 'persist'],
+                  actions: [
+                    'resetContext',
+                    'resetLocalFlags',
+                    'setPub',
+                    'persist',
+                  ],
                 },
                 // Event for setting a manually entered citation.
                 SET_CITATION: {

@@ -14,7 +14,7 @@ const ChosenPub = ({ pub, citation }) => {
       <div className="row">
         <div className="col-sm-12">
           <div className="well small">
-            <p>
+            <div>
               {citation ? (
                 <>
                   <strong>Publication citation entered:</strong>&emsp;
@@ -33,7 +33,7 @@ const ChosenPub = ({ pub, citation }) => {
                   {cur_status_phrase_for[pub.curationStatus]}
                 </h5>
               )}
-            </p>
+            </div>
             <p>
               <strong>Please note:</strong>&ensp; The Fast-Track Your Paper tool
               accesses our &ldquo;live&rdquo; FlyBase references database in
