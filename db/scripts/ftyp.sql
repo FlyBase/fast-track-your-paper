@@ -73,6 +73,9 @@ WHERE flybase.data_class(p.uniquename) = 'FBrf'
 -- Full text index on the materialize view.
 CREATE INDEX pub_text_idx ON ftyp_hidden.pub_search USING GIN (pub_tsvector);
 
+-- Allow for sorting on pyear.
+CREATE INDEX pub_pyear_idx ON public.pub (pyear);
+
 /**
   ftyp.search_pubs will perform a text search on a pre-defined set of
   publication fields.  The fields searched are defined by the
@@ -87,13 +90,16 @@ $$
 SELECT p.*
 FROM pub p
          JOIN cvterm cvt on (p.type_id = cvt.cvterm_id)
+         JOIN (
+          SELECT pub_id,
+                 ts_rank_cd(pub_tsvector, plainto_tsquery('simple', terms)) AS score
+            FROM ftyp_hidden.pub_search
+            WHERE pub_tsvector @@ plainto_tsquery('simple', terms)
+         ) ps ON (ps.pub_id = p.pub_id)
 WHERE cvt.name IN ('paper', 'review', 'note')
-  AND p.pub_id IN (
-    SELECT pub_id
-    FROM ftyp_hidden.pub_search
-    WHERE pub_tsvector @@ plainto_tsquery('simple', terms)
-    ORDER BY ts_rank_cd(pub_tsvector, plainto_tsquery('simple', terms)) DESC
-);
+ORDER BY p.pyear DESC,
+         ps.score DESC
+;
 $$ LANGUAGE SQL STABLE;
 
 /*
