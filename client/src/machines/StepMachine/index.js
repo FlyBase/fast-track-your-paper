@@ -8,15 +8,7 @@ import { createGeneStepMachine } from 'machines/GeneStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 import { loader } from 'graphql.macro'
 
-import {
-  hasContact,
-  hasContactAndIsReview,
-  isReview,
-  hasPublication,
-  isConfirmed,
-  isFlagsValid,
-  isFromEmail,
-} from './guards'
+import { hasContact, isReview, hasPublication, isFormValid } from './guards'
 
 const { assign } = actions
 
@@ -476,13 +468,28 @@ export const createStepMachine = () => {
         sendPubError: send('NOPUB_ERROR', { to: 'pubStepMachine' }),
       },
       guards: {
-        hasPublication,
-        isReview,
-        isFromEmail,
-        isFlagsValid,
-        hasContact,
-        hasContactAndIsReview,
-        isConfirmed,
+        hasPublication: (context, event) => {
+          const { submission } = context
+          return event?.hasPub || hasPublication(submission)
+        },
+        isReview: (context) => {
+          return isReview(context?.submission?.publication)
+        },
+        isFromEmail: (context) => {
+          return context?.fbrf && context?.submission?.contact?.email
+        },
+        isFlagsValid: (context, event) => {
+          return isFormValid(event?.form)
+        },
+        hasContact: (context, event) => {
+          return hasContact(context?.submission?.contact, event?.form)
+        },
+        hasContactAndIsReview: (context, event) => {
+          const { contact, publication } = context?.submission
+          const formikBag = event?.form
+          return hasContact(contact, formikBag) && isReview(publication)
+        },
+        isConfirmed: (context) => context.confirmed,
       },
       services: {
         invokeSaveToDb: (context, event) => {

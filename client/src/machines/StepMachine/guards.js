@@ -1,43 +1,43 @@
-// Check that the submission has an associated publication or citation.
-export const hasPublication = (context, event) => {
-  const { submission } = context
+/**
+ * Check that the submission has an associated publication or citation.
+ * @param submission - The submission object to validate
+ * @returns {boolean} - Whether or not the submission has a publication.
+ */
+export const hasPublication = (submission) => {
   return (
-    event.hasPub ||
     (submission.publication && submission.publication.uniquename) ||
     submission.citation
   )
 }
 
-export const isReview = (context, event) => {
-  return context?.submission?.publication?.type?.name === 'review'
+/**
+ * Is the publication a review or not.
+ * @param publication - The publication to validate with an assigned type.
+ * @returns {boolean} - Whether or not the publication is a review.
+ */
+export const isReview = (publication) => {
+  return publication?.type?.name === 'review'
 }
 
-export const isFromEmail = (context, event) => {
-  const fbrf = context?.fbrf
-  const email = context?.submission?.contact?.email
-  return fbrf && email
+/**
+ * Given a formik Bag object, checks if the form is in a valid state or
+ * not.
+ * @param formikBag - Formik Bag object (https://formik.org/docs/api/formik)
+ * @returns {boolean} - Boolean indicating that the form is valid or not.
+ */
+export const isFormValid = (formikBag) => {
+  return formikBag?.isValid ?? false
 }
 
-export const isFlagsValid = (context, event) => {
-  // Here we receive the formik bag object and check if it has validated.
-  // API of object is https://formik.org/docs/api/formik
-  return event?.form?.isValid ?? false
-}
-
-export const hasContact = (context, event) => {
-  const {
-    submission: {
-      contact: { name, email },
-    },
-  } = context
-  // Here we receive the formik bag object and check if it has validated.
-  // API of object is https://formik.org/docs/api/formik
-  const isFormValid = event?.form?.isValid ?? false
-  return name && email && isFormValid
-}
-
-export const isConfirmed = (context) => context.confirmed
-
-export const hasContactAndIsReview = (context, event) => {
-  return hasContact(context, event) && isReview(context)
+/**
+ * Given a contact and contact form object validate that all are
+ * set correctly.
+ *
+ * @param contact - Contact object with name and email.
+ * @param formikBag - Formik Bag object (https://formik.org/docs/api/formik)
+ * @returns {boolean} - Boolean indicating that the submission has a valid contact set.
+ */
+export const hasContact = (contact, formikBag) => {
+  const { name, email } = contact
+  return name && email && isFormValid(formikBag)
 }
