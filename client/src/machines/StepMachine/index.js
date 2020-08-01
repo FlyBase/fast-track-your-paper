@@ -8,6 +8,16 @@ import { createGeneStepMachine } from 'machines/GeneStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 import { loader } from 'graphql.macro'
 
+import {
+  hasContact,
+  hasContactAndIsReview,
+  isReview,
+  hasPublication,
+  isConfirmed,
+  isFlagsValid,
+  isFromEmail,
+} from './guards'
+
 const { assign } = actions
 
 // The GraphQL query to search all publication data.
@@ -157,7 +167,7 @@ export const createStepMachine = () => {
                   actions: ['setContact', 'persist'],
                 },
                 NEXT: [
-                  { target: 'genes', cond: 'isReview' },
+                  { target: 'genes', cond: 'hasContactAndIsReview' },
                   { target: 'flags', cond: 'hasContact' },
                 ],
                 PREV: { target: 'pub' },
@@ -466,40 +476,13 @@ export const createStepMachine = () => {
         sendPubError: send('NOPUB_ERROR', { to: 'pubStepMachine' }),
       },
       guards: {
-        // Check that the submission has an associated publication or citation.
-        hasPublication: (context, event) => {
-          const { submission } = context
-          return (
-            event.hasPub ||
-            (submission.publication && submission.publication.uniquename) ||
-            submission.citation
-          )
-        },
-        isReview: (context, event) => {
-          return context?.submission?.publication?.type?.name === 'review'
-        },
-        isFromEmail: (context, event) => {
-          const fbrf = context?.fbrf
-          const email = context?.submission?.contact?.email
-          return fbrf && email
-        },
-        isFlagsValid: (context, event) => {
-          // Here we receive the formik bag object and check if it has validated.
-          // API of object is https://formik.org/docs/api/formik
-          return event?.form?.isValid ?? false
-        },
-        hasContact: (context, event) => {
-          const {
-            submission: {
-              contact: { name, email },
-            },
-          } = context
-          // Here we receive the formik bag object and check if it has validated.
-          // API of object is https://formik.org/docs/api/formik
-          const isFormValid = event?.form?.isValid ?? false
-          return name && email && isFormValid
-        },
-        isConfirmed: (context) => context.confirmed,
+        hasPublication,
+        isReview,
+        isFromEmail,
+        isFlagsValid,
+        hasContact,
+        hasContactAndIsReview,
+        isConfirmed,
       },
       services: {
         invokeSaveToDb: (context, event) => {
