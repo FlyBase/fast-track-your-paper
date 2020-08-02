@@ -6,6 +6,9 @@ COPY (SELECT f.*
         AND f.is_obsolete = false
         AND f.is_analysis = false
         AND cvt.name = 'gene'
-        AND o.genus = 'Drosophila'
-        AND o.species = 'melanogaster'
+        AND (
+            (o.genus = 'Drosophila' AND o.species = 'melanogaster')
+            OR
+            (o.genus = 'Homo' AND o.species = 'sapiens')
+        )
     ) TO STDOUT;
