@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
 import GeneSearchHit from 'components/GeneSearchHit'
+import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 
 import './index.css'
 
@@ -43,29 +44,37 @@ const GeneSearchResults = ({
   onGeneClick = () => {},
   onDismiss = () => {},
   z = '',
-}) => (
-  <div id="geneSearchSuggestions" onMouseLeave={onDismiss}>
-    <div id="geneSearchSuggestionsContainer">
-      <button onClick={onDismiss}>
-        <i id="geneSearchSuggestionsDismiss" className="fa fa-times-circle"></i>
-      </button>
-      <div id="geneSearchSuggestionsSummary" className="bg-info">
-        Showing {genes.length} of {totalCount} matches.&emsp;
+}) => {
+  const ref = useRef()
+
+  useOnClickOutside(ref, onDismiss)
+
+  return (
+    <div ref={ref} id="geneSearchSuggestions">
+      <div id="geneSearchSuggestionsContainer">
+        <button onClick={onDismiss}>
+          <i
+            id="geneSearchSuggestionsDismiss"
+            className="fa fa-times-circle"></i>
+        </button>
+        <div id="geneSearchSuggestionsSummary" className="bg-info">
+          Showing {genes.length} of {totalCount} matches.&emsp;
+        </div>
+        <ul>
+          {genes.map((g) => {
+            z = z ? '' : 'z'
+            let zclass = z
+            return (
+              <li key={g.id} onClick={() => onGeneClick(g)} className={zclass}>
+                <GeneSearchHit g={g} />
+              </li>
+            )
+          })}
+        </ul>
       </div>
-      <ul>
-        {genes.map((g) => {
-          z = z ? '' : 'z'
-          let zclass = z
-          return (
-            <li key={g.id} onClick={() => onGeneClick(g)} className={zclass}>
-              <GeneSearchHit g={g} />
-            </li>
-          )
-        })}
-      </ul>
     </div>
-  </div>
-)
+  )
+}
 
 GeneSearchResults.propTypes = {
   genes: PropTypes.arrayOf(PropTypes.object),
