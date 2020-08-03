@@ -69,12 +69,12 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
               <Form>
                 <div className="well well-sm text-info">
                   <em>
-                    The following data types (new allele, new transgene,
-                    physical interaction, disease) are currently subject to
-                    text-mining in an effort to detect their presence in your
-                    publication. If a data type is detected by text-mining, it
-                    has been pre-selected below. Please correct any incorrectly
-                    added or missing data types contained in your publication.
+                    The following data types (new allele, new transgene, physical interaction,
+                    disease) are currently subject to text-mining in an effort to detect
+                    their presence in your publication.
+                    If a data type is detected by text-mining, it has been pre-selected below.
+                    Please remove any incorrectly added data types and add any missing
+                    data types contained in your publication.
                   </em>
                 </div>
 
