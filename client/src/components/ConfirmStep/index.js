@@ -191,7 +191,9 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
         <h4>
           Genes Studied ({submission.genes.length}
           {madeAbs}):
-          <button className="btn btn-default">Edit</button>
+          <button onClick={() => dispatch('GENES')} className="btn btn-default">
+            Edit
+          </button>
         </h4>
         <ul id="confirmationGenesList" className="bg-warning">
           {submission.genes.map((gene) => {

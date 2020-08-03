@@ -8,6 +8,8 @@ import { createGeneStepMachine } from 'machines/GeneStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 import { loader } from 'graphql.macro'
 
+import { hasContact, isReview, hasPublication, isFormValid } from './guards'
+
 const { assign } = actions
 
 // The GraphQL query to search all publication data.
@@ -97,7 +99,12 @@ export const createStepMachine = () => {
               on: {
                 // Event for selecting a publication.
                 SET_PUB: {
-                  actions: ['setPub', 'persist'],
+                  actions: [
+                    'resetContext',
+                    'resetLocalFlags',
+                    'setPub',
+                    'persist',
+                  ],
                 },
                 NEXT: {
                   target: 'author',
@@ -129,7 +136,12 @@ export const createStepMachine = () => {
                 ],
                 // Event for selecting a publication.
                 SET_PUB: {
-                  actions: ['setPub', 'persist'],
+                  actions: [
+                    'resetContext',
+                    'resetLocalFlags',
+                    'setPub',
+                    'persist',
+                  ],
                 },
                 // Event for setting a manually entered citation.
                 SET_CITATION: {
@@ -147,7 +159,7 @@ export const createStepMachine = () => {
                   actions: ['setContact', 'persist'],
                 },
                 NEXT: [
-                  { target: 'genes', cond: 'isReview' },
+                  { target: 'genes', cond: 'hasContactAndIsReview' },
                   { target: 'flags', cond: 'hasContact' },
                 ],
                 PREV: { target: 'pub' },
@@ -456,38 +468,26 @@ export const createStepMachine = () => {
         sendPubError: send('NOPUB_ERROR', { to: 'pubStepMachine' }),
       },
       guards: {
-        // Check that the submission has an associated publication or citation.
         hasPublication: (context, event) => {
           const { submission } = context
-          return (
-            event.hasPub ||
-            (submission.publication && submission.publication.uniquename) ||
-            submission.citation
-          )
+          return event?.hasPub || hasPublication(submission)
         },
-        isReview: (context, event) => {
-          return context?.submission?.publication?.type?.name === 'review'
+        isReview: (context) => {
+          return isReview(context?.submission?.publication)
         },
-        isFromEmail: (context, event) => {
-          const fbrf = context?.fbrf
-          const email = context?.submission?.contact?.email
-          return fbrf && email
+        isFromEmail: (context) => {
+          return context?.fbrf && context?.submission?.contact?.email
         },
         isFlagsValid: (context, event) => {
-          // Here we receive the formik bag object and check if it has validated.
-          // API of object is https://formik.org/docs/api/formik
-          return event?.form?.isValid ?? false
+          return isFormValid(event?.form)
         },
         hasContact: (context, event) => {
-          const {
-            submission: {
-              contact: { name, email },
-            },
-          } = context
-          // Here we receive the formik bag object and check if it has validated.
-          // API of object is https://formik.org/docs/api/formik
-          const isFormValid = event?.form?.isValid ?? false
-          return name && email && isFormValid
+          return hasContact(context?.submission?.contact, event?.form)
+        },
+        hasContactAndIsReview: (context, event) => {
+          const { contact, publication } = context?.submission
+          const formikBag = event?.form
+          return hasContact(contact, formikBag) && isReview(publication)
         },
         isConfirmed: (context) => context.confirmed,
       },

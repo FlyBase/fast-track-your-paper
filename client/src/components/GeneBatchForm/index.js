@@ -20,6 +20,16 @@ const validationSchema = Yup.object().shape({
         }
         return false
       }
+    )
+    .test(
+      'greater-than-100',
+      'More than 100 genes entered. Please tick ‘dataset’ in the previous step if you used a method to investigate many genes at once, and only add genes that have been specifically investigated in your publication here.',
+      (value) => {
+        if (value && value.length > 0) {
+          const ids = value.split(/[\s,]+/)
+          return ids.length <= 100
+        }
+      }
     ),
 })
 
