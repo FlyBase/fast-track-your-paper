@@ -30,6 +30,7 @@ const GeneSelectionControls = ({
       </Button>
       <Button
         bsSize="xsmall"
+        bsStyle="success"
         type="button"
         onClick={onSelectUpdated}
         disabled={counts?.updated?.total === 0}>
@@ -37,6 +38,7 @@ const GeneSelectionControls = ({
       </Button>
       <Button
         bsSize="xsmall"
+        bsStyle="warning"
         type="button"
         onClick={onSelectSplit}
         disabled={counts?.split?.total === 0}>
