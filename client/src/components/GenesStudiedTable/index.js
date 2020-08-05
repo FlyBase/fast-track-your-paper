@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import PropTypes from 'prop-types'
 import GeneStudiedRow from 'components/GenesStudiedRow'
 
 import './index.css'
 import GeneSelectionControls from '../GeneSelectionControls'
+
+import { initialState, reducer } from './reducer'
 
 const GenesStudiedTable = ({
   showAbs = false,
@@ -12,14 +14,14 @@ const GenesStudiedTable = ({
   onAbClick = () => {},
   children,
 }) => {
+  const [state, dispatch] = useReducer(reducer, initialState)
+  useEffect(() => {
+    dispatch({ type: 'SET_GENES', payload: genes })
+  }, [genes, dispatch])
+
   let abcell = showAbs ? '' : 'abcell'
 
-  const [selectedGenes, setSelectedGenes] = useState(new Set())
-  const allGenesSelected = selectedGenes.size === genes.length
-  const numGenesUpdated =
-    genes.filter((gene) => gene.status === 'updated').length ?? 0
-  const numGenesSplit =
-    genes.filter((gene) => gene.status === 'split').length ?? 0
+  const { counts, selectedGenes } = state
 
   const handleGeneSelect = (isSelected, gene) => {
     const copySelectedGenes = new Set(selectedGenes)
@@ -28,7 +30,7 @@ const GenesStudiedTable = ({
     } else {
       copySelectedGenes.delete(gene)
     }
-    setSelectedGenes(copySelectedGenes)
+    dispatch({ type: 'SET_SELECTED', payload: copySelectedGenes })
   }
 
   /**
@@ -36,21 +38,41 @@ const GenesStudiedTable = ({
    */
   const handleSelectAll = () => {
     // If all genes are already on deselect all.
-    if (allGenesSelected) {
-      setSelectedGenes(new Set())
+    if (counts.genes.total === counts.genes.selected) {
+      dispatch({ type: 'SET_SELECTED' })
     }
     // Select all genes.
     else {
-      setSelectedGenes(new Set(genes))
+      dispatch({ type: 'SET_SELECTED', payload: genes })
     }
   }
 
   const handleSelectUpdated = () => {
-    setSelectedGenes(new Set(genes.filter((gene) => gene.status === 'updated')))
+    if (counts.updated.total === counts.updated.selected) {
+      dispatch({
+        type: 'SET_SELECTED',
+        payload: [...selectedGenes].filter((gene) => gene.status !== 'updated'),
+      })
+    } else {
+      const updatedGenes = [...genes].filter(
+        (gene) => gene.status === 'updated'
+      )
+      const newlySelected = [...selectedGenes, ...updatedGenes]
+      dispatch({ type: 'SET_SELECTED', payload: newlySelected })
+    }
   }
 
   const handleSelectSplit = () => {
-    setSelectedGenes(new Set(genes.filter((gene) => gene.status === 'split')))
+    if (counts.split.total === counts.split.selected) {
+      dispatch({
+        type: 'SET_SELECTED',
+        payload: [...selectedGenes].filter((gene) => gene.status !== 'split'),
+      })
+    } else {
+      const splitGenes = [...genes].filter((gene) => gene.status === 'split')
+      const newlySelected = [...selectedGenes, ...splitGenes]
+      dispatch({ type: 'SET_SELECTED', payload: newlySelected })
+    }
   }
 
   return (
@@ -80,10 +102,7 @@ const GenesStudiedTable = ({
           <th>
             Gene
             <GeneSelectionControls
-              numGenes={genes.length}
-              numSelected={selectedGenes.size}
-              numUpdated={numGenesUpdated}
-              numSplit={numGenesSplit}
+              counts={counts}
               onSelectAll={handleSelectAll}
               onSelectUpdated={handleSelectUpdated}
               onSelectSplit={handleSelectSplit}
