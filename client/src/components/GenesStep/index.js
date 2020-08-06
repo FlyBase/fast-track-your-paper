@@ -8,13 +8,15 @@ import differenceBy from 'lodash.differenceby'
 import unionBy from 'lodash.unionby'
 import cloneDeep from 'lodash.clonedeep'
 
+import { useApolloClient } from '@apollo/client'
+
 import GenesStudiedTable from 'components/GenesStudiedTable'
 import GeneSearchInput from 'components/GeneSearchInput'
 import GeneSearchResults from 'components/GeneSearchResults'
 import GeneSearchMessage from 'components/GeneSearchMessage'
 import GeneBatchForm from 'components/GeneBatchForm'
 import GeneBatchResults from 'components/GeneBatchResults'
-import { useApolloClient } from '@apollo/client'
+import GeneDeleteModal from 'components/GeneDeleteModal'
 
 const GenesStep = ({
   service,
@@ -36,6 +38,7 @@ const GenesStep = ({
   )
   // Keep local array of genes studied that is pre-populated from saved data.
   const [genesStudied, setGenesStudied] = useState(savedGenes)
+  const [showGeneDelete, setGeneDelete] = useState(false)
 
   // Get the gene search results from the current machine context.
   const {
@@ -227,6 +230,16 @@ const GenesStep = ({
               </div>
 
               <div className="radio">
+                <GeneDeleteModal
+                  show={showGeneDelete}
+                  handleClose={(e, action) => {
+                    if (action === 'delete') {
+                      setGenesStudied([])
+                      send('NONE')
+                    }
+                    setGeneDelete(false)
+                  }}
+                />
                 <label>
                   <input
                     type="radio"
@@ -234,7 +247,13 @@ const GenesStep = ({
                     id="optionsRadios3"
                     value="option3"
                     checked={current.matches('none')}
-                    onChange={() => send('NONE')}
+                    onChange={() => {
+                      if (genesStudied.length === 0) {
+                        send('NONE')
+                      } else {
+                        setGeneDelete(true)
+                      }
+                    }}
                   />
                   <b>No genes</b> studied in this publication
                 </label>
