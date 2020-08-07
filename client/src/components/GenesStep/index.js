@@ -38,7 +38,7 @@ const GenesStep = ({
   )
   // Keep local array of genes studied that is pre-populated from saved data.
   const [genesStudied, setGenesStudied] = useState(savedGenes)
-  const [showGeneDelete, setGeneDelete] = useState(false)
+  const [showGeneDelete, setShowGeneDelete] = useState(false)
 
   // Get the gene search results from the current machine context.
   const {
@@ -234,10 +234,9 @@ const GenesStep = ({
                   show={showGeneDelete}
                   handleClose={(e, action) => {
                     if (action === 'delete') {
-                      setGenesStudied([])
                       send('NONE')
                     }
-                    setGeneDelete(false)
+                    setShowGeneDelete(false)
                   }}
                 />
                 <label>
@@ -251,7 +250,7 @@ const GenesStep = ({
                       if (genesStudied.length === 0) {
                         send('NONE')
                       } else {
-                        setGeneDelete(true)
+                        setShowGeneDelete(true)
                       }
                     }}
                   />
