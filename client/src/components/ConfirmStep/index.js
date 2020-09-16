@@ -180,7 +180,7 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
         </ul>
         <h4>
           Genes Studied ({submission.genes.length}
-          {madeAbs}):
+          {madeAbs}):&emsp;
           <button className="btn btn-default">Edit</button>
         </h4>
         <ul id="confirmationGenesList" className="bg-warning">
