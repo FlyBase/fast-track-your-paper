@@ -18,9 +18,10 @@
   right: 0px;
   padding: 0px;
   margin-top: -4px;
-  background-color: rgba(0,0,0,0);
+  background-color: rgba(0, 0, 0, 0);
   border: none;
-  height: 10px; width: 24px;
+  height: 10px;
+  width: 24px;
 }
 #geneSearchSuggestionsDismiss:hover {
   color: grey;

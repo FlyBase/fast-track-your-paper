@@ -44,7 +44,8 @@ const GeneSearchResults = ({
   onDismiss = () => {},
   z = '',
 }) => (
-  <div id="geneSearchSuggestions" >{/*onMouseLeave={onDismiss}*/}
+  <div id="geneSearchSuggestions">
+    {/*onMouseLeave={onDismiss}*/}
     <div id="geneSearchSuggestionsContainer">
       <div id="geneSearchSuggestionsSummary" className="bg-info">
         <button id="geneSearchSuggestionsDismiss" onClick={onDismiss}>
