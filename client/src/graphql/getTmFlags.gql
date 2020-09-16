@@ -1,0 +1,10 @@
+# This query is used to pull flags that were found
+# from text mining. They are used to pre-check certain
+# flags in the tool for the user.
+query GetTmFlags($fbrf: String!) {
+  flags: getTextMiningFlags(fbrf: $fbrf) {
+    nodes {
+      dataType
+    }
+  }
+}

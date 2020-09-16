@@ -3,9 +3,11 @@ import { Formik, Form } from 'formik'
 import { Persist } from 'formik-persist'
 
 import DataFlagCheckbox from 'components/DataFlagCheckbox'
+import DataFlagTextArea from 'components/DataFlagTextArea'
 import DiseaseTextArea from 'components/DiseaseTextArea'
 import CellLineFlag from 'components/CellLineFlag'
 import DatasetFlag from 'components/DatasetFlag'
+import { DataFlagsSchema } from './validation'
 
 const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
   const [showAllHelp, setShowAllHelp] = useState(false)
@@ -25,6 +27,7 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
         </div>
         <div className="panel-body">
           <Formik
+            enableReinitialize={true}
             initialValues={{
               new_allele: flags?.new_allele ?? false,
               new_transgene: flags?.new_transgene ?? false,
@@ -57,6 +60,7 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
              * for details
              */
             innerRef={bagRef}
+            validationSchema={DataFlagsSchema}
             onSubmit={(values, actions) => {
               setFlags({ flags: { ...values } })
             }}>
@@ -197,7 +201,7 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
                     name="expression_wild_type"
                     showAllHelp={showAllHelp}
                     disabled={noneApply}
-                    helpMessage="Your publication reports novel or comprehensive temporal or spatial expression data (e.g. tissue, developmental stage) of any D. melanogaster gene in a wild-type background; e.g. reporter gene analysis, antibody staining, In situ hybridization. Do not use this flag if the paper reports only subcellular localization.">
+                    helpMessage="Your publication reports novel or comprehensive temporal or spatial expression data (e.g. tissue, developmental stage) for any D. melanogaster gene in a wild-type background; e.g. reporter gene analysis, antibody staining, In situ hybridization. Do not use this flag if the paper reports only subcellular localization.">
                     Expression analysis in a wild-type background
                   </DataFlagCheckbox>
                 </div>
@@ -208,8 +212,8 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
                     name="phenotypic_analysis"
                     showAllHelp={showAllHelp}
                     disabled={noneApply}
-                    helpMessage="Your publication reports novel or comprehensive phenotypic data of one or more Drosophila melanogaster genes; e.g. based on mutant analysis, over-expression of a transgene, or genetic interactions.">
-                    Novel phenotypic analysis
+                    helpMessage="Your publication reports novel or comprehensive phenotypic data for one or more Drosophila melanogaster genes; e.g. based on mutant analysis, over-expression of a transgene, or genetic interactions.">
+                    Novel or comprehensive phenotypic analysis
                   </DataFlagCheckbox>
                   <DataFlagCheckbox
                     name="chemical_phenotypes"
@@ -258,14 +262,14 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
                   </DataFlagCheckbox>
                 </div>
 
-                <label>New technique/reagent/resource</label>
+                <label>Technical advance or new resource</label>
                 <div className="form-group" id="new_tech">
                   <DataFlagCheckbox
                     name="new_technique"
                     showAllHelp={showAllHelp}
                     disabled={noneApply}
-                    helpMessage="A major part of this paper describes a new technique, reagent or resource.">
-                    New technique/reagent/resource
+                    helpMessage="This paper includes a technical advance, new reagent, or resource likely to be useful for other researchers.">
+                    Technical advance or new resource
                   </DataFlagCheckbox>
                 </div>
 
@@ -294,6 +298,25 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
                     New member of receptor signaling pathway
                   </DataFlagCheckbox>
                 </div>
+
+                <label>None</label>
+                <div className="form-group">
+                  <DataFlagCheckbox
+                    name="no_flags"
+                    showAllHelp={showAllHelp}
+                    helpMessage="Your publication reports other kinds of data than those listed here. Letting us know will help us improve curation efficiency.">
+                    None of the above data types apply
+                  </DataFlagCheckbox>
+                </div>
+
+                {/* can't figure out how to emulate what I did in the disease field */}
+                {/* values.no_flags && (
+                <DataFlagTextArea
+                  rows="4"
+                  placeholder="Please tell us what types of data your publication contains that this form does not allow you to report."
+                  showAllHelp={showAllHelp}>
+                </DataFlagTextArea>
+                ) */}
 
                 {children}
 

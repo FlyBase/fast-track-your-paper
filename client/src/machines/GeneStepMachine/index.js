@@ -110,6 +110,8 @@ export const createGeneStepMachine = () => {
           },
         },
         none: {
+          // Delete any genes added upon entry.
+          entry: 'setGenesStudied',
           on: {
             SEARCH: 'search',
             BATCH: 'batch',

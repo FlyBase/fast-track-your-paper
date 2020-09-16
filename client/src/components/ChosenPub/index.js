@@ -14,7 +14,7 @@ const ChosenPub = ({ pub, citation }) => {
       <div className="row">
         <div className="col-sm-12">
           <div className="well small">
-            <p>
+            <div>
               {citation ? (
                 <>
                   <strong>Publication citation entered:</strong>&emsp;
@@ -24,14 +24,16 @@ const ChosenPub = ({ pub, citation }) => {
                   bibliography.
                 </>
               ) : (
-                <>
-                  <strong>Publication selected:</strong>&emsp;
+                <h5>
+                  <strong>Publication selected:</strong>
+                  <br />
+                  <i>{pub.title}</i>&ensp;
                   {pub.miniref}
                   <br />
-                  {cur_status_phrase_for[pub.curationStatus]}.
-                </>
+                  {cur_status_phrase_for[pub.curationStatus]}
+                </h5>
               )}
-            </p>
+            </div>
             <p>
               <strong>Please note:</strong>&ensp; The Fast-Track Your Paper tool
               accesses our &ldquo;live&rdquo; FlyBase references database in

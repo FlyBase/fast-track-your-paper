@@ -33,7 +33,7 @@ const CellLineFlag = ({
         <div className="col-xs-6">
           <DataFlagTxtInput
             name={`cell_lines.${i}.source`}
-            placeholder="e.g. DGRC or this study"
+            placeholder="e.g. DGRC, this study, unknown"
             disabled={disabled}
             style={textInputStyle}
           />

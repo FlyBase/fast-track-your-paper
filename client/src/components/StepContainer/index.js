@@ -22,7 +22,7 @@ import StepNavigation, { Prev, Next } from 'components/StepNavigation'
 import { fetchFromLocalStorage, storeToLocalStorage } from 'utils/storage'
 
 // An array to map the step machine state names to user friendly labels.
-const steps = [
+const defaultSteps = [
   { name: 'pub', label: 'Publication' },
   { name: 'author', label: 'Contact' },
   { name: 'flags', label: 'Data' },
@@ -187,6 +187,14 @@ function StepContainer() {
     error,
   } = current.context
 
+  // Dont' show the flags step when a review is selected.
+  const steps = defaultSteps.filter((step) => {
+    if (publication?.type?.name === 'review') {
+      return step.name !== 'flags'
+    }
+    return true
+  })
+
   /*
     Get the array index of the current step.
     This is required to show progress in the StepIndicator component.
@@ -250,7 +258,7 @@ function StepContainer() {
         }}
         nextClick={async () => {
           await authorFormikBagRef.current.submitForm()
-          send('NEXT')
+          send('NEXT', { client, form: authorFormikBagRef.current })
         }}
       />
     )
@@ -270,7 +278,7 @@ function StepContainer() {
         }}
         nextClick={async () => {
           await flagsFormikBagRef.current.submitForm()
-          send('NEXT')
+          send('NEXT', { form: flagsFormikBagRef.current })
         }}
       />
     )
@@ -279,6 +287,7 @@ function StepContainer() {
       <GenesStepWrapper
         service={geneMachine}
         genes={genes}
+        showAntibodies={publication?.type?.name === 'paper'}
         prevClick={() => send('PREV')}
         nextClick={() => send('NEXT')}
       />

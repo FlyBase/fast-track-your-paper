@@ -8,10 +8,13 @@ import { createGeneStepMachine } from 'machines/GeneStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 import { loader } from 'graphql.macro'
 
+import { hasContact, isReview, hasPublication, isFormValid } from './guards'
+
 const { assign } = actions
 
 // The GraphQL query to search all publication data.
 const submissionMutation = loader('graphql/submitPaper.gql')
+const tmFlagsQuery = loader('graphql/getTmFlags.gql')
 
 // See the following for full details on how this machine is
 // configured.
@@ -69,13 +72,11 @@ export const createStepMachine = () => {
         initializing: {
           // Initialize step machine when machine is started.
           entry: ['initStepMachine'],
-          on: {
-            // Machine initialized, go to pending state.
-            '': [
-              { target: 'pending.email', cond: 'isFromEmail' },
-              { target: 'pending' },
-            ],
-          },
+          // Machine initialized, go to pending state.
+          always: [
+            { target: 'pending.email', cond: 'isFromEmail' },
+            { target: 'pending' },
+          ],
         },
         pending: {
           id: 'pending',
@@ -92,13 +93,18 @@ export const createStepMachine = () => {
           },
           // Sub states of the top level pending state.
           states: {
-            // Pub state
+            // Handle email links.
             email: {
               entry: ['persist'],
               on: {
                 // Event for selecting a publication.
                 SET_PUB: {
-                  actions: ['setPub', 'persist'],
+                  actions: [
+                    'resetContext',
+                    'resetLocalFlags',
+                    'setPub',
+                    'persist',
+                  ],
                 },
                 NEXT: {
                   target: 'author',
@@ -107,6 +113,7 @@ export const createStepMachine = () => {
                 },
               },
             },
+            // Pub state
             pub: {
               // Call the 'persist' action to store app state to localstorage
               // or whatever the persist action implements.
@@ -129,7 +136,12 @@ export const createStepMachine = () => {
                 ],
                 // Event for selecting a publication.
                 SET_PUB: {
-                  actions: ['setPub', 'persist'],
+                  actions: [
+                    'resetContext',
+                    'resetLocalFlags',
+                    'setPub',
+                    'persist',
+                  ],
                 },
                 // Event for setting a manually entered citation.
                 SET_CITATION: {
@@ -146,18 +158,39 @@ export const createStepMachine = () => {
                 SET_CONTACT: {
                   actions: ['setContact', 'persist'],
                 },
-                NEXT: { target: 'flags', cond: 'hasContact' },
+                NEXT: [
+                  { target: 'genes', cond: 'hasContactAndIsReview' },
+                  { target: 'flags', cond: 'hasContact' },
+                ],
                 PREV: { target: 'pub' },
               },
             },
             // Data flags step
             flags: {
+              initial: 'loading',
               entry: ['persist'],
+              states: {
+                loading: {
+                  invoke: {
+                    id: 'getTmFlags',
+                    src: 'getTmFlags',
+                    onDone: {
+                      target: 'success',
+                      actions: ['setTmFlags'],
+                    },
+                    onError: {
+                      target: 'failure',
+                    },
+                  },
+                },
+                success: {},
+                failure: {},
+              },
               on: {
                 SET_FLAGS: {
                   actions: ['setFlags', 'persist'],
                 },
-                NEXT: { target: 'genes' },
+                NEXT: { target: 'genes', cond: 'isFlagsValid' },
                 PREV: { target: 'author' },
               },
             },
@@ -169,7 +202,10 @@ export const createStepMachine = () => {
                   actions: ['setGenes', 'persist'],
                 },
                 NEXT: { target: 'confirm' },
-                PREV: { target: 'flags' },
+                PREV: [
+                  { target: 'author', cond: 'isReview' },
+                  { target: 'flags' },
+                ],
               },
             },
             // Confirmation step
@@ -332,6 +368,34 @@ export const createStepMachine = () => {
             },
           }
         }),
+        setTmFlags: assign((context, event) => {
+          const submission = context?.submission
+          const flags = submission?.flags ?? {}
+          const tmFlags = event?.data?.data?.flags?.nodes ?? []
+          let newFlags = {}
+          tmFlags.forEach((flag) => {
+            if (flag.dataType.startsWith('new_al')) {
+              newFlags.new_allele = true
+            } else if (flag.dataType.startsWith('new_transg')) {
+              newFlags.new_transgene = true
+            } else if (flag.dataType.startsWith('phys_int')) {
+              newFlags.physical_interaction = true
+            } else if (flag.dataType.startsWith('disease')) {
+              newFlags.human_disease = true
+            }
+          })
+          /* Order is important here.
+           * Let existing flags override any text mining flag data.
+           * This should only happen when a user goes back to edit the flags step.
+           */
+          submission.flags = {
+            ...newFlags,
+            ...flags,
+          }
+          return {
+            submission,
+          }
+        }),
         setFlags: assign((context, event) => {
           const { submission } = context
           const { flags = {} } = event
@@ -404,27 +468,26 @@ export const createStepMachine = () => {
         sendPubError: send('NOPUB_ERROR', { to: 'pubStepMachine' }),
       },
       guards: {
-        // Check that the submission has an associated publication or citation.
         hasPublication: (context, event) => {
           const { submission } = context
-          return (
-            event.hasPub ||
-            (submission.publication && submission.publication.uniquename) ||
-            submission.citation
-          )
+          return event?.hasPub || hasPublication(submission)
         },
-        isFromEmail: (context, event) => {
-          const fbrf = context?.fbrf
-          const email = context?.submission?.contact?.email
-          return fbrf && email
+        isReview: (context) => {
+          return isReview(context?.submission?.publication)
+        },
+        isFromEmail: (context) => {
+          return context?.fbrf && context?.submission?.contact?.email
+        },
+        isFlagsValid: (context, event) => {
+          return isFormValid(event?.form)
         },
         hasContact: (context, event) => {
-          const {
-            submission: {
-              contact: { name, email },
-            },
-          } = context
-          return name && email
+          return hasContact(context?.submission?.contact, event?.form)
+        },
+        hasContactAndIsReview: (context, event) => {
+          const { contact, publication } = context?.submission
+          const formikBag = event?.form
+          return hasContact(contact, formikBag) && isReview(publication)
         },
         isConfirmed: (context) => context.confirmed,
       },
@@ -436,6 +499,16 @@ export const createStepMachine = () => {
             mutation: submissionMutation,
             variables: { submission },
           })
+        },
+        getTmFlags: (context, event) => {
+          const { client } = event
+          // Get the FBrf out of the selected publication object.
+          const fbrf = context?.submission?.publication?.uniquename
+          if (client) {
+            // Send query to retrieve any text mining flags.
+            return client.query({ query: tmFlagsQuery, variables: { fbrf } })
+          }
+          return {}
         },
       },
     }

@@ -59,7 +59,7 @@ const PubStep = ({
              * Show search results if the user has entered some search terms
              * and the state machine is in the 'search.loaded' state.
              */}
-            {terms && current.matches({ search: 'loaded' }) && (
+            {terms && current.matches('search.loaded') && (
               <PubResults
                 keywords={terms}
                 pubs={pubs}
@@ -68,9 +68,20 @@ const PubStep = ({
                 onCitationClick={() => send('CITATION')}
               />
             )}
-          </div>{' '}
+            {current.matches('search.loading') && (
+              <div>
+                <i className="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                <b>Searching...</b>
+              </div>
+            )}
+            {current.matches('search.failed') && (
+              <div className="alert alert-danger" role="alert">
+                <h4>Search failed</h4>
+              </div>
+            )}
+          </div>
           {/* end .panel-body */}
-        </div>{' '}
+        </div>
         {/* end .panel */}
       </div>
       {pubs.length !== 0 && children}
