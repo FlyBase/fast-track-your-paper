@@ -62,15 +62,17 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
             }}>
             {({ values, values: { no_flags: noneApply } }) => (
               <Form>
-
-              {isReview && (
-                <h4 className="alert alert-warning" style={{marginBottom:'1em'}}>
-                  The publication you have chosen is classified as a <b>review</b> by FlyBase.
-                  <br />
-                  FlyBase only curates a few types of data for reviews;
-                  the form below will only accept information about these types.
-                </h4>
-              )}
+                {isReview && (
+                  <h4
+                    className="alert alert-warning"
+                    style={{ marginBottom: '1em' }}>
+                    The publication you have chosen is classified as a{' '}
+                    <b>review</b> by FlyBase.
+                    <br />
+                    FlyBase only curates a few types of data for reviews; the
+                    form below will only accept information about these types.
+                  </h4>
+                )}
 
                 <label>None</label>
                 <div className="form-group">
