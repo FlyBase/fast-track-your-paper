@@ -144,7 +144,7 @@ const PubResults = ({
               <strong>Can't find what you are looking for?</strong>
               <br />
               FlyBase only incorporates and curates publications that are "fully
-              published," meaning they have final volume and page numbers.
+              published," meaning they have <b>final volume and page numbers</b>.
               Publications that have not yet reached this stage (including
               preprints) will not be included in the FlyBase bibliography.
               Please wait until your paper is fully published before using this
