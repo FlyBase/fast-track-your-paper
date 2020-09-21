@@ -40,7 +40,7 @@ const PubStep = ({
 
   return (
     <>
-      <div className="col-xs-12">
+      <div className="container">
         <div className="panel panel-primary">
           <div className="panel-heading">
             <h3 className="panel-title">Choose a Publication to Annotate</h3>
