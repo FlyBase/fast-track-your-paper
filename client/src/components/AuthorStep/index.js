@@ -29,6 +29,7 @@ const AuthorStep = ({ service, contact, bagRef, children }) => {
           contact: { name, email, isAuthor: isAuthor === 'yes' },
         })
       }}>
+      { (formik) => (
       <Form className="form-horizontal">
         <div className="container">
           {current.matches('invalid') && (
@@ -39,18 +40,18 @@ const AuthorStep = ({ service, contact, bagRef, children }) => {
               <h3 className="panel-title">Contact Information</h3>
             </div>
             <div className="panel-body">
-              <div className="form-group">
+              <div className={'form-group'+((formik.touched.name && formik.errors.name) ? ' has-error' : '')}>
                 <label htmlFor="name" className="col-sm-2 control-label">
                   Name
                 </label>
                 <div className="col-sm-10 col-lg-9">
                   <Field id="name" name="name" className="form-control" />
                 </div>
-                <div className="col-sm-2">
+                <div className="col-sm-offset-2 col-sm-10 col-lg-9 h4 text-danger">
                   <ErrorMessage name="name" />
                 </div>
               </div>
-              <div className="form-group">
+              <div className={'form-group'+((formik.touched.email && formik.errors.email) ? ' has-error' : '')}>
                 <label htmlFor="email" className="col-sm-2 control-label">
                   Email
                 </label>
@@ -62,11 +63,11 @@ const AuthorStep = ({ service, contact, bagRef, children }) => {
                     className="form-control"
                   />
                 </div>
-                <div className="col-sm-2">
+                <div className="col-sm-offset-2 col-sm-10 col-lg-9 h4 text-danger">
                   <ErrorMessage name="email" />
                 </div>
               </div>
-              <div className="form-group">
+              <div className={'form-group'+((formik.touched.email_verify && formik.errors.email_verify) ? ' has-error' : '')}>
                 <label
                   htmlFor="email_verify"
                   className="col-sm-2 control-label">
@@ -80,7 +81,7 @@ const AuthorStep = ({ service, contact, bagRef, children }) => {
                     className="form-control"
                   />
                 </div>
-                <div className="col-sm-2">
+                <div className="col-sm-offset-2 col-sm-10 col-lg-9 h4 text-danger">
                   <ErrorMessage name="email_verify" />
                 </div>
               </div>
@@ -116,7 +117,7 @@ const AuthorStep = ({ service, contact, bagRef, children }) => {
           </div>
         </div>
         {children}
-      </Form>
+      </Form>)}
     </Formik>
   )
 }
