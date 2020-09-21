@@ -22,7 +22,7 @@
   text-align: center;
 }
 #batch-results div.panel-body > div > div:last-child {
-  flex-basis: 2em;
+  flex-basis: 6em;
   text-align: right;
   font-size: 12px;
 }
