@@ -39,8 +39,8 @@ services:
     image: flybase/ftyp-db:${TAG:-latest}
     restart: always
     environment:
-      POSTGRES_DB: ftyp
-      POSTGRES_PASSWORD: CHANGEME
+      POSTGRES_DB: ${FTYP_PGDATABASE:-ftyp}
+      POSTGRES_PASSWORD: ${FTYP_PGPASSWORD:-CHANGEME}
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     volumes:
       - ftyp-data:/var/lib/postgresql/data

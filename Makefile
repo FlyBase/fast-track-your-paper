@@ -3,11 +3,19 @@ SUBMISSION_JSON := $(DATA_DIR)/ftyp-submissions.json
 DATA_FLAGS_URI := https://svn.flybase.org/documents/curation/curation_data/text_mining_flags/textmining_positive_SVM.txt
 DATA_FLAGS_FILE := $(DATA_DIR)/text_mining/data_flags.tsv
 
+# Perl command to read in the value of .env file.
 PERL_SPLIT = perl -n -e '($$key, $$val) = split /\s*=\s*/; print $$val;'
 
 ENV_FILE := .env
-SVN_USER := $(shell grep SVN_USER $(ENV_FILE) | $(PERL_SPLIT))
-SVN_PASSWORD := $(shell grep SVN_PASSWORD $(ENV_FILE) | $(PERL_SPLIT))
+
+SVN_USER := $(shell grep '^SVN_USER' $(ENV_FILE) | $(PERL_SPLIT))
+SVN_PASSWORD := $(shell grep '^SVN_PASSWORD' $(ENV_FILE) | $(PERL_SPLIT))
+
+# Export these to scripts executed by this Makefile.
+export PGHOST := $(shell grep '^SRC_PGHOST' $(ENV_FILE) | $(PERL_SPLIT))
+export PGDATABASE := $(shell grep '^SRC_PGDATABASE' $(ENV_FILE) | $(PERL_SPLIT))
+export PGPORT := $(shell grep '^SRC_PGPORT' $(ENV_FILE) | $(PERL_SPLIT))
+export PGUSER := $(shell grep '^SRC_PGUSER' $(ENV_FILE) | $(PERL_SPLIT))
 
 all: pull-data load-data build-client
 
@@ -48,6 +56,7 @@ load-data: up
 
 $(DATA_DIR)/chado_feature.tsv $(DATA_DIR)/chado $(DATA_DIR)/feature:
 	mkdir -p $(DATA_DIR) && cd db && scripts/pull_chado_data.sh
+
 
 # Passing in authentication via args is not ideal because login information is exposed to local users.
 # Newer versions of svn do support passwords via STDIN (--password-from-stdin), but not all clients
