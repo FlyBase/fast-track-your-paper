@@ -3,6 +3,12 @@ SUBMISSION_JSON := $(DATA_DIR)/ftyp-submissions.json
 DATA_FLAGS_URI := https://svn.flybase.org/documents/curation/curation_data/text_mining_flags/textmining_positive_SVM.txt
 DATA_FLAGS_FILE := $(DATA_DIR)/text_mining/data_flags.tsv
 
+PERL_SPLIT = perl -n -e '($$key, $$val) = split /\s*=\s*/; print $$val;'
+
+ENV_FILE := .env
+SVN_USER := $(shell grep SVN_USER $(ENV_FILE) | $(PERL_SPLIT))
+SVN_PASSWORD := $(shell grep SVN_PASSWORD $(ENV_FILE) | $(PERL_SPLIT))
+
 all: pull-data load-data build-client
 
 up: pull-images
