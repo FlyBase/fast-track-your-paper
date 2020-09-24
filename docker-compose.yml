@@ -27,7 +27,7 @@ services:
       --allow-explain
       --enable-query-batching
       --legacy-relations omit
-      --connection postgres://postgres:CHANGEME@db/ftyp
+      --connection postgres://postgres:${FTYP_PGPASSWORD:-CHANGEME}@db/${FTYP_PGDATABASE:-ftyp}
       --schema ftyp,flybase,public
     networks:
       - frontend
