@@ -40,8 +40,8 @@ const SubmitStep = ({ submission = {}, result, children }) => {
           <h3 class="panel-title">FlyBase Gene Snapshots</h3>
         </div>
         <div class="panel-body">
-          Based on the genes associated with your recent publication, you've done
-          work on some genes that do not currently have{' '}
+          Based on the genes associated with your recent publication, you've
+          done work on some genes that do not currently have{' '}
           <a href="https://wiki.flybase.org/wiki/Gene_Snapshots">
             Gene Snapshots
           </a>

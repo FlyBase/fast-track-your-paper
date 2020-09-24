@@ -6,11 +6,17 @@ const DataFlagTextArea = ({ children, ...props }) => {
 
   return (
     <>
-      <textarea className="form-control" style={ (meta.touched && meta.error) ? {backgroundColor:'#f2dede'} : {} } {...field} {...props}>
+      <textarea
+        className="form-control"
+        style={meta.touched && meta.error ? { backgroundColor: '#f2dede' } : {}}
+        {...field}
+        {...props}>
         {children}
       </textarea>
       {meta.touched && meta.error ? (
-        <div className="text-danger"><b>{meta.error}</b></div>
+        <div className="text-danger">
+          <b>{meta.error}</b>
+        </div>
       ) : null}
     </>
   )

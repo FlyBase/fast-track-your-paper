@@ -48,10 +48,7 @@ const ChosenPub = ({ pub, citation }) => {
             </p>
             <p>
               If you feel that there is an error, please{' '}
-              <a href="/contact/email?subject=ftyp">
-                contact FlyBase
-              </a>
-              .
+              <a href="/contact/email?subject=ftyp">contact FlyBase</a>.
             </p>
           </div>
         </div>

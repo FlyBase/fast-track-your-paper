@@ -59,8 +59,16 @@ const GeneSearchResults = ({
           Showing {genes.length} of {totalCount} matches.&emsp;
         </div>
         <ul>
-          <li style={{backgroundColor:'white'}}>
-            <GeneSearchHit g={{symbol:'symbol',hl:{name:'<b>name</b>',synonyms:['<b>synonym matches</b>']}}} />
+          <li style={{ backgroundColor: 'white' }}>
+            <GeneSearchHit
+              g={{
+                symbol: 'symbol',
+                hl: {
+                  name: '<b>name</b>',
+                  synonyms: ['<b>synonym matches</b>'],
+                },
+              }}
+            />
           </li>
           {genes.map((g) => {
             z = z ? '' : 'z'
