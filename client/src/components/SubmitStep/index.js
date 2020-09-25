@@ -12,7 +12,6 @@ const SubmitStep = ({ submission = {}, result, children }) => {
   const { loading, error, data } = useQuery(submissionQuery, {
     variables: { fbrf },
   })
-  console.log(submission)
   let noSumGeneList = []
   for (let n = 0; n < submission.genes.length; n++) {
     if (!submission.genes[n].hasSummary) {
@@ -32,7 +31,7 @@ const SubmitStep = ({ submission = {}, result, children }) => {
       )
     }
   }
-  console.log(noSumGeneList)
+
   let sumInvite = (
     <div class="container">
       <div class="panel panel-primary">
