@@ -25,7 +25,7 @@ const ChosenPub = ({ pub, citation }) => {
                 </>
               ) : (
                 <>
-                  <span class="h4">Publication selected:</span>
+                  <span className="h4">Publication selected:</span>
                   <br />
                   <h5>
                     <i>{pub.title}</i>&ensp;

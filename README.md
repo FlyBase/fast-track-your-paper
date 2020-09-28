@@ -14,16 +14,34 @@ A tool for expediting curation of published research in genetic databases.
 1. Clone repo
 ```bash
 git clone https://github.com/FlyBase/fast-track-your-paper.git
+cd fast-track-your-paper
 ```
 
-2. Pull / load data and start docker containers
-
-Replace all values in between angle brackets ('<>') with their appropriate values for your situation.
-The values should not contain the angle brackets.
+2. Create credentials file
 
 ```bash
-cd fast-track-your-paper
-make PGHOST=<HOSTNAME> PGDATABASE=<DBNAME> PGPORT=<PORT> PGUSER=<USER>
+touch .env
+```
+
+Edit the `.env` to add your SVN and PostgreSQL credentials.  Be sure to replace all values within the 
+angle brackets `<>` with values for your environment.
+
+```
+SVN_USER=<SVN USERNAME>
+SVN_PASSWORD=<SVN PASSWORD>
+
+SRC_PGHOST=<HOSTNAME>
+SRC_PGDATABASE=<DATABASE NAME>
+SRC_PGPORT=<POSTGRES PORT>
+SRC_PGUSER=<POSTGRES USER>
+
+FTYP_PGPASSWORD=<FTYP DATABASE PASSWORD>
+```
+
+3. Pull / load data and start docker containers
+
+```bash
+make
 ```
 
 For full details see the db [README](./db/README.md).

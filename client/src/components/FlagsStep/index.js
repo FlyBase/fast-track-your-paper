@@ -3,7 +3,6 @@ import { Formik, Form } from 'formik'
 import { Persist } from 'formik-persist'
 
 import DataFlagCheckbox from 'components/DataFlagCheckbox'
-import DataFlagTextArea from 'components/DataFlagTextArea'
 import DiseaseTextArea from 'components/DiseaseTextArea'
 import CellLineFlag from 'components/CellLineFlag'
 import DatasetFlag from 'components/DatasetFlag'

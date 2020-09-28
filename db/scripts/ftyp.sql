@@ -383,13 +383,16 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 DROP TABLE IF EXISTS ftyp_hidden.submissions;
 CREATE TABLE ftyp_hidden.submissions (
     submission_id integer PRIMARY KEY DEFAULT nextval('ftyp_hidden.submissions_submission_id'),
-    fbrf varchar UNIQUE DEFAULT NULL
-    CONSTRAINT fbrf_must_be_valid CHECK (fbrf ~ '^FBrf[0-9]+$'),
+    fbrf varchar DEFAULT NULL CONSTRAINT fbrf_must_be_valid CHECK (fbrf ~ '^FBrf[0-9]+$'),
     submitted_to_flybase timestamptz DEFAULT CURRENT_TIMESTAMP,
     date_processed timestamptz DEFAULT null,
     user_data jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
+/*
+ * This trigger populates the ftyp_hidden.submissions.fbrf field using the FBrf ID
+ * from the submission object being inserted.
+ */
 CREATE TRIGGER update_fbrf BEFORE INSERT OR UPDATE ON ftyp_hidden.submissions
 FOR EACH ROW EXECUTE PROCEDURE ftyp_hidden.get_submission_fbrf();
 
@@ -440,7 +443,16 @@ CREATE INDEX tf_flag_type_idx ON ftyp_hidden.text_mining_flag (flag_type);
 -- Select only high confidence flags except for disease.
 CREATE OR REPLACE FUNCTION ftyp.get_text_mining_flags(fbrf text) RETURNS SETOF ftyp_hidden.text_mining_flag AS $$
 SELECT * FROM ftyp_hidden.text_mining_flag
-         WHERE ftyp_hidden.text_mining_flag.fbrf = $1
+         WHERE ftyp_hidden.text_mining_flag.pmid = (
+             SELECT dbx.accession
+             FROM pub p JOIN pub_dbxref pdbx ON p.pub_id = pdbx.pub_id
+                        JOIN dbxref dbx ON pdbx.dbxref_id = dbx.dbxref_id
+                        JOIN db ON dbx.db_id = db.db_id
+             WHERE p.uniquename=$1
+               AND db.name='pubmed'
+               AND pdbx.is_current = true
+             LIMIT 1
+             )
            AND (
             ftyp_hidden.text_mining_flag.data_type LIKE '%:high'
               OR
