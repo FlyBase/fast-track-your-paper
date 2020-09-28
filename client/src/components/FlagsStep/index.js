@@ -310,15 +310,14 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
                 </div>
 
                 {/* can't figure out how to emulate what I did in the disease field */}
-                { noneApply && (
-                <textarea
-                  className="form-control"
-                  name="none_apply_text"
-                  rows="4"
-                  style={{marginBottom:'2em'}}
-                  placeholder="Optional: if there important data types contained in your paper that have not been covered by the above flags, please briefly list them here."
-                ></textarea>
-                ) }
+                {noneApply && (
+                  <textarea
+                    className="form-control"
+                    name="none_apply_text"
+                    rows="4"
+                    style={{ marginBottom: '2em' }}
+                    placeholder="Optional: if there are important data types contained in your paper that have not been covered by the above flags, please briefly list them here."></textarea>
+                )}
 
                 {children}
 
