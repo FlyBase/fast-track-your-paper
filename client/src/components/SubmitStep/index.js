@@ -1,17 +1,6 @@
 import React from 'react'
-import { useParams, useHistory } from 'react-router-dom'
-import { useQuery } from '@apollo/client'
-import { loader } from 'graphql.macro'
 
-// The GraphQL query to fetch the submission
-const submissionQuery = loader('graphql/getSubmission.gql')
-
-const SubmitStep = ({ submission = {}, result, children }) => {
-  // not using any of these four constants yet
-  const { fbrf } = useParams()
-  const { loading, error, data } = useQuery(submissionQuery, {
-    variables: { fbrf },
-  })
+const SubmitStep = ({ submission = {}, children }) => {
   let noSumGeneList = []
   for (let n = 0; n < submission.genes.length; n++) {
     if (!submission.genes[n].hasSummary) {
@@ -24,7 +13,7 @@ const SubmitStep = ({ submission = {}, result, children }) => {
       wufooURL += '&Field3=' + gn.symbol
       noSumGeneList.push(
         <li>
-          <a href={encodeURI(wufooURL)} target="_blank">
+          <a href={encodeURI(wufooURL)} target="_blank" rel="noopener noreferrer">
             <b>{gn.symbol}</b> <i class="fa fa-external-link" />
           </a>
         </li>
