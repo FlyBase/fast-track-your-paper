@@ -13,7 +13,10 @@ const SubmitStep = ({ submission = {}, children }) => {
       wufooURL += '&Field3=' + gn.symbol
       noSumGeneList.push(
         <li>
-          <a href={encodeURI(wufooURL)} target="_blank" rel="noopener noreferrer">
+          <a
+            href={encodeURI(wufooURL)}
+            target="_blank"
+            rel="noopener noreferrer">
             <b>{gn.symbol}</b> <i class="fa fa-external-link" />
           </a>
         </li>
