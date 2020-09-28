@@ -383,13 +383,16 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 DROP TABLE IF EXISTS ftyp_hidden.submissions;
 CREATE TABLE ftyp_hidden.submissions (
     submission_id integer PRIMARY KEY DEFAULT nextval('ftyp_hidden.submissions_submission_id'),
-    fbrf varchar UNIQUE DEFAULT NULL
-    CONSTRAINT fbrf_must_be_valid CHECK (fbrf ~ '^FBrf[0-9]+$'),
+    fbrf varchar DEFAULT NULL CONSTRAINT fbrf_must_be_valid CHECK (fbrf ~ '^FBrf[0-9]+$'),
     submitted_to_flybase timestamptz DEFAULT CURRENT_TIMESTAMP,
     date_processed timestamptz DEFAULT null,
     user_data jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
+/*
+ * This trigger populates the ftyp_hidden.submissions.fbrf field using the FBrf ID
+ * from the submission object being inserted.
+ */
 CREATE TRIGGER update_fbrf BEFORE INSERT OR UPDATE ON ftyp_hidden.submissions
 FOR EACH ROW EXECUTE PROCEDURE ftyp_hidden.get_submission_fbrf();
 
