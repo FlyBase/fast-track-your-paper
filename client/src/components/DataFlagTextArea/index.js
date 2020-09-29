@@ -1,16 +1,16 @@
 import { useField } from 'formik'
 import React from 'react'
 
-const DataFlagTextArea = ({ children, ...props }) => {
+const DataFlagTextArea = ({ children, style = {}, ...props }) => {
   const [field, meta] = useField({ ...props, type: 'textarea' })
+
+  if (meta.touched && meta.error) {
+    style.backgroundColor = '#f2dede'
+  }
 
   return (
     <>
-      <textarea
-        className="form-control"
-        style={meta.touched && meta.error ? { backgroundColor: '#f2dede' } : {}}
-        {...field}
-        {...props}>
+      <textarea className="form-control" style={style} {...field} {...props}>
         {children}
       </textarea>
       {meta.touched && meta.error ? (
