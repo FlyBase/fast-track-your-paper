@@ -4,7 +4,7 @@ DATA_FLAGS_URI := https://svn.flybase.org/documents/curation/curation_data/text_
 DATA_FLAGS_FILE := $(DATA_DIR)/text_mining/data_flags.tsv
 
 # Perl command to read in the value of .env file.
-PERL_SPLIT = perl -n -e '($$key, $$val) = split /\s*=\s*/; print $$val;'
+PERL_SPLIT = perl -n -e '($$key, $$val) = split /\s*=\s*/, $$_, 2; print $$val;'
 
 ENV_FILE := .env
 
