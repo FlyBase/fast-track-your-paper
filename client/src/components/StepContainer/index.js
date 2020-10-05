@@ -332,6 +332,7 @@ function StepContainer() {
           display: flex;
           flex-flow: column nowrap;
           align-items: center;
+          font-size: 18px;
         `}>
         {step}
         <Divider />
