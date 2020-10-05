@@ -25,14 +25,14 @@ const ChosenPub = ({ pub, citation }) => {
                 </>
               ) : (
                 <>
-                  <span className="h4">Publication selected:</span>
+                  <span className="h3">Publication selected:</span>
                   <br />
-                  <h5>
+                  <h4>
                     <i>{pub.title}</i>&ensp;
                     {pub.miniref}
                     <br />
                     {cur_status_phrase_for[pub.curationStatus]}
-                  </h5>
+                  </h4>
                 </>
               )}
             </div>
