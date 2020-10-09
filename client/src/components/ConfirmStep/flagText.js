@@ -1,5 +1,6 @@
 export const flags2HTMLstring = {
   no_flags: 'You indicated no curation flags',
+  none_apply_text: '',
   new_allele:
     'generation of a new classical allele or chromosomal aberration in a Drosophila genome',
   new_transgene: 'generation of a new transgenic construct',
@@ -30,7 +31,8 @@ export const flags2HTMLstring = {
     'new experimental data defining cis-regulatory elements of <i>D. melanogaster</i> genes at the sequence level',
   anatomical_data:
     'novel anatomical description of new or existing wild-type Drosophila body parts',
-  new_technique: 'a new technique, reagent or resource',
+  new_technique: 'new technique, reagent, resource or other advance',
+  new_technique_text: '',
   dataset: 'high-throughput or large-scale data',
   dataset_pheno: 'phenotypic screen',
   dataset_accessions: 'data repository',

@@ -12,10 +12,10 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
           Edit
         </button>
       </h4>
-      <p>
+      <p className="text-primary" style={{marginBottom:0}}>
         <i>{submission?.publication?.title}</i>
       </p>
-      <p>{submission?.publication?.miniref}</p>
+      <p className="text-primary">{submission?.publication?.miniref}</p>
     </>
   ) : (
     <>
@@ -25,7 +25,7 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
           Edit
         </button>
       </h4>
-      <p>{submission?.citation}</p>
+      <p className="text-primary">{submission?.citation}</p>
       <p>
         You did not find this publication when you searched our bibliography.
       </p>
@@ -35,6 +35,7 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
   for (let g = 0; g < submission.genes.length; g++) {
     if (submission.genes[g].antibody) madeAbs = ''
   }
+  // console.log(submission.flags)
   return (
     <>
       <h3>Confirmation</h3>
@@ -48,7 +49,7 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
             Edit
           </button>
         </h4>
-        <p>
+        <p className="text-primary" style={{marginBottom:0}}>
           {submission.contact.name} &lang;{submission.contact.email}&rang;
         </p>
         <p>
@@ -66,11 +67,11 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
                 Edit
               </button>
             </h4>
-            <ul>
+            <ul className="text-primary">
               {Object.keys(flags2HTMLstring).map((flag) => {
                 if (submission.flags[flag]) {
                   /* logic here to parse Boolean flags, text, and arrays */
-                  let dataFlag = flags2HTMLstring[flag]
+                  let dataFlagHTML = flags2HTMLstring[flag]
                   let listyle = {}
                   if (flag.match(/_line/)) {
                     /* handle these after the map */
@@ -94,17 +95,20 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
                     }
                     /* else handle normally below */
                   }
-                  if (dataFlag === '') {
-                    dataFlag =
+                  if (dataFlagHTML === '') {
+                    dataFlagHTML = (flag.match(/none/)) ?
+                      '<b>suggestions for data types to capture</b>' :
                       '<b>' +
                       flag.replace(/_/g, ' ') +
-                      '</b><pre style="margin:0; font-style:italic;">' +
+                      '</b>'
+                    dataFlagHTML +=
+                      '<pre style="margin:0; font-style:italic;">' +
                       submission.flags[flag] +
                       '</pre>'
                     listyle = { listStyleType: 'none', margin: 0 }
                   }
-                  if (typeof dataFlag == 'object') {
-                    dataFlag =
+                  if (typeof dataFlagHTML == 'object') {
+                    dataFlagHTML =
                       /*(submission.flags[flag].length) ? submission.flags[flag].join(', ') :*/ submission
                         .flags[flag]
                     listyle = { listStyleType: 'none', paddingLeft: '1em' }
@@ -113,7 +117,7 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
                     <li
                       key={flag}
                       style={listyle}
-                      dangerouslySetInnerHTML={{ __html: dataFlag }}
+                      dangerouslySetInnerHTML={{ __html: dataFlagHTML }}
                     />
                   )
                 }
@@ -195,7 +199,7 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
             Edit
           </button>
         </h4>
-        <ul id="confirmationGenesList" className="bg-warning">
+        <ul id="confirmationGenesList" className="bg-info img-rounded">
           {submission.genes.map((gene) => {
             let ab = gene.antibody
               ? gene.antibody.join(' & ') + ' Ab generated'
