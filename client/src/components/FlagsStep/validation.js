@@ -9,12 +9,15 @@ export const DataFlagsSchema = Yup.object().shape({
   }),
   new_technique: Yup.boolean(),
   new_technique_text: Yup.string()
-    .max(280,'Please enter no more than 280 characters.')
+    .max(280, 'Please enter no more than 280 characters.')
     .when('new_technique', {
       is: true,
       then: Yup.string().required(),
       otherwise: Yup.string().notRequired(),
     }),
   no_flags: Yup.boolean(),
-  none_apply_text: Yup.string().max(280,'Please enter no more than 280 characters.'),
+  none_apply_text: Yup.string().max(
+    280,
+    'Please enter no more than 280 characters.'
+  ),
 })
