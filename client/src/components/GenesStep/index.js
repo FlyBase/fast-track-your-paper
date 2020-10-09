@@ -303,6 +303,13 @@ const GenesStep = ({
                 flex: 0 1 300px;
               }
             `}>
+            <span className="help-block">
+							<span className="text-info">
+								Only FBgn IDs can be uploaded here; please use
+								the <a href="/convert/id">ID validator</a> if
+								you need to convert your list to FBgns first.
+							</span>
+            </span>
             <GeneBatchForm onSubmit={handleOnUpload} />
             <div
               css={`
