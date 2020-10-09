@@ -45,31 +45,37 @@ const SubmitStep = ({ submission = {}, children }) => {
           for FlyBase.
         </div>
       </div>
-
-      <div class="panel panel-primary">
-        <div class="panel-heading">
-          <h3 class="panel-title">FCAG &ndash; the FlyBase Community Advisory Group</h3>
-        </div>
-        <div class="panel-body">
-          If you would like to help shape FlyBase with survey feedback
-          about various aspects of the website and database, please join
-          our <a href="https://wiki.flybase.org/wiki/FlyBase:Community_Advisory_Group">FlyBase Community Advisory Group</a> by
-          filling in the registration form <a href="/static/fcag">here</a>.
-        </div>
-        <div class="panel-footer text-primary">
-          If you or someone in your research group is already a member of FCAG, <b>thank you!</b>
-          FlyBase benefits from your guidance and input.
-        </div>
-      </div>
-
     </div>
   )
   return (
     <>
+
       {/** TODO: Add follow up statements based submission flags and genes. */}
+
       <h2>Thank you!</h2>
+
+      <div class="container">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">FCAG &ndash; the FlyBase Community Advisory Group</h3>
+          </div>
+          <div class="panel-body">
+            If you would like to help shape FlyBase with survey feedback
+            about various aspects of the website and database, please join FCAG,
+            our <a href="https://wiki.flybase.org/wiki/FlyBase:Community_Advisory_Group">FlyBase Community Advisory Group</a> by
+            filling in the registration form <a href="/static/fcag">here</a>.
+          </div>
+          <div class="panel-footer text-primary">
+            If you or someone in your research group is already a member of
+            FCAG, <b>thank you!</b> FlyBase benefits from your guidance and input.
+          </div>
+        </div>
+      </div>
+
       {noSumGeneList.length ? sumInvite : ''}
+
       {children}
+
     </>
   )
 }
