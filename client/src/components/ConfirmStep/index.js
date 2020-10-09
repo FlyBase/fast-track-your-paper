@@ -12,7 +12,7 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
           Edit
         </button>
       </h4>
-      <p className="text-primary" style={{marginBottom:0}}>
+      <p className="text-primary" style={{ marginBottom: 0 }}>
         <i>{submission?.publication?.title}</i>
       </p>
       <p className="text-primary">{submission?.publication?.miniref}</p>
@@ -49,7 +49,7 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
             Edit
           </button>
         </h4>
-        <p className="text-primary" style={{marginBottom:0}}>
+        <p className="text-primary" style={{ marginBottom: 0 }}>
           {submission.contact.name} &lang;{submission.contact.email}&rang;
         </p>
         <p>
@@ -96,11 +96,9 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
                     /* else handle normally below */
                   }
                   if (dataFlagHTML === '') {
-                    dataFlagHTML = (flag.match(/none/)) ?
-                      '<b>suggestions for data types to capture</b>' :
-                      '<b>' +
-                      flag.replace(/_/g, ' ') +
-                      '</b>'
+                    dataFlagHTML = flag.match(/none/)
+                      ? '<b>suggestions for data types to capture</b>'
+                      : '<b>' + flag.replace(/_/g, ' ') + '</b>'
                     dataFlagHTML +=
                       '<pre style="margin:0; font-style:italic;">' +
                       submission.flags[flag] +

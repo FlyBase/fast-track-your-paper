@@ -266,15 +266,15 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
                 </div>
 
                 {values.new_technique && (
-                <div className="form-group">
-                  <div className="col-lg-12" style={{ marginBottom: '1em' }}>
-                    <DataFlagTextArea
-                      className="form-control"
-                      name="new_technique_text"
-                      rows="4"
-                      placeholder="Required: Please briefly describe the technical advance, new reagent or resource described in your paper. (limit 280 characters)"></DataFlagTextArea>
+                  <div className="form-group">
+                    <div className="col-lg-12" style={{ marginBottom: '1em' }}>
+                      <DataFlagTextArea
+                        className="form-control"
+                        name="new_technique_text"
+                        rows="4"
+                        placeholder="Required: Please briefly describe the technical advance, new reagent or resource described in your paper. (limit 280 characters)"></DataFlagTextArea>
+                    </div>
                   </div>
-                </div>
                 )}
 
                 <label>Large-scale Dataset</label>
@@ -314,15 +314,15 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
                 </div>
 
                 {noneApply && (
-                <div className="form-group">
-                  <div className="col-lg-12" style={{ marginBottom: '2em' }}>
-                    <DataFlagTextArea
-                      className="form-control"
-                      name="none_apply_text"
-                      rows="4"
-                      placeholder="Optional: if there are important data types contained in your paper that have not been covered by the above flags, please briefly list them here."></DataFlagTextArea>
+                  <div className="form-group">
+                    <div className="col-lg-12" style={{ marginBottom: '2em' }}>
+                      <DataFlagTextArea
+                        className="form-control"
+                        name="none_apply_text"
+                        rows="4"
+                        placeholder="Optional: if there are important data types contained in your paper that have not been covered by the above flags, please briefly list them here."></DataFlagTextArea>
+                    </div>
                   </div>
-                </div>
                 )}
 
                 {children}
