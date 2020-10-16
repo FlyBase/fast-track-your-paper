@@ -148,16 +148,14 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
 
     <div class="container-fluid">
-
-        <!--
-            <a href="http://fb2017_05.flybase.org">FlyBase FB2017_05</a>
+<!--
+        <a href="http://fb2017_05.flybase.org">FlyBase FB2017_05</a>
         <div class="row">
           <div class="col-xs-12 text-center" style="background-color:gold;">
             <h5>The FlyBase archive server is out of order.</h5>
           </div>
         </div>
-        -->
-
+-->
         <div class="row">
           <div class="col-xs-12 nopadding grey" style="height:72px">
 
@@ -170,7 +168,7 @@
 
             <div id="titlecontainer" class="hidden-xs">
               <div id="release_notice" class="text-error text-center text-danger small">
-                FB2020_04, released Aug 18, 2020
+                FB2020_05, released Oct 14, 2020
               </div>
               <p id="headertitle" class="lead text-center">Fast-Track Your Paper</p>
             </div>
@@ -182,7 +180,7 @@
           <div id="titlecontainer" class="col-xs-12 grey">
 
             <div id="release_notice" class="text-error text-center text-danger small">
-                FB2020_04, released Aug 18, 2020
+                FB2020_05, released Oct 14, 2020
             </div>
             <p id="headertitle" class="lead text-center" style="line-height:1em">
               A Database of <i>Drosophila</i> Genes &amp; Genomes
@@ -192,8 +190,6 @@
         </div>
         <!-- begin navbar.tx -->
         <nav class="row navbar navbar-inverse" style="border-radius: 0 0 4px 4px; min-height:auto; ">
-
-          <style> @media (min-width: 768px) { .navbar-collapse.collapse { display:inline-block !important; } } </style>
 
           <div class="container-fluid" style="padding:0">
 
@@ -207,7 +203,7 @@
             </div>
 
             <!-- Responsive Navbar Part 2: Place all navbar contents you want collapsed within .navbar-collapse.collapse. -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="display:inline-block !important;">
 
               <ul class="nav navbar-nav">
                 <li><a href="/">Home</a></li>
@@ -347,7 +343,6 @@
                     <li><a href="/community/find">Find A Person</a></li>
                     <li><a href="/community/newsletter">Newsletter</a></li>
                     <li><a href="https://join.slack.com/t/flyslackco/shared_invite/enQtNzA2Mzc1NjEzMDU5LTIzMjNiZTM4NzI1ZjdhZDRiMTBkNzVhZmQyNzk3OWYxMWYwZDBhMWUzNGM5OTQ5MDUwMDcxYWQyMTJmZDFhYTc">FlySlack Community</a></li>
-                    <li><a href="/wiki/Category:Genes">FlyGene Wiki</a></li>
                     <li><a href="http://twitter.com/FlyBaseDotOrg">Twitter</a></li>
                   </ul>
                 </li>
@@ -358,7 +353,7 @@
                     <li><a href="/static/sequenced_species">Sequenced Species</a></li>
                     <li><a href="/maps/synteny">Synteny Table</a></li>
                     <li><a href="/static/Drosophilidae">Color Illustrations</a></li>
-                    <li><a href="/wiki/FlyBase:Abbreviations">Abbreviations</a></li>
+                    <!--<li><a href="/wiki/FlyBase:Abbreviations">Abbreviations</a></li>-->
                   </ul>
                 </li>
                 <li class="dropdown">
@@ -425,7 +420,7 @@
 
             </div><!--/.nav-collapse -->
 
-            <form class="navbar-form navbar-right" id="j2g_search_form" method="post" action="/cgi-bin/uniquery.pl" style="padding-right:0; margin:2px;" role="search" enctype="multipart/form-data">
+            <form id="j2g_search_form" method="post" action="/cgi-bin/uniquery.pl" role="search" enctype="multipart/form-data" class="navbar-form navbar-right" style="padding-right:0; margin:2px;" onsubmit="j2gOnSubmitActions()">
               <div class="form-group">
                 <input type="hidden" name="caller" value="genejump"><!-- used by uniquery -->
                 <input type="hidden" name="species" value="Dmel">
@@ -481,7 +476,7 @@
               <div class="col-sm-offset-4 col-sm-4" style="margin-top:8px;">
                 <div class="row">
                   <div class="col-xs-12 text-center">
-                    <strong id="release">version FB2020_04, released Aug 18, 2020</strong>
+                    <strong id="release">version FB2020_05, released Oct 14, 2020</strong>
                   </div>
                 </div>
                 <div class="row">
