@@ -1,0 +1,128 @@
+
+    <meta charset="utf-8">
+    <meta name="author" content="FlyBase">
+    <meta name="description" content="FlyBase: a database for drosophila genetics and molecular biology">
+    <meta name="keywords" content="Drosophila,genome,melanogaster,fruit fly,research resource">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries 
+         WARNING: Respond.js doesn't work if you view the page via file://-->
+    <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js?FB2015_02"></script>
+         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js?FB2015_02"></script>
+       <![endif] -->
+
+    <!--Bootstrap -->
+    <link href="/css/bootstrap3/bootstrap.min.css?FB2017_02" rel="stylesheet" media="all" type="text/css">
+    <link href="/css/bootstrap2flybase.css?FB2017_02" rel="stylesheet" media="all" type="text/css">
+    <link href="/css/global.css?FB2017_02" rel="stylesheet" media="all" type="text/css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/css/font-awesome/font-awesome.min.css?FB2015_02" type="text/css">
+    <!-- Clear sans font -->
+    <link rel="stylesheet" href="/font/clearsans_regular_macroman/stylesheet.css" type="text/css" charset="utf-8">
+
+    <link rel="stylesheet" type="text/css" href="/css/home/home.css">
+    <link rel="stylesheet" type="text/css" href="/css/typeaheadjs.css">
+    <style>
+    #imagelinks img {
+      height: 75px;
+      width: 123px;
+    }
+    #imagelinks .btn {
+      margin: 2px 0;
+      background-color: #eee;
+      float: none;
+    }
+    #imagelinks .btn-default:hover {
+      background-color: #ddd;
+    }
+    .FBiconLink { padding: 0; }
+    @keyframes flashfade { from { background: #fcc; } to { background: seashell; } }
+    /* width cutoffs below should match boundary between bootstrap sm and md */
+    @media screen and (min-width: 992px) {
+      #sidebar { border-right: 1px solid lightgrey }
+    }
+    @media screen and (max-width: 991px) {
+      #sidebar { border-top: 1px solid lightgrey; padding-top: 1em }
+      #searchbox-col { padding: 0 }
+      #commentary-panel-collapse { height: 240px; overflow: auto }
+      fieldset#searchbox { padding: 0 0.25em }
+    }
+    /* this width cutoff is specific to QuickSearch */
+    @media screen and (max-width: 639px) {
+      #quicksearch_tabs li { float: none }
+      div#quicksearch_tabs ul { border: 1px solid rgb(221,221,221) }
+      .nav-tabs > li > a { margin-right: 0 }
+    }
+    /* QuickSearch form styling */
+    #new_quicksearch_contents {
+      border: 1px solid rgb(221,221,221);  /* same as Bootstrap tab border */
+      border-top: none;
+      background-color: #eee;
+      padding: 0.8em 0.5em 0.5em;
+    }
+    #quicksearch_tabs > .nav-tabs > .active > a,
+    #quicksearch_tabs > .nav-tabs > .active > a:focus {
+      background-color: #eee;
+    }
+    #submitWrapper > #submit {
+      float: right;
+      margin: 1em
+    }
+    .searchOptionsTitle {
+      float: left;
+      width: 7em;
+      padding: 0em;
+      margin: 0em 1em 0em 0.5em;
+      text-align: right;
+    }
+    /* #ids used here below are now often redundant in the HTML - fix this */
+    #speciesOptions label {
+      width: auto;
+    }
+    #helpTextWrapper {
+      text-align: right;
+      margin-right: 2em;
+    }
+    #searchbox .form-group {         /* make the form more compact (Bootstrap uses 15px here!)*/
+      margin-bottom: 4px;
+    }
+    #searchbox #referenceWrapper .form-group {
+      margin: 0;
+    }
+    #searchbox input[type="text"] {
+      padding: 0 5px;
+     /* margin-top: 4px; */
+    }
+    #GO_search_form input[type="text"] {
+      padding-left: 12px;
+    }
+    #dataclass_form input[type="text"] {
+      padding-left: 12px;
+    }
+    #searchbox .nav li a {
+      padding: 6px 10px;
+    }
+    .homologdiv { font-size:9pt; overflow:auto; }
+    #DmelLabelParalogs { color: dodgerblue; }
+    .homologOutputSwitchMsgBox { float: right; font-size: 14px; }
+    .homologOutputSwitchMsgBox a { white-space: nowrap; }
+    #DRinputerrormsg { display: none; color: maroon; text-align: center; }
+    #hitOptions { margin-bottom: 8px; }
+    #Search_radio_group input[type="radio"] { min-height: 20px; }
+    #new_quicksearch_contents .homologdiv input  { width:2em; height:13px; margin:0; }
+    #new_quicksearch_contents .dioptoutputlabel   { text-align:left; font-size:inherit; padding: 0 3px; width:22em; white-space: nowrap; }
+    #new_quicksearch_contents .orthodboutputlabel { text-align:left; font-size:inherit; padding: 0 3px; width:40em }
+/*    #new_quicksearch_contents select option { margin-left:1em }   */
+    #new_quicksearch_contents span.twitter-typeahead { width: 100%; display: inline !important; }
+    #new_quicksearch_contents span.twitter-typeahead input { vertical-align: middle !important; }
+    .thumbnail {
+      border: none;
+      margin: 0 1em 0 0;
+    }
+    .fa-question-circle-o { font-size: 20px; }
+    </style>
+
+    <title>Fast Track Your Paper</title>
+  <script charset="utf-8" src="https://platform.twitter.com/js/moment~timeline~tweet.ae149926685a43cb146e35371430188e.js"></script><script charset="utf-8" src="https://platform.twitter.com/js/timeline.687eed636a16648c9f0b1f72d7fa68bd.js"></script>

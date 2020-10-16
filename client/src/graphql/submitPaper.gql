@@ -1,0 +1,5 @@
+mutation FtypSubmission($submission: JSON!) {
+  submitPaper(input: { submission: $submission }) {
+    datetime
+  }
+}

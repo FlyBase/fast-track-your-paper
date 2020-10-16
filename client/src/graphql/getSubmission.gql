@@ -1,0 +1,8 @@
+query Submission($fbrf: String!) {
+  submission: getSubmission(fbrf: $fbrf) {
+    fbrf
+    submittedToFlybase
+    dateProcessed
+    userData
+  }
+}

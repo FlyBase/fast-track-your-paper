@@ -1,0 +1,32 @@
+#batch-results {
+  /*margin-top: 2em;*/
+}
+#batch-results div.panel-body {
+  display: flex;
+  flex-direction: column;
+}
+#batch-results div.panel-body > div {
+  display: flex;
+  justify-content: space-between;
+}
+#batch-results div.panel-body > div:hover {
+  background-color: #eee;
+}
+#batch-results div.panel-body > div > div:first-child {
+  flex-basis: 10em;
+  flex-grow: 1;
+  font-weight: bold;
+}
+#batch-results div.panel-body > div > div:nth-child(2) {
+  flex-basis: 2em;
+  text-align: center;
+}
+#batch-results div.panel-body > div > div:last-child {
+  flex-basis: 6em;
+  text-align: right;
+  font-size: 12px;
+}
+
+#batch-results button {
+  padding: 0;
+}

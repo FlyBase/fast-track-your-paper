@@ -1,0 +1,16 @@
+#PubResultsTable tr:not(.disabled):hover {
+  background-color: #eff;
+}
+#PubResultsTable tr.disabled td {
+  cursor: not-allowed;
+  color: grey;
+}
+.panel .panel-table {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.panel-footer button {
+  padding: 0;
+  border-width: 0;
+  vertical-align: initial;
+}

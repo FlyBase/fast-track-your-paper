@@ -1,0 +1,78 @@
+#geneSearchSuggestions {
+  position: relative;
+}
+#geneSearchSuggestionsContainer {
+  position: absolute;
+  top: 65px;
+  left: 10%;
+  background-color: #eee;
+  padding: 0 /*6px*/;
+  z-index: 5;
+  border-radius: 8px;
+  box-shadow: 3px 6px 3px 0px #ccc;
+  max-width: 75%;
+}
+#geneSearchSuggestionsDismiss {
+  position: absolute;
+  font-size: 16px;
+  right: 0px;
+  padding: 0px;
+  margin-top: -4px;
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  height: 10px;
+  width: 24px;
+}
+#geneSearchSuggestionsDismiss:hover {
+  color: grey;
+  cursor: pointer;
+}
+#geneSearchSuggestionsSummary {
+  font-size: 12px;
+  font-style: italic;
+  padding-left: 3px;
+}
+#geneSearchSuggestions ul {
+  list-style: none inside;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+#geneSearchSuggestions li {
+  border-radius: 8px;
+  display: flex;
+  cursor: pointer;
+}
+#geneSearchSuggestions li.z {
+  background-color: #e8e8e8;
+}
+#geneSearchSuggestions li:hover {
+  background-color: #ddd;
+}
+
+#geneSearchSuggestions li b.text-info {
+  flex-basis: 15%;
+  flex-shrink: 0;
+  padding: 0 5px;
+}
+#geneSearchSuggestions li span {
+  flex-basis: 35%;
+  flex-shrink: 0;
+  padding: 0 5px;
+}
+#geneSearchSuggestions li i {
+  flex-basis: 50%;
+  flex-shrink: 0;
+  padding: 0 5px;
+  white-space: normal;
+}
+
+@media screen and (min-width: 768px) {
+  #geneSearchSuggestions ul {
+    top: 65px;
+  }
+  #geneSearchSuggestions li {
+    /*white-space: nowrap;*/
+  }
+}

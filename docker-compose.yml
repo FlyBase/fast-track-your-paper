@@ -1,0 +1,67 @@
+version: "3.5"
+services:
+  proxy:
+    image: nginx:mainline-alpine
+    ports:
+      - "8888:80"
+    volumes:
+      - ./proxy/conf.d:/etc/nginx/conf.d
+    networks:
+      - frontend
+  api:
+    image: flybase/ftyp-api:${TAG:-latest}
+    restart: "on-failure"
+    command: >-
+      --subscriptions
+      --watch
+      --dynamic-json
+      --disable-default-mutations
+      --no-setof-functions-contain-nulls
+      --no-ignore-rbac
+      --no-ignore-indexes
+      --show-error-stack=json
+      --extended-errors hint,detail,errcode
+      --append-plugins @graphile-contrib/pg-simplify-inflector
+      --export-schema-graphql schema.graphql
+      --enhance-graphiql
+      --allow-explain
+      --enable-query-batching
+      --legacy-relations omit
+      --connection postgres://postgres:${FTYP_PGPASSWORD:-CHANGEME}@db/${FTYP_PGDATABASE:-ftyp}
+      --schema ftyp,flybase,public
+    networks:
+      - frontend
+      - internal
+
+  # See https://hub.docker.com/_/postgres for details on using
+  # the postgres docker container.
+  db:
+    image: flybase/ftyp-db:${TAG:-latest}
+    restart: always
+    environment:
+      POSTGRES_DB: ${FTYP_PGDATABASE:-ftyp}
+      POSTGRES_PASSWORD: ${FTYP_PGPASSWORD:-CHANGEME}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - ftyp-data:/var/lib/postgresql/data
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+      - ./db/data:/ftyp/data
+      - ./db/scripts:/ftyp/scripts
+    networks:
+      - internal
+  client:
+    image: flybase/ftyp-client:${TAG:-latest}
+    working_dir: "/home/node/app"
+    command: "serve -s build"
+    volumes:
+      - ./client:/home/node/app
+    networks:
+      - frontend
+
+networks:
+  frontend:
+  internal:
+
+volumes:
+  ftyp-data: {}
+
