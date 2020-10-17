@@ -4,10 +4,10 @@ import StepContainer from 'components/StepContainer'
 import FtypAdmin from 'components/FtypAdmin'
 import SubmissionView from '../SubmissionView'
 
-function App() {
+function App({ basename }) {
   return (
     <div>
-      <Router>
+      <Router basename={basename}>
         <Switch>
           <Route exact path="/">
             <StepContainer />

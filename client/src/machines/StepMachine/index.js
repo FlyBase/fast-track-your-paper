@@ -467,7 +467,9 @@ export const createStepMachine = () => {
           submission.contact.email = event.email
           return {
             fbrf: event.fbrf,
-            ...submission,
+            submission: {
+              ...submission,
+            },
           }
         }),
         /*

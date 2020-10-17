@@ -31,6 +31,8 @@ if (process.env.NODE_ENV !== 'production') {
   axe(React, ReactDOM, 1000)
 }
 
+const baseName = process?.env?.PUBLIC_URL
+
 /*
  *  Initialize the Apollo client and context objects.
  *  The context is used to pass this down to any deeply
@@ -40,13 +42,13 @@ if (process.env.NODE_ENV !== 'production') {
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
-    uri: '/graphql',
+    uri: `${baseName ?? ''}/graphql`,
   }),
 })
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App />
+    <App basename={baseName} />
   </ApolloProvider>,
   document.getElementById('root')
 )
