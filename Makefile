@@ -46,7 +46,10 @@ clean-client:
 
 build-client:
 	cd client; yarn install && \
-	yarn run update-header-footer && \
+	yarn run build
+
+update-header-footer:
+	cd client; yarn run update-header-footer && \
 	yarn run build
 
 pull-data:$(DATA_DIR)/chado_feature.tsv $(DATA_DIR)/chado $(DATA_DIR)/feature $(DATA_FLAGS_FILE)
@@ -79,7 +82,7 @@ load-submissions:
 $(SUBMISSION_JSON):
 	docker-compose exec -T -u postgres db psql ftyp -c "select json_agg(row_to_json(row)) from (select * from ftyp_hidden.submissions) as row;" -t  > $(SUBMISSION_JSON)
 
-.PHONY: up down clean load-data start stop pull-images build-client clean-client clean-db
+.PHONY: up down clean load-data start stop pull-images build-client clean-client clean-db update-header-footer
 
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \
