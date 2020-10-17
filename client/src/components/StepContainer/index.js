@@ -305,7 +305,10 @@ function StepContainer() {
     step = (
       <SubmitStepWrapper
         submission={current.context.submission}
-        nextClick={() => send('START_OVER')}
+        nextClick={() => {
+          send('START_OVER')
+          history.push('/')
+        }}
         result={output}
       />
     )
