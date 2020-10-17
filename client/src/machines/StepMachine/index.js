@@ -99,12 +99,7 @@ export const createStepMachine = () => {
               on: {
                 // Event for selecting a publication.
                 SET_PUB: {
-                  actions: [
-                    'resetContext',
-                    'resetLocalFlags',
-                    'setPub',
-                    'persist',
-                  ],
+                  actions: ['resetLocalFlags', 'setPub', 'persist'],
                 },
                 NEXT: {
                   target: 'author',
