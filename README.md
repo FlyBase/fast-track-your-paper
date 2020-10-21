@@ -57,6 +57,21 @@ For full details see the db [README](./db/README.md).
 * pull-data - Pulls data from the production Chado database.
 * load-data - Loads data from the pulled sources and stores it in the docker DB container.
 * build-client - Updates the header/footer and builds the compiled javascript client app.
+* dump-submissions - Dumps the unprocessed submissions into a JSON file suitable for curation processing.
+
+### dump-submissions
+
+This Makefile target creates a file under `db/data/` called `ftyp_json.yymmdd.json` where `yymmdd` 
+represents the two digit year, month, and day. To override this you need to pass a variable called
+`SUBMISSION_JSON` to this target.
+
+```
+make dump-submissions SUBMISSION_JSON=db/data/my-submissions.json
+make dump-submissions SUBMISSION_JSON=ftyp.json
+```
+
+After the submissions have been dumped, the Makefile will also mark them as such so that
+they will be ignored during subsequent runs of `dump-submissions`.
 
 ## Docker containers
 

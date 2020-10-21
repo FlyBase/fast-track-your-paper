@@ -1,5 +1,5 @@
 DATA_DIR   := db/data
-SUBMISSION_JSON := $(DATA_DIR)/ftyp-submissions.json
+SUBMISSION_JSON := $(DATA_DIR)/ftyp_json.$(shell date +%y%m%d).json
 DATA_FLAGS_URI := https://svn.flybase.org/documents/curation/curation_data/text_mining_flags/textmining_positive_SVM.txt
 DATA_FLAGS_FILE := $(DATA_DIR)/text_mining/data_flags.tsv
 
@@ -80,7 +80,8 @@ load-submissions:
 	echo "Target not implemented yet."
 
 $(SUBMISSION_JSON):
-	docker-compose exec -T -u postgres db psql ftyp -c "select json_agg(row_to_json(row)) from (select * from ftyp_hidden.submissions) as row;" -t  > $(SUBMISSION_JSON)
+	docker-compose exec -T -u postgres db psql ftyp -c "select json_agg(row_to_json(row)) from (select * from ftyp_hidden.submissions where date_processed is null) as row;" -t  > $(SUBMISSION_JSON)
+	docker-compose exec -T -u postgres db psql ftyp -c "begin; update ftyp_hidden.submissions set date_processed=now() where date_processed is null; commit;"
 
 .PHONY: up down clean load-data start stop pull-images build-client clean-client clean-db update-header-footer
 
