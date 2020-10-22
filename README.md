@@ -57,21 +57,34 @@ For full details see the db [README](./db/README.md).
 * pull-data - Pulls data from the production Chado database.
 * load-data - Loads data from the pulled sources and stores it in the docker DB container.
 * build-client - Updates the header/footer and builds the compiled javascript client app.
-* dump-submissions - Dumps the unprocessed submissions into a JSON file suitable for curation processing.
+* export-submissions - Exports the unprocessed submissions into a JSON file suitable for curation processing.
+* backup-submissions - Produces a SQL data file containing all rows of the submissions table.
+* restore-submissions - Restores all rows from the file produced by `backup-submissions`.
 
-### dump-submissions
+### export-submissions
 
-This Makefile target creates a file under `db/data/` called `ftyp_json.yymmdd.json` where `yymmdd` 
-represents the two digit year, month, and day. To override this you need to pass a variable called
-`SUBMISSION_JSON` to this target.
+This target creates a file under `db/data/` called `ftyp_json.yymmdd.json` by default where `yymmdd` 
+represents the two digit year, month, and day. To override the filename only you need to pass a variable called
+`SUBMISSION_JSON_FILENAME` to this target.
 
 ```
-make dump-submissions SUBMISSION_JSON=db/data/my-submissions.json
-make dump-submissions SUBMISSION_JSON=ftyp.json
+make export-submissions SUBMISSION_JSON_FILENAME=my-submissions.json
+make export-submissions SUBMISSION_JSON_FILENAME=ftyp.json
 ```
 
-After the submissions have been dumped, the Makefile will also mark them as such so that
-they will be ignored during subsequent runs of `dump-submissions`.
+After the submissions have been exported, they will be marked as processed so that
+subsequent exports will ignore them.
+
+### backup-submissions
+
+Calls the [backup_submissions.sh](./db/scripts/backup_submissions.sh) script to dump all rows
+of the submissions table. The output is in the `db/data/submissions/` directory.
+
+### restore-submissions
+
+Calls the [restore_submissions.sh](./db/scripts/restore_submissions.sh) script to restore all
+rows of the submissions table from the file produced by `backup-submissions`. This target loads 
+any `.sql` or `.sql.gz` file in the `db/data/submissions/` directory into the database.
 
 ## Docker containers
 
