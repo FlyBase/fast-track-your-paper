@@ -1,6 +1,7 @@
 DATA_DIR   := db/data
-SUBMISSION_JSON_FILENAME := ftyp_json.$(shell date +%y%m%d).json
-SUBMISSION_BACKUP_FILENAME := ftyp_hidden.submissions.sql.gz
+SUBMISSION_JSON := $(DATA_DIR)/ftyp_json.$(shell date +%y%m%d).json
+SUBMISSION_BACKUP := $(DATA_DIR)/submissions/ftyp_hidden.submissions.sql.gz
+BACKUP_DIR := $(shell dirname $(SUBMISSION_BACKUP))
 DATA_FLAGS_URI := https://svn.flybase.org/documents/curation/curation_data/text_mining_flags/textmining_positive_SVM.txt
 DATA_FLAGS_FILE := $(DATA_DIR)/text_mining/data_flags.tsv
 
@@ -80,10 +81,14 @@ $(DATA_FLAGS_FILE):$(DATA_DIR)/text_mining/textmining_positive_SVM.txt
 	cat $(DATA_DIR)/text_mining/textmining_positive_SVM.txt | perl -pe "s/^#.*\n//" > $(DATA_FLAGS_FILE)
 
 export-submissions:
-	docker-compose exec -u postgres db /ftyp/scripts/export_submissions.sh $(SUBMISSION_JSON_FILENAME)
+	docker-compose exec -T -u postgres db /ftyp/scripts/export_submissions.sh | perl -pe "s/^\s*$$//" > $(SUBMISSION_JSON)
 
-backup-submissions:
-	docker-compose exec -u postgres db /ftyp/scripts/backup_submissions.sh $(SUBMISSION_BACKUP_FILENAME)
+backup-submissions:$(BACKUP_DIR)
+	mkdir -p $(shell dirname $(SUBMISSION_BACKUP))
+	docker-compose exec -T -u postgres db /ftyp/scripts/backup_submissions.sh | gzip > $(SUBMISSION_BACKUP)
+
+$(BACKUP_DIR):
+	mkdir -p $(BACKUP_DIR)
 
 restore-submissions:
 	docker-compose exec -u postgres db /ftyp/scripts/restore_submissions.sh
