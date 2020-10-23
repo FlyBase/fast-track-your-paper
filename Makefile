@@ -84,7 +84,6 @@ export-submissions:
 	docker-compose exec -T -u postgres db /ftyp/scripts/export_submissions.sh | perl -pe "s/^\s*$$//" > $(SUBMISSION_JSON)
 
 backup-submissions:$(BACKUP_DIR)
-	mkdir -p $(shell dirname $(SUBMISSION_BACKUP))
 	docker-compose exec -T -u postgres db /ftyp/scripts/backup_submissions.sh | gzip > $(SUBMISSION_BACKUP)
 
 $(BACKUP_DIR):
