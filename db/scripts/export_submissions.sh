@@ -10,5 +10,5 @@ function ctrl_c() {
 }
 
 # Script to export FTYP submisisons into JSON format.
-psql -d "$POSTGRES_DB" -f /ftyp/scripts/export_submissions.sql -t  > /ftyp/data/"$1"
-psql -d "$POSTGRES_DB" -c "begin; update ftyp_hidden.submissions set date_processed=now() where date_processed is null; commit;"
+psql -d "$POSTGRES_DB" -f /ftyp/scripts/export_submissions.sql -t
+psql -d "$POSTGRES_DB" -q -c "begin; update ftyp_hidden.submissions set date_processed=now() where date_processed is null; commit;"

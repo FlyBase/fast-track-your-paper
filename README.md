@@ -64,12 +64,12 @@ For full details see the db [README](./db/README.md).
 ### export-submissions
 
 This target creates a file under `db/data/` called `ftyp_json.yymmdd.json` by default where `yymmdd` 
-represents the two digit year, month, and day. To override the filename only you need to pass a variable called
-`SUBMISSION_JSON_FILENAME` to this target.
+represents the two digit year, month, and day. To override the file you need to pass a variable called
+`SUBMISSION_JSON` to this target.
 
 ```
-make export-submissions SUBMISSION_JSON_FILENAME=my-submissions.json
-make export-submissions SUBMISSION_JSON_FILENAME=ftyp.json
+make export-submissions SUBMISSION_JSON=db/data/my-submissions.json
+make export-submissions SUBMISSION_JSON=ftyp.json
 ```
 
 After the submissions have been exported, they will be marked as processed so that

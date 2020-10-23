@@ -10,4 +10,4 @@ function ctrl_c() {
 }
 
 mkdir -p /ftyp/data/submissions
-pg_dump -d "$POSTGRES_DB" -a -t ftyp_hidden.submissions | gzip > /ftyp/data/submissions/"$1"
+pg_dump -d "$POSTGRES_DB" -a -t ftyp_hidden.submissions
