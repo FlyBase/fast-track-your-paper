@@ -210,7 +210,7 @@ export const createStepMachine = () => {
                 SET_GENES: {
                   actions: ['setGenes', 'persist'],
                 },
-                NEXT: { target: 'confirm' },
+                NEXT: { target: 'confirm', cond: 'isUnderGeneLimit' },
                 PREV: [
                   { target: 'author', cond: 'isReview' },
                   { target: 'flags' },
@@ -513,6 +513,10 @@ export const createStepMachine = () => {
           return hasContact(contact, formikBag) && isReview(publication)
         },
         isConfirmed: (context) => context.confirmed,
+        isUnderGeneLimit: (context) => {
+          const genes = context?.submission?.genes ?? []
+          return genes.length <= 101
+        },
       },
       services: {
         invokeSaveToDb: (context, event) => {

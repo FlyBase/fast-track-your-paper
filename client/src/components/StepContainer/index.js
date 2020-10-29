@@ -91,11 +91,19 @@ const FlagsStepWrapper = ({ prevClick, nextClick, ...props }) => (
   </FlagsStep>
 )
 
-const GenesStepWrapper = ({ prevClick, nextClick, ...props }) => (
+const GenesStepWrapper = ({
+  prevClick,
+  nextClick,
+  prevProps = {},
+  nextProps = {},
+  ...props
+}) => (
   <GenesStep {...props}>
     <StepNavigation>
-      <Prev onClick={prevClick}>Return to Data step</Prev>
-      <Next onClick={nextClick} type="button">
+      <Prev onClick={prevClick} {...prevProps}>
+        Return to Data step
+      </Prev>
+      <Next onClick={nextClick} type="button" {...nextProps}>
         <b>Save</b> Genes step and go to Confirmation step
       </Next>
     </StepNavigation>
@@ -188,7 +196,7 @@ function StepContainer() {
     pubMachine,
     authorMachine,
     geneMachine,
-    submission: { publication, citation, contact, flags, genes },
+    submission: { publication, citation, contact, flags, genes = [] },
     fbrf,
     output,
     error,
@@ -298,6 +306,7 @@ function StepContainer() {
         showAntibodies={publication?.type?.name === 'paper'}
         prevClick={() => send('PREV')}
         nextClick={() => send('NEXT')}
+        nextProps={{ disabled: genes.length > 100 }}
       />
     )
   } else if (current.matches({ pending: 'confirm' })) {

@@ -7,6 +7,7 @@ import IconHelp from 'components/IconHelp'
 import differenceBy from 'lodash.differenceby'
 import unionBy from 'lodash.unionby'
 import cloneDeep from 'lodash.clonedeep'
+import Alert from 'react-bootstrap/lib/Alert'
 
 import { useApolloClient } from '@apollo/client'
 
@@ -347,6 +348,14 @@ const GenesStep = ({
               </label>
             </div>
           </GenesStudiedTable>
+        )}
+        {genesStudied.length > 100 && (
+          <Alert bsStyle="danger">
+            <strong>More than 100 genes entered.</strong> Please tick ‘dataset’
+            in the previous step if you used a method to investigate many genes
+            at once, and only add genes that have been specifically investigated
+            in your publication here.
+          </Alert>
         )}
         {children}
       </div>
