@@ -20,6 +20,7 @@ import StepIndicator from 'components/StepIndicator'
 import StepNavigation, { Prev, Next } from 'components/StepNavigation'
 
 import { fetchFromLocalStorage, storeToLocalStorage } from 'utils/storage'
+import { isCurated } from 'machines/StepMachine/guards'
 
 // An array to map the step machine state names to user friendly labels.
 const defaultSteps = [
@@ -43,13 +44,19 @@ const PubStepWrapper = ({ nextClick, ...props }) => (
   </PubStep>
 )
 
-const EmailStepWrapper = ({ prevClick, nextClick, ...props }) => (
+const EmailStepWrapper = ({
+  prevClick,
+  nextClick,
+  nextProps = {},
+  prevProps = {},
+  ...props
+}) => (
   <EmailStep {...props}>
     <StepNavigation>
-      <Prev onClick={prevClick} aria-labelledby="startover">
+      <Prev onClick={prevClick} aria-labelledby="startover" {...prevProps}>
         <span id="startover">Select another publication</span>
       </Prev>
-      <Next onClick={nextClick} aria-labelledby="authorstep">
+      <Next onClick={nextClick} aria-labelledby="authorstep" {...nextProps}>
         <span id="authorstep">
           <b>Save</b> Publication step and go to Contact step
         </span>
@@ -231,6 +238,7 @@ function StepContainer() {
           history.push('/')
         }}
         nextClick={() => send('NEXT')}
+        nextProps={{ disabled: isCurated(publication) }}
       />
     )
   } else if (current.matches({ pending: 'author' })) {

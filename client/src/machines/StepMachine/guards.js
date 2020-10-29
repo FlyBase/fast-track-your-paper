@@ -5,9 +5,19 @@
  */
 export const hasPublication = (submission) => {
   return (
-    (submission.publication && submission.publication.uniquename) ||
-    submission.citation
+    (submission?.publication && submission?.publication?.uniquename) ||
+    submission?.citation
   )
+}
+
+/**
+ * Checks that the publication has been curated or not.
+ *
+ * @param publication - The publication object to validate
+ * @returns {boolean} - Whether or not the publication has been curated.
+ */
+export const isCurated = (publication) => {
+  return publication?.curationStatus !== null
 }
 
 /**
