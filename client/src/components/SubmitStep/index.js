@@ -1,7 +1,9 @@
 import React from 'react'
 
 const SubmitStep = ({ submission = {}, children }) => {
+
   let noSumGeneList = []
+
   for (let n = 0; n < submission.genes.length; n++) {
     if (!submission.genes[n].hasSummary) {
       let gn = submission.genes[n]
@@ -24,11 +26,35 @@ const SubmitStep = ({ submission = {}, children }) => {
     }
   }
 
+  let FCAGinvite = (
+    <div class="container">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h2 class="panel-title" style={{fontSize:24}}>
+            FCAG &ndash; the FlyBase Community Advisory Group
+          </h2>
+        </div>
+        <div class="panel-body">
+          If you would like to help shape FlyBase with survey feedback about
+          various aspects of the website and database, please join FCAG, our{' '}
+          <a href="https://wiki.flybase.org/wiki/FlyBase:Community_Advisory_Group">
+            FlyBase Community Advisory Group
+          </a>{' '}
+          by filling in the registration form <a href="/static/fcag">here</a>.
+        </div>
+        <div class="panel-footer text-primary">
+          If you or someone in your research group is already a member of FCAG,{' '}
+          <b>thank you!</b> FlyBase benefits from your guidance and input.
+        </div>
+      </div>
+    </div>
+  )
+
   let sumInvite = (
     <div class="container">
       <div class="panel panel-primary">
         <div class="panel-heading">
-          <h3 class="panel-title">FlyBase Gene Snapshots</h3>
+          <h2 class="panel-title" style={{fontSize:24}}>FlyBase Gene Snapshots</h2>
         </div>
         <div class="panel-body">
           Based on the genes associated with your recent publication, you've
@@ -47,35 +73,41 @@ const SubmitStep = ({ submission = {}, children }) => {
       </div>
     </div>
   )
-  return (
-    <>
 
-      {/** TODO: Add follow up statements based submission flags and genes. */}
-
-      <h2>Thank you!</h2>
-
-      <div class="container">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">FCAG &ndash; the FlyBase Community Advisory Group</h3>
-          </div>
-          <div class="panel-body">
-            If you would like to help shape FlyBase with survey feedback
-            about various aspects of the website and database, please join FCAG,
-            our <a href="https://wiki.flybase.org/wiki/FlyBase:Community_Advisory_Group">FlyBase Community Advisory Group</a> by
-            filling in the registration form <a href="/static/fcag">here</a>.
-          </div>
-          <div class="panel-footer text-primary">
-            If you or someone in your research group is already a member of
-            FCAG, <b>thank you!</b> FlyBase benefits from your guidance and input.
-          </div>
+  let pabMabsInvite = (
+    <div class="container">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h2 class="panel-title" style={{fontSize:24}}>Antibody reviews</h2>
+        </div>
+        <div class="panel-body">
+          Please consider reviewing any antibodies tested and/or used in Drosophila
+          over the course of the research described in this publication.{' '}
+          <a href="/wiki/FlyBase:Antibodies#Review_antibodies_tested_in_Drosophila">
+            Antibody reviews
+          </a>,
+          both positive and negative, help the research community save time
+          and money when selecting antibodies for their studies.
+        </div>
+        <div class="panel-footer text-primary">
+          The "Antibody reviews" link above goes to a FlyBase wiki page with
+          information about pAbmAbs, an independent antibody review organization.
         </div>
       </div>
+    </div>
+  )
+
+  return (
+    <>
+      <h1>Thank you!</h1>
+
+      {true ? FCAGinvite : ''}
+
+      {true ? pabMabsInvite : ''}
 
       {noSumGeneList.length ? sumInvite : ''}
 
       {children}
-
     </>
   )
 }
