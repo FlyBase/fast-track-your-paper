@@ -57,6 +57,34 @@ For full details see the db [README](./db/README.md).
 * pull-data - Pulls data from the production Chado database.
 * load-data - Loads data from the pulled sources and stores it in the docker DB container.
 * build-client - Updates the header/footer and builds the compiled javascript client app.
+* export-submissions - Exports the unprocessed submissions into a JSON file suitable for curation processing.
+* backup-submissions - Produces a SQL data file containing all rows of the submissions table.
+* restore-submissions - Restores all rows from the file produced by `backup-submissions`.
+
+### export-submissions
+
+This target creates a file under `db/data/` called `ftyp_json.yymmdd.json` by default where `yymmdd` 
+represents the two digit year, month, and day. To override the file you need to pass a variable called
+`SUBMISSION_JSON` to this target.
+
+```
+make export-submissions SUBMISSION_JSON=db/data/my-submissions.json
+make export-submissions SUBMISSION_JSON=ftyp.json
+```
+
+After the submissions have been exported, they will be marked as processed so that
+subsequent exports will ignore them.
+
+### backup-submissions
+
+Calls the [backup_submissions.sh](./db/scripts/backup_submissions.sh) script to dump all rows
+of the submissions table. The output is in the `db/data/submissions/` directory.
+
+### restore-submissions
+
+Calls the [restore_submissions.sh](./db/scripts/restore_submissions.sh) script to restore all
+rows of the submissions table from the file produced by `backup-submissions`. This target loads 
+any `.sql` or `.sql.gz` file in the `db/data/submissions/` directory into the database.
 
 ## Docker containers
 

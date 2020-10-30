@@ -1,5 +1,7 @@
 DATA_DIR   := db/data
-SUBMISSION_JSON := $(DATA_DIR)/ftyp-submissions.json
+SUBMISSION_JSON := $(DATA_DIR)/ftyp_json.$(shell date +%y%m%d).json
+SUBMISSION_BACKUP := $(DATA_DIR)/submissions/ftyp_hidden.submissions.sql.gz
+BACKUP_DIR := $(shell dirname $(SUBMISSION_BACKUP))
 DATA_FLAGS_URI := https://svn.flybase.org/documents/curation/curation_data/text_mining_flags/textmining_positive_SVM.txt
 DATA_FLAGS_FILE := $(DATA_DIR)/text_mining/data_flags.tsv
 
@@ -38,7 +40,11 @@ pull-images:
 clean: down clean-db clean-client
 
 clean-db:
-	rm -rf db/data/*
+	rm -rf $(DATA_DIR)/chado/
+	rm -rf $(DATA_DIR)/feature/
+	rm -rf $(DATA_DIR)/featureloc/
+	rm -rf $(DATA_DIR)/text_mining/
+	rm -f $(DATA_DIR)/*.tsv
 
 clean-client:
 	rm -rf client/build/*
@@ -46,7 +52,10 @@ clean-client:
 
 build-client:
 	cd client; yarn install && \
-	yarn run update-header-footer && \
+	yarn run build
+
+update-header-footer:
+	cd client; yarn run update-header-footer && \
 	yarn run build
 
 pull-data:$(DATA_DIR)/chado_feature.tsv $(DATA_DIR)/chado $(DATA_DIR)/feature $(DATA_FLAGS_FILE)
@@ -71,15 +80,19 @@ $(DATA_DIR)/text_mining/textmining_positive_SVM.txt:guard-SVN_USER guard-SVN_PAS
 $(DATA_FLAGS_FILE):$(DATA_DIR)/text_mining/textmining_positive_SVM.txt
 	cat $(DATA_DIR)/text_mining/textmining_positive_SVM.txt | perl -pe "s/^#.*\n//" > $(DATA_FLAGS_FILE)
 
-dump-submissions:$(SUBMISSION_JSON)
+export-submissions:
+	docker-compose exec -T -u postgres db /ftyp/scripts/export_submissions.sh | perl -pe "s/^\s*$$//" > $(SUBMISSION_JSON)
 
-load-submissions:
-	echo "Target not implemented yet."
+backup-submissions:$(BACKUP_DIR)
+	docker-compose exec -T -u postgres db /ftyp/scripts/backup_submissions.sh | gzip > $(SUBMISSION_BACKUP)
 
-$(SUBMISSION_JSON):
-	docker-compose exec -T -u postgres db psql ftyp -c "select json_agg(row_to_json(row)) from (select * from ftyp_hidden.submissions) as row;" -t  > $(SUBMISSION_JSON)
+$(BACKUP_DIR):
+	mkdir -p $(BACKUP_DIR)
 
-.PHONY: up down clean load-data start stop pull-images build-client clean-client clean-db
+restore-submissions:
+	docker-compose exec -u postgres db /ftyp/scripts/restore_submissions.sh
+
+.PHONY: up down clean load-data start stop pull-images build-client clean-client clean-db update-header-footer export-submissions backup-submissions restore-submissions
 
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \

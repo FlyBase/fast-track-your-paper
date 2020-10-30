@@ -37,12 +37,17 @@ export const createPubStepMachine = () => {
         NOPUB_ERROR: {
           target: 'nopub',
         },
+        ALREADY_CURATED: {
+          target: 'curated',
+        },
       },
       // All states for the pub steps.
       states: {
         // Initial state.
         idle: {},
         nopub: {},
+        // State for when the paper has already been curated.
+        curated: {},
         // State for capturing manually entered citations.
         citation: {
           on: {

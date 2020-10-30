@@ -3,7 +3,7 @@ services:
   proxy:
     image: nginx:mainline-alpine
     ports:
-      - "8888:80"
+      - "${PROXY_PORT:-8888}:80"
     volumes:
       - ./proxy/conf.d:/etc/nginx/conf.d
     networks:
