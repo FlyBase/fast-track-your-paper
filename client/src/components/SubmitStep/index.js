@@ -1,7 +1,6 @@
 import React from 'react'
 
 const SubmitStep = ({ submission = {}, children }) => {
-
   let noSumGeneList = []
 
   for (let n = 0; n < submission.genes.length; n++) {
@@ -30,7 +29,7 @@ const SubmitStep = ({ submission = {}, children }) => {
     <div class="container">
       <div class="panel panel-primary">
         <div class="panel-heading">
-          <h2 class="panel-title" style={{fontSize:24}}>
+          <h2 class="panel-title" style={{ fontSize: 24 }}>
             FCAG &ndash; the FlyBase Community Advisory Group
           </h2>
         </div>
@@ -54,7 +53,9 @@ const SubmitStep = ({ submission = {}, children }) => {
     <div class="container">
       <div class="panel panel-primary">
         <div class="panel-heading">
-          <h2 class="panel-title" style={{fontSize:24}}>FlyBase Gene Snapshots</h2>
+          <h2 class="panel-title" style={{ fontSize: 24 }}>
+            FlyBase Gene Snapshots
+          </h2>
         </div>
         <div class="panel-body">
           Based on the genes associated with your recent publication, you've
@@ -78,20 +79,24 @@ const SubmitStep = ({ submission = {}, children }) => {
     <div class="container">
       <div class="panel panel-primary">
         <div class="panel-heading">
-          <h2 class="panel-title" style={{fontSize:24}}>Antibody reviews</h2>
+          <h2 class="panel-title" style={{ fontSize: 24 }}>
+            Antibody reviews
+          </h2>
         </div>
         <div class="panel-body">
-          Please consider reviewing any antibodies tested and/or used in Drosophila
-          over the course of the research described in this publication.{' '}
+          Please consider reviewing any antibodies tested and/or used in
+          Drosophila over the course of the research described in this
+          publication.{' '}
           <a href="/wiki/FlyBase:Antibodies#Review_antibodies_tested_in_Drosophila">
             Antibody reviews
-          </a>,
-          both positive and negative, help the research community save time
+          </a>
+          , both positive and negative, help the research community save time
           and money when selecting antibodies for their studies.
         </div>
         <div class="panel-footer text-primary">
           The "Antibody reviews" link above goes to a FlyBase wiki page with
-          information about pAbmAbs, an independent antibody review organization.
+          information about pAbmAbs, an independent antibody review
+          organization.
         </div>
       </div>
     </div>
