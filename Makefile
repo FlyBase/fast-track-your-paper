@@ -19,7 +19,7 @@ export PGDATABASE := $(shell grep '^SRC_PGDATABASE' $(ENV_FILE) | $(PERL_SPLIT))
 export PGPORT := $(shell grep '^SRC_PGPORT' $(ENV_FILE) | $(PERL_SPLIT))
 export PGUSER := $(shell grep '^SRC_PGUSER' $(ENV_FILE) | $(PERL_SPLIT))
 
-all: pull-data load-data build-client
+all: load-data build-client
 
 up: pull-images
 	docker-compose up -d --build
