@@ -8,7 +8,13 @@ import { createGeneStepMachine } from 'machines/GeneStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 import { loader } from 'graphql.macro'
 
-import { hasContact, isReview, hasPublication, isFormValid } from './guards'
+import {
+  hasContact,
+  isCurated,
+  isReview,
+  hasPublication,
+  isFormValid,
+} from './guards'
 
 const { assign } = actions
 
@@ -101,11 +107,19 @@ export const createStepMachine = () => {
                 SET_PUB: {
                   actions: ['resetLocalFlags', 'setPub', 'persist'],
                 },
-                NEXT: {
-                  target: 'author',
-                  actions: ['persist'],
-                  cond: 'hasPublication',
-                },
+                NEXT: [
+                  {
+                    target: 'author',
+                    actions: ['persist'],
+                    cond: 'hasValidPub',
+                  },
+                  // Fall through to here if guard conditions fail.
+                  {
+                    entry: [assign({ error: 'Publication already curated' })],
+                    actions: ['sendAlreadyCurated'],
+                    exit: [assign({ error: null })],
+                  },
+                ],
               },
             },
             // Pub state
@@ -120,12 +134,12 @@ export const createStepMachine = () => {
                   {
                     target: 'author',
                     actions: ['persist'],
-                    cond: 'hasPublication',
+                    cond: 'hasValidPub',
                   },
                   // Fall through to here if guard conditions fail.
                   {
                     entry: [assign({ error: 'No publication selected.' })],
-                    actions: ['sendPubError'],
+                    actions: ['sendNoPubError'],
                     exit: [assign({ error: null })],
                   },
                 ],
@@ -196,7 +210,7 @@ export const createStepMachine = () => {
                 SET_GENES: {
                   actions: ['setGenes', 'persist'],
                 },
-                NEXT: { target: 'confirm' },
+                NEXT: { target: 'confirm', cond: 'isUnderGeneLimit' },
                 PREV: [
                   { target: 'author', cond: 'isReview' },
                   { target: 'flags' },
@@ -470,12 +484,16 @@ export const createStepMachine = () => {
         /*
         Lets the pub step machine know that an error occurred.
          */
-        sendPubError: send('NOPUB_ERROR', { to: 'pubStepMachine' }),
+        sendNoPubError: () =>
+          send('NOPUB_ERROR', { to: (context) => context.pubMachine }),
+        sendAlreadyCurated: () =>
+          send('ALREADY_CURATED', { to: (context) => context.pubMachine }),
       },
       guards: {
-        hasPublication: (context, event) => {
+        hasValidPub: (context, event) => {
           const { submission } = context
-          return event?.hasPub || hasPublication(submission)
+          const hasPub = event?.hasPub ?? hasPublication(submission)
+          return hasPub && !isCurated(submission?.publication)
         },
         isReview: (context) => {
           return isReview(context?.submission?.publication)
@@ -495,6 +513,10 @@ export const createStepMachine = () => {
           return hasContact(contact, formikBag) && isReview(publication)
         },
         isConfirmed: (context) => context.confirmed,
+        isUnderGeneLimit: (context) => {
+          const genes = context?.submission?.genes ?? []
+          return genes.length <= 101
+        },
       },
       services: {
         invokeSaveToDb: (context, event) => {

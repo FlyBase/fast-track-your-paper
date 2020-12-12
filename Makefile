@@ -19,7 +19,7 @@ export PGDATABASE := $(shell grep '^SRC_PGDATABASE' $(ENV_FILE) | $(PERL_SPLIT))
 export PGPORT := $(shell grep '^SRC_PGPORT' $(ENV_FILE) | $(PERL_SPLIT))
 export PGUSER := $(shell grep '^SRC_PGUSER' $(ENV_FILE) | $(PERL_SPLIT))
 
-all: pull-data load-data build-client
+all: load-data build-client
 
 up: pull-images
 	docker-compose up -d --build
@@ -84,7 +84,6 @@ export-submissions:
 	docker-compose exec -T -u postgres db /ftyp/scripts/export_submissions.sh | perl -pe "s/^\s*$$//" > $(SUBMISSION_JSON)
 
 backup-submissions:$(BACKUP_DIR)
-	mkdir -p $(shell dirname $(SUBMISSION_BACKUP))
 	docker-compose exec -T -u postgres db /ftyp/scripts/backup_submissions.sh | gzip > $(SUBMISSION_BACKUP)
 
 $(BACKUP_DIR):

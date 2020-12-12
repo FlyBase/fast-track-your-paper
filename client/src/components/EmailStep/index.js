@@ -48,17 +48,30 @@ const EmailStep = ({ fbrf, dispatch = () => {}, children }) => {
 
   // Display the pub when fetched.
   let pubDisplay = null
-  if (pub) {
+  if (pub?.curationStatus === 'bibl') {
     pubDisplay = <ChosenPub pub={pub} />
   } else {
     // The user sent an FBrf that doesn't exist or is not available for submission.
-    pubDisplay = (
-      <h3>Publication (ID: {fbrf} )is not available for submission</h3>
+    pubDisplay = pub ? (
+      <h3>
+        This publication ({pub.miniref}) has already been curated, and is no
+        longer available for submission.
+      </h3>
+    ) : (
+      <h3>
+        This publication (FlyBase ID {fbrf}) is not available for submission.
+      </h3>
     )
   }
   return (
     <div>
-      {pubDisplay}
+      <div className="well">
+        {pubDisplay}
+        <h4>
+          Thank you for your time; we at FlyBase appreciate your willingness to
+          help.
+        </h4>
+      </div>
       {children}
     </div>
   )
