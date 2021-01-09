@@ -37,7 +37,7 @@ stop:
 pull-images:
 	docker-compose pull
 
-clean: down clean-db clean-client
+clean: backup-submissions down clean-db clean-client
 
 clean-db:
 	rm -rf $(DATA_DIR)/chado/
