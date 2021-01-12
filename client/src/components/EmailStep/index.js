@@ -48,7 +48,7 @@ const EmailStep = ({ fbrf, dispatch = () => {}, children }) => {
 
   // Display the pub when fetched.
   let pubDisplay = null
-  if (pub?.curationStatus === 'bibl') {
+  if (pub !== undefined) {
     pubDisplay = <ChosenPub pub={pub} />
   } else {
     // The user sent an FBrf that doesn't exist or is not available for submission.
