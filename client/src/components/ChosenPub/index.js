@@ -35,12 +35,13 @@ const ChosenPub = ({ pub, citation }) => {
               )}
             </div>
             <p>
-              <strong>Please note:</strong>&ensp; The Fast-Track Your Paper tool accesses our
-              &ldquo;live&rdquo; FlyBase references database in order to provide users with the most
-              up-to-date information. Data in this internal database is 3-12 weeks ahead
-              of the data displayed on the current FlyBase website.
-              This means that a paper and its data may not be visible on the FlyBase website
-              but may actually already be known to FlyBase and/or show a curated status
+              <strong>Please note:</strong>&ensp; The Fast-Track Your Paper tool
+              accesses our &ldquo;live&rdquo; FlyBase references database in
+              order to provide users with the most up-to-date information. Data
+              in this internal database is 3-12 weeks ahead of the data
+              displayed on the current FlyBase website. This means that a paper
+              and its data may not be visible on the FlyBase website but may
+              actually already be known to FlyBase and/or show a curated status
               when using the Fast-Track Your Paper tool.
             </p>
             <p>
