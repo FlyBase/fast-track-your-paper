@@ -7,7 +7,7 @@ export const AuthorSchema = Yup.object().shape({
     .required('Email required')
     .nullable(),
   email_verify: Yup.mixed()
-    .oneOf([Yup.ref('email'), null], 'Emails do not match.')
+    .oneOf([Yup.ref('email'), null], 'Emails do not match')
     .required('Email verification is required')
     .nullable(),
   isAuthor: Yup.mixed().oneOf(['yes', 'no']).required('Authorship required'),

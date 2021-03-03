@@ -97,11 +97,7 @@ const PubResults = ({
                         role="button"
                         tabIndex="0"
                         data-pub-idx={i}
-                        className={
-                          p?.curationStatus || p?.hasSubmission
-                            ? 'disabled'
-                            : ''
-                        }
+                        className={p?.curationStatus ? 'disabled' : ''}
                         title={
                           p.curationStatus
                             ? 'This publication has been ' +
@@ -109,11 +105,7 @@ const PubResults = ({
                               ' curated.'
                             : ''
                         }
-                        onClick={
-                          !(p?.curationStatus || p.hasSubmission)
-                            ? handleOnPubClick
-                            : null
-                        }>
+                        onClick={!p?.curationStatus ? handleOnPubClick : null}>
                         <td style={{ verticalAlign: 'middle' }}>{i + 1}</td>
                         <td
                           className={
@@ -144,8 +136,8 @@ const PubResults = ({
               <strong>Can't find what you are looking for?</strong>
               <br />
               FlyBase only incorporates and curates publications that are "fully
-              published," meaning they have final volume and page numbers.
-              Publications that have not yet reached this stage (including
+              published," meaning they have <b>final volume and page numbers</b>
+              . Publications that have not yet reached this stage (including
               preprints) will not be included in the FlyBase bibliography.
               Please wait until your paper is fully published before using this
               tool. If your paper is recently published and you cannot find it,

@@ -7,6 +7,9 @@ import IconHelp from 'components/IconHelp'
 import differenceBy from 'lodash.differenceby'
 import unionBy from 'lodash.unionby'
 import cloneDeep from 'lodash.clonedeep'
+import Alert from 'react-bootstrap/lib/Alert'
+
+import { useApolloClient } from '@apollo/client'
 
 import GenesStudiedTable from 'components/GenesStudiedTable'
 import GeneSearchInput from 'components/GeneSearchInput'
@@ -14,7 +17,7 @@ import GeneSearchResults from 'components/GeneSearchResults'
 import GeneSearchMessage from 'components/GeneSearchMessage'
 import GeneBatchForm from 'components/GeneBatchForm'
 import GeneBatchResults from 'components/GeneBatchResults'
-import { useApolloClient } from '@apollo/client'
+import GeneDeleteModal from 'components/GeneDeleteModal'
 
 const GenesStep = ({
   service,
@@ -36,6 +39,7 @@ const GenesStep = ({
   )
   // Keep local array of genes studied that is pre-populated from saved data.
   const [genesStudied, setGenesStudied] = useState(savedGenes)
+  const [showGeneDelete, setShowGeneDelete] = useState(false)
 
   // Get the gene search results from the current machine context.
   const {
@@ -186,6 +190,13 @@ const GenesStep = ({
           </h3>
         </div>
         <div className="panel-body">
+          <span class="help-block">
+            Please add any genes investigated in your publication below. If you
+            have conducted a genome-wide study or large screen involving many
+            genes, please only add genes that were further functionally
+            validated in your study and tick &lsquo;Large-scale dataset&rsquo;
+            in the previous step.
+          </span>
           <div className="form-group">
             <p className="help-block">
               Please add any genes investigated in your publication below. If
@@ -236,6 +247,15 @@ const GenesStep = ({
               </div>
 
               <div className="radio">
+                <GeneDeleteModal
+                  show={showGeneDelete}
+                  handleClose={(e, action) => {
+                    if (action === 'delete') {
+                      send('NONE')
+                    }
+                    setShowGeneDelete(false)
+                  }}
+                />
                 <label>
                   <input
                     type="radio"
@@ -243,7 +263,13 @@ const GenesStep = ({
                     id="optionsRadios3"
                     value="option3"
                     checked={current.matches('none')}
-                    onChange={() => send('NONE')}
+                    onChange={() => {
+                      if (genesStudied.length === 0) {
+                        send('NONE')
+                      } else {
+                        setShowGeneDelete(true)
+                      }
+                    }}
                   />
                   <b>No genes</b> studied in this publication
                 </label>
@@ -287,10 +313,17 @@ const GenesStep = ({
                 flex: 0 1 400px;
               }
             `}>
+            <span className="help-block">
+              <span className="text-info">
+                Only FBgn IDs can be uploaded here; please use the{' '}
+                <a href="/convert/id">ID validator</a> if you need to convert
+                your list to FBgns first.
+              </span>
+            </span>
             <GeneBatchForm onSubmit={handleOnUpload} />
             <div
               css={`
-                flex: 0 1 300px;
+                flex: 0 1 360px;
               `}>
               {current.matches({ batch: 'loaded' }) && (
                 <GeneBatchResults
@@ -324,6 +357,14 @@ const GenesStep = ({
               </label>
             </div>
           </GenesStudiedTable>
+        )}
+        {genesStudied.length > 100 && (
+          <Alert bsStyle="danger">
+            <strong>More than 100 genes entered.</strong> Please tick ‘dataset’
+            in the previous step if you used a method to investigate many genes
+            at once, and only add genes that have been specifically investigated
+            in your publication here.
+          </Alert>
         )}
         {children}
       </div>

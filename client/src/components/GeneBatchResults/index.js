@@ -79,7 +79,7 @@ const GeneBatchResults = ({
         css={`
           margin: 0;
         `}>
-        Uploaded Genes
+        Uploaded Gene IDs
       </label>
       <div className="panel panel-default">
         <div className="panel-body">
@@ -137,7 +137,7 @@ const Add = ({ ids = [], handleOnClick, ...props }) => {
   if (ids.length !== 0) {
     return (
       <button
-        className="btn btn-default btn-xs"
+        className="btn btn-info btn-xs"
         type="button"
         {...props}
         onClick={() => handleOnClick(ids)}>

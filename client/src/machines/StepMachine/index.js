@@ -8,7 +8,13 @@ import { createGeneStepMachine } from 'machines/GeneStepMachine'
 import cloneDeep from 'lodash.clonedeep'
 import { loader } from 'graphql.macro'
 
-import { hasContact, isReview, hasPublication, isFormValid } from './guards'
+import {
+  hasContact,
+  isCurated,
+  isReview,
+  hasPublication,
+  isFormValid,
+} from './guards'
 
 const { assign } = actions
 
@@ -99,18 +105,21 @@ export const createStepMachine = () => {
               on: {
                 // Event for selecting a publication.
                 SET_PUB: {
-                  actions: [
-                    'resetContext',
-                    'resetLocalFlags',
-                    'setPub',
-                    'persist',
-                  ],
+                  actions: ['resetLocalFlags', 'setPub', 'persist'],
                 },
-                NEXT: {
-                  target: 'author',
-                  actions: ['persist'],
-                  cond: 'hasPublication',
-                },
+                NEXT: [
+                  {
+                    target: 'author',
+                    actions: ['persist'],
+                    cond: 'hasValidPub',
+                  },
+                  // Fall through to here if guard conditions fail.
+                  {
+                    entry: [assign({ error: 'Publication already curated' })],
+                    actions: ['sendAlreadyCurated'],
+                    exit: [assign({ error: null })],
+                  },
+                ],
               },
             },
             // Pub state
@@ -125,12 +134,12 @@ export const createStepMachine = () => {
                   {
                     target: 'author',
                     actions: ['persist'],
-                    cond: 'hasPublication',
+                    cond: 'hasValidPub',
                   },
                   // Fall through to here if guard conditions fail.
                   {
                     entry: [assign({ error: 'No publication selected.' })],
-                    actions: ['sendPubError'],
+                    actions: ['sendNoPubError'],
                     exit: [assign({ error: null })],
                   },
                 ],
@@ -201,7 +210,7 @@ export const createStepMachine = () => {
                 SET_GENES: {
                   actions: ['setGenes', 'persist'],
                 },
-                NEXT: { target: 'confirm' },
+                NEXT: { target: 'confirm', cond: 'isUnderGeneLimit' },
                 PREV: [
                   { target: 'author', cond: 'isReview' },
                   { target: 'flags' },
@@ -398,31 +407,39 @@ export const createStepMachine = () => {
         }),
         setFlags: assign((context, event) => {
           const { submission } = context
-          const { flags = {} } = event
-          if (!flags?.cell_line) {
-            /**
-             * Remove any cell line data that was entered if the cell_line flag
-             * is unchecked.
-             */
-            flags.cell_lines = []
-            flags.stable_line = false
-            flags.commercial_line = false
-          }
-          if (!flags?.human_disease) {
-            /**
-             * Remove any human disease text that was entered if the human_disease flag
-             * is unchecked.
-             */
-            flags.human_disease_text = ''
-          }
-          if (!flags?.dataset) {
-            /**
-             * Remove any dataset flags that were entered if the dataset flag
-             * is unchecked.
-             */
-            flags.dataset_pheno = false
-            flags.dataset_accessions = false
-            flags.dataset_accession_numbers = ''
+          let { flags = {} } = event
+          if (!flags?.no_flags) {
+            if (!flags?.cell_line) {
+              /**
+               * Remove any cell line data that was entered if the cell_line flag
+               * is unchecked.
+               */
+              flags.cell_lines = []
+              flags.stable_line = false
+              flags.commercial_line = false
+            }
+            if (!flags?.human_disease) {
+              /**
+               * Remove any human disease text that was entered if the human_disease flag
+               * is unchecked.
+               */
+              flags.human_disease_text = ''
+            }
+            if (!flags?.dataset) {
+              /**
+               * Remove any dataset flags that were entered if the dataset flag
+               * is unchecked.
+               */
+              flags.dataset_pheno = false
+              flags.dataset_accessions = false
+              flags.dataset_accession_numbers = ''
+            }
+          } else {
+            // If no_flags has been checked, remove all other flag data except the optional text.
+            flags = {
+              no_flags: true,
+              none_apply_text: flags?.none_apply_text ?? '',
+            }
           }
           return {
             submission: {
@@ -459,18 +476,24 @@ export const createStepMachine = () => {
           submission.contact.email = event.email
           return {
             fbrf: event.fbrf,
-            ...submission,
+            submission: {
+              ...submission,
+            },
           }
         }),
         /*
         Lets the pub step machine know that an error occurred.
          */
-        sendPubError: send('NOPUB_ERROR', { to: 'pubStepMachine' }),
+        sendNoPubError: () =>
+          send('NOPUB_ERROR', { to: (context) => context.pubMachine }),
+        sendAlreadyCurated: () =>
+          send('ALREADY_CURATED', { to: (context) => context.pubMachine }),
       },
       guards: {
-        hasPublication: (context, event) => {
+        hasValidPub: (context, event) => {
           const { submission } = context
-          return event?.hasPub || hasPublication(submission)
+          const hasPub = event?.hasPub ?? hasPublication(submission)
+          return hasPub && !isCurated(submission?.publication)
         },
         isReview: (context) => {
           return isReview(context?.submission?.publication)
@@ -490,6 +513,10 @@ export const createStepMachine = () => {
           return hasContact(contact, formikBag) && isReview(publication)
         },
         isConfirmed: (context) => context.confirmed,
+        isUnderGeneLimit: (context) => {
+          const genes = context?.submission?.genes ?? []
+          return genes.length <= 101
+        },
       },
       services: {
         invokeSaveToDb: (context, event) => {

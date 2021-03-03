@@ -7,10 +7,9 @@ import DataFlagTextArea from 'components/DataFlagTextArea'
 import DiseaseTextArea from 'components/DiseaseTextArea'
 import CellLineFlag from 'components/CellLineFlag'
 import DatasetFlag from 'components/DatasetFlag'
-
 import { DataFlagsSchema } from './validation'
 
-const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
+const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
   const [showAllHelp, setShowAllHelp] = useState(false)
   return (
     <div className="container">
@@ -49,12 +48,14 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
               cis_regulatory: flags?.cis_regulatory ?? false,
               anatomical_data: flags?.anatomical_data ?? false,
               new_technique: flags?.new_technique ?? false,
+              new_technique_text: flags?.new_technique_text ?? '',
               dataset: flags?.dataset ?? false,
               dataset_pheno: flags?.dataset ?? false,
               dataset_accessions: flags?.dataset_accessions ?? false,
               dataset_accession_numbers: flags?.dataset_accession_numbers ?? '',
               new_pathway_member: flags?.new_pathway_member ?? false,
               no_flags: flags?.no_flags ?? false,
+              none_apply_text: flags?.none_apply_text ?? '',
             }}
             /**
              * See https://github.com/jaredpalmer/formik/issues/1603#issuecomment-575669249
@@ -67,6 +68,18 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
             }}>
             {({ values, values: { no_flags: noneApply } }) => (
               <Form>
+                {isReview && (
+                  <h4
+                    className="alert alert-warning"
+                    style={{ marginBottom: '1em' }}>
+                    The publication you have chosen is classified as a{' '}
+                    <b>review</b> by FlyBase.
+                    <br />
+                    FlyBase only curates a few types of data for reviews; the
+                    form below will only accept information about these types.
+                  </h4>
+                )}
+
                 <div className="well well-sm text-info">
                   <em>
                     The following data types (new allele, new transgene,
@@ -253,6 +266,18 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
                   </DataFlagCheckbox>
                 </div>
 
+                {values.new_technique && (
+                  <div className="form-group">
+                    <div className="col-lg-12" style={{ marginBottom: '1em' }}>
+                      <DataFlagTextArea
+                        className="form-control"
+                        name="new_technique_text"
+                        rows="4"
+                        placeholder="Required: Please briefly describe the technical advance, new reagent or resource described in your paper. (limit 280 characters)"></DataFlagTextArea>
+                    </div>
+                  </div>
+                )}
+
                 <label>Large-scale Dataset</label>
                 <div className="form-group" id="largescale_dataset">
                   <DataFlagCheckbox
@@ -289,14 +314,17 @@ const FlagsStep = ({ flags, setFlags, bagRef, children }) => {
                   </DataFlagCheckbox>
                 </div>
 
-                {/* can't figure out how to emulate what I did in the disease field */}
-                {/* values.no_flags && (
-                <DataFlagTextArea
-                  rows="4"
-                  placeholder="Please tell us what types of data your publication contains that this form does not allow you to report."
-                  showAllHelp={showAllHelp}>
-                </DataFlagTextArea>
-                ) */}
+                {noneApply && (
+                  <div className="form-group">
+                    <div className="col-lg-12" style={{ marginBottom: '2em' }}>
+                      <DataFlagTextArea
+                        className="form-control"
+                        name="none_apply_text"
+                        rows="4"
+                        placeholder="Optional: if there are important data types contained in your paper that have not been covered by the above flags, please briefly list them here."></DataFlagTextArea>
+                    </div>
+                  </div>
+                )}
 
                 {children}
 

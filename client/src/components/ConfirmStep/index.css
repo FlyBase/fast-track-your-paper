@@ -1,3 +1,6 @@
+#confirmationPanel {
+  min-width: 600px;
+}
 #confirmationPanel h4 button {
   float: right;
   padding: 0 8px;

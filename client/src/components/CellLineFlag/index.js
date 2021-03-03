@@ -25,7 +25,7 @@ const CellLineFlag = ({
         <div className="col-xs-4">
           <DataFlagTxtInput
             name={`cell_lines.${i}.name`}
-            placeholder="e.g. S2-DGRC, S2-cdi-GFP"
+            placeholder="e.g. S2-DGRC or S2-cdi-GFP"
             disabled={disabled}
             style={textInputStyle}
           />
@@ -83,7 +83,7 @@ const CellLineFlag = ({
       <div className="form-group">
         <div className="col-sm-12">
           <p className="form-control-static">
-            <em>Please provide the name and source for each cell line:</em>
+            <em>Please provide one name and one source for each cell line:</em>
             <IconHelp
               initial={showAllHelp}
               message="Enter corresponding cell line names and sources on the same row."

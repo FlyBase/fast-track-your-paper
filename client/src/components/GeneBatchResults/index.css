@@ -9,19 +9,20 @@
   display: flex;
   justify-content: space-between;
 }
-#batch-results div.panel-body > div > div {
+#batch-results div.panel-body > div:hover {
+  background-color: #eee;
 }
 #batch-results div.panel-body > div > div:first-child {
-  flex-basis: 8em;
+  flex-basis: 10em;
+  flex-grow: 1;
   font-weight: bold;
 }
 #batch-results div.panel-body > div > div:nth-child(2) {
-  flex-basis: 4em;
+  flex-basis: 2em;
   text-align: center;
 }
 #batch-results div.panel-body > div > div:last-child {
-  flex-basis: auto;
-  flex-grow: 1;
+  flex-basis: 6em;
   text-align: right;
   font-size: 12px;
 }

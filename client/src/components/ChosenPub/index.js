@@ -24,14 +24,16 @@ const ChosenPub = ({ pub, citation }) => {
                   bibliography.
                 </>
               ) : (
-                <h5>
-                  <strong>Publication selected:</strong>
+                <>
+                  <span className="h3">Publication selected:</span>
                   <br />
-                  <i>{pub.title}</i>&ensp;
-                  {pub.miniref}
-                  <br />
-                  {cur_status_phrase_for[pub.curationStatus]}
-                </h5>
+                  <h4>
+                    <i>{pub.title}</i>&ensp;
+                    {pub.miniref}
+                    <br />
+                    {cur_status_phrase_for[pub.curationStatus]}
+                  </h4>
+                </>
               )}
             </div>
             <p>
@@ -46,10 +48,7 @@ const ChosenPub = ({ pub, citation }) => {
             </p>
             <p>
               If you feel that there is an error, please{' '}
-              <a href="http:/cgi-bin/mailto-fbhelp.html?selectedSubject=fasttrack">
-                contact FlyBase
-              </a>
-              .
+              <a href="/contact/email?subject=ftyp">contact FlyBase</a>.
             </p>
           </div>
         </div>
