@@ -51,7 +51,14 @@ const GeneBatchForm = ({ onSubmit, ...props }) => {
       validationSchema={validationSchema}
       onSubmit={preSubmit}>
       <Form>
-        <div>
+        <div className="form-group" style={{ fontSize: 12 }}>
+          <p className="text-warning">
+            Only FBgn IDs can be uploaded here; please use the{' '}
+            <a href="/convert/id">ID validator</a> if you need to convert your
+            list to FBgns first.
+          </p>
+        </div>
+        <div className="form-group">
           <label
             htmlFor="ids"
             css={`

@@ -52,7 +52,9 @@ const GeneSearchResults = ({
   return (
     <div ref={ref} id="geneSearchSuggestions">
       <div id="geneSearchSuggestionsContainer">
-        <button onClick={onDismiss}>
+        <button
+          onClick={onDismiss}
+          style={{ display: 'block', border: 'none' }}>
           <i
             id="geneSearchSuggestionsDismiss"
             className="fa fa-times-circle"></i>
@@ -61,6 +63,17 @@ const GeneSearchResults = ({
           Showing {genes.length} of {totalCount} matches.&emsp;
         </div>
         <ul>
+          <li className="bg-warning" style={{ color: 'white !' }}>
+            <GeneSearchHit
+              g={{
+                symbol: '<i>Symbol</i>',
+                hl: {
+                  synonyms: ['<b>Synonyms</b>'],
+                  name: '<b><i>Name</i></b>',
+                },
+              }}
+            />
+          </li>
           {genes.map((g) => {
             z = z ? '' : 'z'
             let zclass = z

@@ -100,7 +100,13 @@ const GeneBatchResults = ({
             <div>{updatedIds?.length ? <i className="fa fa-check" /> : ''}</div>
           </div>
           <div>
-            <div>Splits:</div>
+            <div>
+              Splits:
+              <IconHelp
+                initial={showAllHelp}
+                message="Each of these FBgn IDs have been split into more than one FBgn; please add and check below."
+              />
+            </div>
             <div>{splitIds?.length ?? 0} </div>
             <div>
               <Add ids={splitIds} handleOnClick={onAdd} />

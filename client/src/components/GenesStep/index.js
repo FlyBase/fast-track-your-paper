@@ -176,7 +176,7 @@ const GenesStep = ({
       <div id="genesStepPanel" className="panel panel-primary">
         <div className="panel-heading">
           <h3 className="panel-title">
-            Associate Genes
+            Which genes are studied in this publication?
             <button
               type="button"
               className="pull-right btn btn-default btn-xs"
@@ -186,6 +186,15 @@ const GenesStep = ({
           </h3>
         </div>
         <div className="panel-body">
+          <div className="form-group">
+            <p className="help-block">
+              Please add any genes investigated in your publication below. If
+              you have conducted a genome-wide study or large screen involving
+              many genes, please only add genes that were further functionally
+              validated in your study and tick &lsquo;Large-scale dataset&rsquo;
+              in the previous step.
+            </p>
+          </div>
           <div className="form-group">
             <div className="col-sm-12 control-label">
               <div className="radio">
@@ -275,7 +284,7 @@ const GenesStep = ({
               flex-flow: row wrap;
               justify-content: space-evenly;
               form {
-                flex: 0 1 300px;
+                flex: 0 1 400px;
               }
             `}>
             <GeneBatchForm onSubmit={handleOnUpload} />
