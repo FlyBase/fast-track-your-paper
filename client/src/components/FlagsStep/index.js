@@ -273,7 +273,7 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
                         className="form-control"
                         name="new_technique_text"
                         rows="4"
-                        placeholder="Required: Please briefly describe the technical advance, new reagent or resource described in your paper. (limit 280 characters)"></DataFlagTextArea>
+                        placeholder="Required: Please briefly describe the technical advance, new type of reagent or resource described in your paper. (limit 280 characters)"></DataFlagTextArea>
                     </div>
                   </div>
                 )}
