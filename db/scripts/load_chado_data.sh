@@ -26,7 +26,7 @@ vacuumdb -f -v -z -a
 
 psql -d $POSTGRES_DB -f /chado/schema/data_classes/utils.sql
 psql -d $POSTGRES_DB -f /chado/schema/ids/id_updater.sql
-psql -d $POSTGRES_DB -f /chado/schema/symbols/current_synonym.sql
+psql -d $POSTGRES_DB -f /chado/schema/symbols/main.sql
 psql -d $POSTGRES_DB -f /chado/schema/properties/get_prop.sql
 psql -d $POSTGRES_DB -f /chado/schema/FBrf/main.sql
 
