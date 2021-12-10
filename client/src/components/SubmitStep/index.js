@@ -1,29 +1,24 @@
 import React from 'react'
 
 const SubmitStep = ({ submission = {}, children }) => {
-  let noSumGeneList = []
-
-  for (let n = 0; n < submission.genes.length; n++) {
-    if (!submission.genes[n].hasSummary) {
-      let gn = submission.genes[n]
-      let wufooURL =
-        'https://flybase.wufoo.com/forms/flybase-gene-snapshot-form'
-      wufooURL += '?Field37=' + submission.contact.name
-      wufooURL += '&Field4=' + submission.contact.email
-      wufooURL += '&Field31=' + gn.id
-      wufooURL += '&Field3=' + gn.symbol
-      noSumGeneList.push(
+  const { name = '', email = '' } = submission?.contact
+  const noSumGeneList = submission?.genes
+    // Remove non-dmel or genes with summaries.
+    .filter((gene) => !gene?.hasSummary && gene?.species === 'Dmel')
+    .map((gene) => {
+      const { id = '', symbol = '' } = gene
+      const wufooURL = `https://flybase.wufoo.com/forms/flybase-gene-snapshot-form?Field37=${name}&Field4=${email}&Field31=${id}&Field3=${symbol}`
+      return (
         <li>
           <a
             href={encodeURI(wufooURL)}
             target="_blank"
             rel="noopener noreferrer">
-            <b>{gn.symbol}</b> <i class="fa fa-external-link" />
+            <b>{symbol}</b> <i className="fa fa-external-link" />
           </a>
         </li>
       )
-    }
-  }
+    })
 
   let FCAGinvite = (
     <div class="container">
