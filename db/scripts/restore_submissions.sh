@@ -11,3 +11,5 @@ do
     psql -d $POSTGRES_DB < "$file"
   fi
 done
+
+psql -d $POSTGRES_DB -c "select setval('ftyp_hidden.submissions_submission_id', (select max(submission_id) from ftyp_hidden.submissions));"
