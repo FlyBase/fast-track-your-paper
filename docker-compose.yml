@@ -52,7 +52,7 @@ services:
   client:
     image: flybase/ftyp-client:${TAG:-latest}
     working_dir: "/home/node/app"
-    command: "serve -s build"
+    command: "serve -s build -l 5000"
     volumes:
       - ./client:/home/node/app
     networks:
