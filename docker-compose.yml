@@ -37,10 +37,10 @@ services:
   # the postgres docker container.
   db:
     # Uncomment image line below in production.
-    #image: flybase/ftyp-db:${TAG:-latest}
+    image: flybase/ftyp-db:${TAG:-latest}
     # Uncomment build context for development
-    build:
-      context: ./db
+    #build:
+    #  context: ./db
     restart: always
     environment:
       POSTGRES_DB: ${FTYP_PGDATABASE:-ftyp}
