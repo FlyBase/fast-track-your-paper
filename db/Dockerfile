@@ -1,4 +1,4 @@
-FROM postgres:10
+FROM postgres:13
 
 RUN set -x \
       && apt-get update && apt-get install -y git

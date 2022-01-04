@@ -36,7 +36,11 @@ services:
   # See https://hub.docker.com/_/postgres for details on using
   # the postgres docker container.
   db:
-    image: flybase/ftyp-db:${TAG:-latest}
+    # Uncomment image line below in production.
+    #image: flybase/ftyp-db:${TAG:-latest}
+    # Uncomment build context for development
+    build:
+      context: ./db
     restart: always
     environment:
       POSTGRES_DB: ${FTYP_PGDATABASE:-ftyp}
