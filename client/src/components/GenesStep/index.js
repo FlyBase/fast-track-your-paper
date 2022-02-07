@@ -190,13 +190,6 @@ const GenesStep = ({
           </h3>
         </div>
         <div className="panel-body">
-          <span class="help-block">
-            Please add any genes investigated in your publication below. If you
-            have conducted a genome-wide study or large screen involving many
-            genes, please only add genes that were further functionally
-            validated in your study and tick &lsquo;Large-scale dataset&rsquo;
-            in the previous step.
-          </span>
           <div className="form-group">
             <p className="help-block">
               Please add any genes investigated in your publication below. If
