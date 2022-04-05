@@ -23,10 +23,12 @@ function App({ basename }) {
           <Route path="/admin">
             <FtypAdmin />
           </Route>
+          <Route path="/:fbrf">
+            <StepContainer />
+          </Route>
           <Route path="/:fbrf/:email">
             <StepContainer />
           </Route>
-          <Redirect from="/:fbrf" to="/" />
         </Switch>
       </Router>
     </div>

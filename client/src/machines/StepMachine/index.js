@@ -473,7 +473,7 @@ export const createStepMachine = () => {
         }),
         setEmailFbrf: assign((context, event) => {
           const { submission } = context
-          submission.contact.email = event.email
+          submission.contact.email = event?.email ? event.email : null
           return {
             fbrf: event.fbrf,
             submission: {
