@@ -338,6 +338,15 @@ function StepContainer() {
       />
     )
   }
+  const helpLink = (
+    <>
+      Please click
+      <a href="https://wiki.flybase.org/wiki/FlyBase:Fast-Track_Your_Paper">
+        here
+      </a>
+      if you want more information about this tool.
+    </>
+  )
 
   return (
     <div
@@ -346,6 +355,7 @@ function StepContainer() {
         padding: 2em 0;
       `}>
       <StepIndicator steps={steps} currentStep={currentStepIdx} />
+      {helpLink}
       <Divider />
       <div
         css={`
@@ -357,6 +367,7 @@ function StepContainer() {
         {step}
         <Divider />
         <StepIndicator steps={steps} currentStep={currentStepIdx} />
+        {helpLink}
       </div>
     </div>
   )

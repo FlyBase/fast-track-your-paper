@@ -35,7 +35,7 @@ const DatasetFlag = ({
           <DataFlagTextArea
             name="dataset_accession_numbers"
             rows="2"
-            placeholder="Optional: Please enter relevant accession numbers, separated by commas"
+            placeholder="Optional: Please enter relevant accession numbers, separated by commas (you do not need to specify the data repository)"
             disabled={disabled}
           />
         </div>

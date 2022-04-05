@@ -38,13 +38,21 @@
       background-color: #ddd;
     }
     .FBiconLink { padding: 0; }
+    #contributeBox {
+      margin-top: 1em;
+      background-color: cyan;
+      border: 2px solid black;
+      border-radius: 5px;
+    }
     @keyframes flashfade { from { background: #fcc; } to { background: seashell; } }
     /* width cutoffs below should match boundary between bootstrap sm and md */
     @media screen and (min-width: 992px) {
       #sidebar { border-right: 1px solid lightgrey }
+      #contributeBox { font-size: 1.7vw; }
     }
     @media screen and (max-width: 991px) {
       #sidebar { border-top: 1px solid lightgrey; padding-top: 1em }
+      #contributeBox { font-size: 2.25vw; }
       #searchbox-col { padding: 0 }
       #commentary-panel-collapse { height: 240px; overflow: auto }
       fieldset#searchbox { padding: 0 0.25em }

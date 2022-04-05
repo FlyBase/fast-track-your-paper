@@ -48,13 +48,21 @@
       background-color: #ddd;
     }
     .FBiconLink { padding: 0; }
+    #contributeBox {
+      margin-top: 1em;
+      background-color: cyan;
+      border: 2px solid black;
+      border-radius: 5px;
+    }
     @keyframes flashfade { from { background: #fcc; } to { background: seashell; } }
     /* width cutoffs below should match boundary between bootstrap sm and md */
     @media screen and (min-width: 992px) {
       #sidebar { border-right: 1px solid lightgrey }
+      #contributeBox { font-size: 1.7vw; }
     }
     @media screen and (max-width: 991px) {
       #sidebar { border-top: 1px solid lightgrey; padding-top: 1em }
+      #contributeBox { font-size: 2.25vw; }
       #searchbox-col { padding: 0 }
       #commentary-panel-collapse { height: 240px; overflow: auto }
       fieldset#searchbox { padding: 0 0.25em }
@@ -188,7 +196,7 @@
 
             <div id="titlecontainer" class="hidden-xs">
               <div id="release_notice" class="text-error text-center text-danger small">
-                FB2022_01, released February 8, 2022
+                FB2022_02, released March 29, 2022
               </div>
               <p id="headertitle" class="lead text-center">Fast-Track Your Paper</p>
             </div>
@@ -200,7 +208,7 @@
           <div id="titlecontainer" class="col-xs-12 grey">
 
             <div id="release_notice" class="text-error text-center text-danger small">
-                FB2022_01, released February 8, 2022
+                FB2022_02, released March 29, 2022
             </div>
             <p id="headertitle" class="lead text-center" style="line-height:1em">
               A Database of <i>Drosophila</i> Genes &amp; Genomes
@@ -486,7 +494,7 @@
               <div class="col-sm-offset-4 col-sm-4" style="margin-top:8px;">
                 <div class="row">
                   <div class="col-xs-12 text-center">
-                    <strong id="release">version FB2022_01, released February 8, 2022</strong>
+                    <strong id="release">version FB2022_02, released March 29, 2022</strong>
                   </div>
                 </div>
                 <div class="row">
