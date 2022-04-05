@@ -21,6 +21,9 @@ function App({ basename }) {
           <Route path="/:fbrf/:email">
             <StepContainer />
           </Route>
+          <Route path="/:fbrf">
+            <StepContainer />
+          </Route>
         </Switch>
       </Router>
     </div>
