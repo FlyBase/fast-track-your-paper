@@ -339,9 +339,13 @@ function StepContainer() {
     )
   }
   const helpLink = (
-      <a className="btn btn-lg btn-info" href="https://wiki.flybase.org/wiki/FlyBase:Fast-Track_Your_Paper">
-        FTYP Help
-      </a>
+    <a
+      className="btn btn-sm btn-info pull-right"
+      style={{ paddingBottom: '1rem' }}
+      href="https://wiki.flybase.org/wiki/FlyBase:Fast-Track_Your_Paper">
+      <i className="fa fa-question" />
+      FTYP Help
+    </a>
   )
 
   return (
@@ -350,8 +354,8 @@ function StepContainer() {
         min-width: 60vw;
         padding: 2em 0;
       `}>
-      <StepIndicator steps={steps} currentStep={currentStepIdx} />
       {helpLink}
+      <StepIndicator steps={steps} currentStep={currentStepIdx} />
       <Divider />
       <div
         css={`
