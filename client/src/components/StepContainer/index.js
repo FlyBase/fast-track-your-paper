@@ -181,7 +181,7 @@ function StepContainer() {
    *  and if the fbrf and email are defined.
    */
   useEffect(() => {
-    if (fbrfUrl && email) {
+    if (fbrfUrl) {
       send('SET_FBRF_EMAIL', { fbrf: fbrfUrl, email })
     }
   }, [email, fbrfUrl, send])

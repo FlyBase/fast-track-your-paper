@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  BrowserRouter as Router,
-  Route,
-  Redirect,
-  Switch,
-} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import StepContainer from 'components/StepContainer'
 import FtypAdmin from 'components/FtypAdmin'
 import SubmissionView from '../SubmissionView'
@@ -23,10 +18,10 @@ function App({ basename }) {
           <Route path="/admin">
             <FtypAdmin />
           </Route>
-          <Route path="/:fbrf">
+          <Route path="/:fbrf/:email">
             <StepContainer />
           </Route>
-          <Route path="/:fbrf/:email">
+          <Route path="/:fbrf">
             <StepContainer />
           </Route>
         </Switch>
