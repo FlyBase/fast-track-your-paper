@@ -339,13 +339,9 @@ function StepContainer() {
     )
   }
   const helpLink = (
-    <>
-      Please click
-      <a href="https://wiki.flybase.org/wiki/FlyBase:Fast-Track_Your_Paper">
-        here
+      <a className="btn btn-lg btn-info" href="https://wiki.flybase.org/wiki/FlyBase:Fast-Track_Your_Paper">
+        FTYP Help
       </a>
-      if you want more information about this tool.
-    </>
   )
 
   return (
