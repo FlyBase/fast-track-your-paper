@@ -2,7 +2,7 @@
   "name": "ftyp-client",
   "version": "0.1.2",
   "private": true,
-  "proxy": "http://preview.flybase.org/submission/publication",
+  "proxy": "http://localhost:8888",
   "dependencies": {
     "@apollo/client": "^3.2.1",
     "@devexpress/dx-react-core": "^2.7.1",
