@@ -1,6 +1,0 @@
-Keep track here of small or vague tasks not captured in JIRA tickets.
-
-Genes step needs button/links in the antibody column headingss to
-check/uncheck all genes for each column.  Ditto for Delete column.
-
-Undocumented requirement:  Alternate workflow for Review publications.
