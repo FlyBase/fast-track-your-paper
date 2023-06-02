@@ -212,7 +212,7 @@ const FlagsStep = ({ flags, setFlags, bagRef, isReview = false, children }) => {
                     name="chemical_phenotypes"
                     showAllHelp={showAllHelp}
                     disabled={noneApply}
-                    helpMessage="Your publication describes in vivo experiments that either induce a mutant phenotype by chemical or drug treatment or that test whether a chemical or drug treatment can modify a mutant phenotype caused by genetic manipulation.">
+                    helpMessage="Your publication describes in vivo experiments that either induce a phenotype by chemical or drug treatment or that test whether a chemical or drug treatment can modify a mutant phenotype caused by genetic manipulation.">
                     Use of chemicals to investigate phenotypes
                   </DataFlagCheckbox>
                 </div>
