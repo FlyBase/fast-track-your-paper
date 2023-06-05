@@ -114,7 +114,6 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
                   return (
                     <li
                       key={flag}
-                      style={listyle}
                       dangerouslySetInnerHTML={{ __html: dataFlagHTML }}
                     />
                   )
