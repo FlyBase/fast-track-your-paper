@@ -170,7 +170,6 @@ function StepContainer() {
   const history = useHistory()
   const client = useApolloClient()
   const [current, send] = useMachine(getHydratedMachine())
-  console.log(current);
 
   /**
    * This useEffect hook sets the FBrf and email from

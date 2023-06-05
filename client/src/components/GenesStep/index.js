@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 // eslint-disable-next-line
 import styled from 'styled-components/macro'
 import useLocalstorage from '@rooks/use-localstorage'
-import {useMachine, useService} from '@xstate/react'
+import { useMachine, useService } from '@xstate/react'
 import IconHelp from 'components/IconHelp'
 import differenceBy from 'lodash.differenceby'
 import unionBy from 'lodash.unionby'
@@ -18,7 +18,7 @@ import GeneSearchMessage from 'components/GeneSearchMessage'
 import GeneBatchForm from 'components/GeneBatchForm'
 import GeneBatchResults from 'components/GeneBatchResults'
 import GeneDeleteModal from 'components/GeneDeleteModal'
-import {getHydratedMachine} from "../StepContainer";
+import { getHydratedMachine } from '../StepContainer'
 
 const GenesStep = ({
   service,
@@ -31,12 +31,12 @@ const GenesStep = ({
   const client = useApolloClient()
   // Initialize gene step machine from the parent machine.
   const [current, send] = useService(service)
-  const [{ context: { submission: { publication: { type: name }}} },] = useMachine(getHydratedMachine())
-  const [currentParent,] = useMachine(getHydratedMachine())
-  const selectedPublicationType = currentParent.context.submission.publication.type.name;
-  const IS_REVIEW = selectedPublicationType === 'review'; //TODO: verify type name for review
 
-  console.log(current);
+  const [currentParent] = useMachine(getHydratedMachine())
+  const selectedPublicationType =
+    currentParent.context.submission.publication.type.name
+  const IS_REVIEW = selectedPublicationType === 'review'
+
   // Show all help subtext.
   const [showAllHelp, setShowAllHelp] = useState(false)
   // Show antibody columns in genes studied table.
@@ -187,9 +187,9 @@ const GenesStep = ({
       <div id="genesStepPanel" className="panel panel-primary">
         <div className="panel-heading">
           <h3 className="panel-title">
-            {
-              IS_REVIEW ? 'Which genes are the focus of this review?' : 'Which genes are studied in this publication?'
-            }
+            {IS_REVIEW
+              ? 'Which genes are the focus of this review?'
+              : 'Which genes are studied in this publication?'}
             <button
               type="button"
               className="pull-right btn btn-default btn-xs"
