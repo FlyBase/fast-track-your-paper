@@ -61,7 +61,7 @@ const PubResults = ({
                     </IconHelp>
                   </div>
                   <div>
-                    <div style={{ float: 'right' }}>already curated</div>
+                    <div style={{ float: 'right' }}>already curated?</div>
                     <IconHelp initial={false} btnClasses="pull-right">
                       <div className="well well-sm" style={{ clear: 'both' }}>
                         A mark in the 'already curated' column indicates that a
