@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 // eslint-disable-next-line
 import styled from 'styled-components/macro'
 import useLocalstorage from '@rooks/use-localstorage'
-import { useService } from '@xstate/react'
+import { useMachine, useService } from '@xstate/react'
 import IconHelp from 'components/IconHelp'
 import differenceBy from 'lodash.differenceby'
 import unionBy from 'lodash.unionby'
@@ -18,6 +18,7 @@ import GeneSearchMessage from 'components/GeneSearchMessage'
 import GeneBatchForm from 'components/GeneBatchForm'
 import GeneBatchResults from 'components/GeneBatchResults'
 import GeneDeleteModal from 'components/GeneDeleteModal'
+import { getHydratedMachine } from '../StepContainer'
 
 const GenesStep = ({
   service,
@@ -30,6 +31,12 @@ const GenesStep = ({
   const client = useApolloClient()
   // Initialize gene step machine from the parent machine.
   const [current, send] = useService(service)
+
+  const [currentParent] = useMachine(getHydratedMachine())
+  const selectedPublicationType =
+    currentParent.context.submission.publication.type.name
+  const IS_REVIEW = selectedPublicationType === 'review'
+
   // Show all help subtext.
   const [showAllHelp, setShowAllHelp] = useState(false)
   // Show antibody columns in genes studied table.
@@ -180,7 +187,11 @@ const GenesStep = ({
       <div id="genesStepPanel" className="panel panel-primary">
         <div className="panel-heading">
           <h3 className="panel-title">
-            Which genes are studied in this publication?
+            {
+              IS_REVIEW
+              ? 'Which genes are the focus of this review?'
+              : 'Which genes are studied in this publication?'
+            }
             <button
               type="button"
               className="pull-right btn btn-default btn-xs"
@@ -191,13 +202,24 @@ const GenesStep = ({
         </div>
         <div className="panel-body">
           <div className="form-group">
-            <p className="help-block">
-              Please add any genes investigated in your publication below. If
-              you have conducted a genome-wide study or large screen involving
-              many genes, please only add genes that were further functionally
-              validated in your study and tick &lsquo;Large-scale dataset&rsquo;
-              in the previous step.
-            </p>
+            {
+              !IS_REVIEW &&
+              <p className="help-block">
+                Please add any genes investigated in your publication below. If
+                you have conducted a genome-wide study or large screen involving
+                many genes, please only add genes that were further functionally
+                validated in your study and tick &lsquo;Large-scale dataset&rsquo;
+                in the previous step.
+              </p>
+            }
+            {
+                IS_REVIEW &&
+                <p className="help-block">
+                  Please add any Drosophila melanogaster genes that are the focus of
+                  your review below; your review will be added to the reference list
+                  of these gene reports.
+                </p>
+            }
           </div>
           <div className="form-group">
             <div className="col-sm-12 control-label">
@@ -216,7 +238,7 @@ const GenesStep = ({
                 </label>
                 <IconHelp
                   initial={showAllHelp}
-                  message="You will be selecting genes from search results to be connected to this publication."
+                  message={`You will be selecting genes from search results to be connected to this ${IS_REVIEW ? 'review' : 'publication'}.`}
                 />
               </div>
               <div className="radio">
@@ -235,7 +257,7 @@ const GenesStep = ({
                 </label>
                 <IconHelp
                   initial={showAllHelp}
-                  message="You will be entering a list of FlyBase gene identifiers (FBgn) to be connected to this publication."
+                  message={`You will be entering a list of FlyBase gene identifiers (FBgn) to be connected to this ${IS_REVIEW ? 'review' : 'publication'}.`}
                 />
               </div>
 
@@ -264,11 +286,11 @@ const GenesStep = ({
                       }
                     }}
                   />
-                  <b>No genes</b> studied in this publication
+                  <b>No genes</b> studied in this {IS_REVIEW ? 'review' : 'publication'}
                 </label>
                 <IconHelp
                   initial={showAllHelp}
-                  message="You confirm that there should be no genes connected to this publication."
+                  message={`You confirm that there should be no genes connected to this ${IS_REVIEW ? 'review' : 'publication'}.`}
                 />
               </div>
             </div>
@@ -356,7 +378,7 @@ const GenesStep = ({
             <strong>More than 100 genes entered.</strong> Please tick ‘dataset’
             in the previous step if you used a method to investigate many genes
             at once, and only add genes that have been specifically investigated
-            in your publication here.
+            in your ${IS_REVIEW ? 'review' : 'publication'} here.
           </Alert>
         )}
         {children}

@@ -137,7 +137,7 @@ const SubmitStepWrapper = ({ nextClick, ...props }) => (
  *
  * @returns {*} - The hydrated Xstate state machine.
  */
-const getHydratedMachine = () => {
+export const getHydratedMachine = () => {
   const localStorageKey = 'ftyp-state'
   const localStorageState = fetchFromLocalStorage(localStorageKey, () =>
     getInitialContext()
