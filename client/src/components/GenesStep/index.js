@@ -187,11 +187,9 @@ const GenesStep = ({
       <div id="genesStepPanel" className="panel panel-primary">
         <div className="panel-heading">
           <h3 className="panel-title">
-            {
-              IS_REVIEW
+            {IS_REVIEW
               ? 'Which genes are the focus of this review?'
-              : 'Which genes are studied in this publication?'
-            }
+              : 'Which genes are studied in this publication?'}
             <button
               type="button"
               className="pull-right btn btn-default btn-xs"
@@ -202,24 +200,22 @@ const GenesStep = ({
         </div>
         <div className="panel-body">
           <div className="form-group">
-            {
-              !IS_REVIEW &&
+            {!IS_REVIEW && (
               <p className="help-block">
                 Please add any genes investigated in your publication below. If
                 you have conducted a genome-wide study or large screen involving
                 many genes, please only add genes that were further functionally
-                validated in your study and tick &lsquo;Large-scale dataset&rsquo;
-                in the previous step.
+                validated in your study and tick &lsquo;Large-scale
+                dataset&rsquo; in the previous step.
               </p>
-            }
-            {
-                IS_REVIEW &&
-                <p className="help-block">
-                  Please add any Drosophila melanogaster genes that are the focus of
-                  your review below; your review will be added to the reference list
-                  of these gene reports.
-                </p>
-            }
+            )}
+            {IS_REVIEW && (
+              <p className="help-block">
+                Please add any Drosophila melanogaster genes that are the focus
+                of your review below; your review will be added to the reference
+                list of these gene reports.
+              </p>
+            )}
           </div>
           <div className="form-group">
             <div className="col-sm-12 control-label">
@@ -238,7 +234,9 @@ const GenesStep = ({
                 </label>
                 <IconHelp
                   initial={showAllHelp}
-                  message={`You will be selecting genes from search results to be connected to this ${IS_REVIEW ? 'review' : 'publication'}.`}
+                  message={`You will be selecting genes from search results to be connected to this ${
+                    IS_REVIEW ? 'review' : 'publication'
+                  }.`}
                 />
               </div>
               <div className="radio">
@@ -257,7 +255,9 @@ const GenesStep = ({
                 </label>
                 <IconHelp
                   initial={showAllHelp}
-                  message={`You will be entering a list of FlyBase gene identifiers (FBgn) to be connected to this ${IS_REVIEW ? 'review' : 'publication'}.`}
+                  message={`You will be entering a list of FlyBase gene identifiers (FBgn) to be connected to this ${
+                    IS_REVIEW ? 'review' : 'publication'
+                  }.`}
                 />
               </div>
 
@@ -286,11 +286,22 @@ const GenesStep = ({
                       }
                     }}
                   />
-                  <b>No genes</b> studied in this {IS_REVIEW ? 'review' : 'publication'}
+                  {IS_REVIEW && (
+                    <>
+                      <b>No genes</b> focused on in this review
+                    </>
+                  )}
+                  {!IS_REVIEW && (
+                    <>
+                      <b>No genes</b> studied in this publication
+                    </>
+                  )}
                 </label>
                 <IconHelp
                   initial={showAllHelp}
-                  message={`You confirm that there should be no genes connected to this ${IS_REVIEW ? 'review' : 'publication'}.`}
+                  message={`You confirm that there should be no genes connected to this ${
+                    IS_REVIEW ? 'review' : 'publication'
+                  }.`}
                 />
               </div>
             </div>
