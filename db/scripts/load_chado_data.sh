@@ -20,7 +20,11 @@ pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/ch
 pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/feature -O -F d -j ${JOBS} || true
 pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/featureloc -O -F d -j ${JOBS} || true
 
+# Load analysis data.
+pg_restore -x -O -c --disable-triggers --if-exists -d $POSTGRES_DB /ftyp/data/analysis -O -F d -j ${JOBS} || true
+
 psql -d $POSTGRES_DB -f /ftyp/scripts/load_genes.sql
+psql -d $POSTGRES_DB -f /ftyp/scripts/load_analysis.sql
 
 vacuumdb -f -v -z -a 
 
