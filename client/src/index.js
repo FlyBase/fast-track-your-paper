@@ -35,8 +35,7 @@ Sentry.init({
 
 // Run accessibility checks in development mode.
 if (process.env.NODE_ENV !== 'production') {
-  const axe = require('react-axe')
-  axe(React, ReactDOM, 1000)
+  import('react-axe').then(({ default: axe }) => axe(React, ReactDOM, 1000))
 }
 
 const baseName = process?.env?.PUBLIC_URL

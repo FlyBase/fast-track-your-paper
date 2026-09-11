@@ -55,10 +55,13 @@ services:
       - internal
   client:
     image: flybase/ftyp-client:${TAG:-latest}
-    working_dir: "/home/node/app"
-    command: "serve -s build -l 5000"
-    volumes:
-      - ./client:/home/node/app
+    build:
+      context: ./client
+    read_only: true
+    tmpfs:
+      - /tmp
+    environment:
+      FTYP_LISTEN: 5000
     networks:
       - frontend
 

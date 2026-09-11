@@ -1,0 +1,26 @@
+pid /tmp/nginx.pid;
+error_log /dev/stderr warn;
+events { worker_connections 128; }
+http {
+ include /etc/nginx/mime.types;
+ access_log off;
+ client_body_temp_path /tmp/body;
+ proxy_temp_path /tmp/proxy;
+ fastcgi_temp_path /tmp/fastcgi;
+ uwsgi_temp_path /tmp/uwsgi;
+ scgi_temp_path /tmp/scgi;
+ server {
+  listen ${FTYP_LISTEN};
+  root /usr/share/nginx/html;
+  add_header X-Content-Type-Options nosniff always;
+  add_header Cache-Control no-store always;
+  location = /submission/publication { return 301 /submission/publication/; }
+  location ^~ /submission/publication/static/ {
+   try_files $uri =404;
+   add_header Cache-Control "public, max-age=31536000, immutable";
+   add_header X-Content-Type-Options nosniff always;
+  }
+  location /submission/publication/ { try_files $uri /submission/publication/index.html; }
+  location / { return 404; }
+ }
+}

@@ -1,5 +1,5 @@
 const fs = require('fs');
-const puppeteer = require('puppeteer');
+const { chromium } = require('playwright');
 
 // Filenames for various include files.
 const head_filename = 'public/head.html';
@@ -8,9 +8,9 @@ const footer_filename = 'public/footer.html';
 
 (async () => {
     // Launch browser and navigate to FlyBase homepage.
-    const browser = await puppeteer.launch();
+    const browser = await chromium.launch();
     const page = await browser.newPage();
-    await page.goto('http://flybase.org');
+    await page.goto(process.env.FTYP_HEADER_SOURCE || 'https://flybase.org');
 
 
     // Fetch the head and modify the document title.
