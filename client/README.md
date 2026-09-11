@@ -32,7 +32,7 @@ the repository's legacy database service is not an upgrade procedure.
 
 Run `yarn playwright install chromium` once, then `yarn update-header-footer`
 to use Playwright to extract the native head/navbar/footer and regenerate
-public/index.html through the existing template. The default source is
+public/index.html through its three fixed literal includes. The default source is
 https://flybase.org. `FTYP_HEADER_SOURCE` is an operator-only override for a
 trusted local fixture or preview. Do not run this utility as part of a build.
 The production ingress retains ownership of root main-site assets.
