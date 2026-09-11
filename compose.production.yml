@@ -1,0 +1,56 @@
+# Dedicated production application stack; database restore/lifecycle is separate.
+services:
+  client:
+    image: ${FTYP_CLIENT_IMAGE:?Set immutable client image digest}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    networks: [frontend]
+  proxy:
+    image: ${FTYP_PROXY_IMAGE:?Set immutable proxy image digest}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    ports:
+      - "${FTYP_BIND_ADDRESS:?Set the dedicated private host address}:${FTYP_PROXY_PORT:-8888}:8080"
+    environment:
+      FTYP_CLIENT_UPSTREAM: client:5000
+    secrets: [ftyp_admin_htpasswd]
+    networks: [frontend, ingress]
+    depends_on: [client, api, api-admin]
+  api:
+    image: ${FTYP_API_IMAGE:?Set immutable reviewed API image digest}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    environment:
+      FTYP_API_MODE: public
+      PGHOST: ${FTYP_PGHOST:?Set reviewed database host}
+      PGDATABASE: ${FTYP_PGDATABASE:?Set reviewed database name}
+      PGPASSWORD: ${FTYP_PUBLIC_PASSWORD:?Set protected public API password}
+    networks: [frontend, database]
+  api-admin:
+    image: ${FTYP_API_IMAGE:?Set immutable reviewed API image digest}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    environment:
+      FTYP_API_MODE: admin
+      PGHOST: ${FTYP_PGHOST:?Set reviewed database host}
+      PGDATABASE: ${FTYP_PGDATABASE:?Set reviewed database name}
+      PGPASSWORD: ${FTYP_ADMIN_PASSWORD:?Set protected admin API password}
+    networks: [frontend, database]
+networks:
+  ingress: {}
+  frontend:
+    internal: true
+  database:
+    external: true
+    name: ${FTYP_DATABASE_NETWORK:?Set reviewed private database network}
+secrets:
+  ftyp_admin_htpasswd:
+    file: ${FTYP_ADMIN_HTPASSWD_FILE:?Set protected admin auth file}

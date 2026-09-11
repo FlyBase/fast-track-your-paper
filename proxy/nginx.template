@@ -1,0 +1,44 @@
+pid /tmp/nginx.pid;
+error_log /dev/stderr warn;
+events { worker_connections 128; }
+http {
+ access_log off;
+ client_body_temp_path /tmp/body;
+ proxy_temp_path /tmp/proxy;
+ fastcgi_temp_path /tmp/fastcgi;
+ uwsgi_temp_path /tmp/uwsgi;
+ scgi_temp_path /tmp/scgi;
+ upstream ftyp_client { server ${FTYP_CLIENT_UPSTREAM}; }
+ upstream ftyp_public { server ${FTYP_PUBLIC_UPSTREAM}; }
+ upstream ftyp_admin { server ${FTYP_ADMIN_UPSTREAM}; }
+ server {
+  listen ${FTYP_LISTEN};
+  add_header X-Content-Type-Options nosniff always;
+  location = /submission/publication { return 301 /submission/publication/; }
+  location = /submission/publication/graphql {
+   add_header Cache-Control no-store always;
+   add_header X-Content-Type-Options nosniff always;
+   proxy_pass http://ftyp_public/graphql;
+  }
+  location = /submission/publication/admin/graphql {
+   auth_basic "FTYP Admin";
+   auth_basic_user_file /run/secrets/ftyp_admin_htpasswd;
+   add_header Cache-Control no-store always;
+   add_header X-Content-Type-Options nosniff always;
+   proxy_pass http://ftyp_admin/graphql;
+  }
+  location = /submission/publication/admin {
+   auth_basic "FTYP Admin";
+   auth_basic_user_file /run/secrets/ftyp_admin_htpasswd;
+   proxy_pass http://ftyp_client;
+  }
+  location ^~ /submission/publication/admin/ {
+   auth_basic "FTYP Admin";
+   auth_basic_user_file /run/secrets/ftyp_admin_htpasswd;
+   proxy_pass http://ftyp_client;
+  }
+  location ^~ /submission/publication/graphiql { return 404; }
+  location /submission/publication/ { proxy_pass http://ftyp_client; }
+  location / { return 404; }
+ }
+}
