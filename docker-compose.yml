@@ -9,26 +9,26 @@ services:
     networks:
       - frontend
   api:
+    build:
+      context: ./api
     image: flybase/ftyp-api:${TAG:-latest}
     restart: "on-failure"
-    command: >-
-      --subscriptions
-      --watch
-      --dynamic-json
-      --disable-default-mutations
-      --no-setof-functions-contain-nulls
-      --no-ignore-rbac
-      --no-ignore-indexes
-      --show-error-stack=json
-      --extended-errors hint,detail,errcode
-      --append-plugins @graphile-contrib/pg-simplify-inflector
-      --export-schema-graphql schema.graphql
-      --enhance-graphiql
-      --allow-explain
-      --enable-query-batching
-      --legacy-relations omit
-      --connection postgres://postgres:${FTYP_PGPASSWORD:-CHANGEME}@db/${FTYP_PGDATABASE:-ftyp}
-      --schema ftyp,flybase,public
+    environment:
+      FTYP_API_MODE: public
+      PGHOST: db
+      PGDATABASE: ${FTYP_PGDATABASE:?Set the FTYP database name}
+      PGPASSWORD: ${FTYP_PUBLIC_PASSWORD:?Set the dedicated public API password}
+    networks:
+      - frontend
+      - internal
+  api-admin:
+    image: flybase/ftyp-api:${TAG:-latest}
+    restart: "on-failure"
+    environment:
+      FTYP_API_MODE: admin
+      PGHOST: db
+      PGDATABASE: ${FTYP_PGDATABASE:?Set the FTYP database name}
+      PGPASSWORD: ${FTYP_ADMIN_PASSWORD:?Set the dedicated admin API password}
     networks:
       - frontend
       - internal
@@ -44,7 +44,7 @@ services:
     restart: always
     environment:
       POSTGRES_DB: ${FTYP_PGDATABASE:-ftyp}
-      POSTGRES_PASSWORD: ${FTYP_PGPASSWORD:-CHANGEME}
+      POSTGRES_PASSWORD: ${FTYP_PGPASSWORD:?Set the database owner password}
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     volumes:
       - ftyp-data:/var/lib/postgresql/data
