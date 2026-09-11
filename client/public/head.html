@@ -4,8 +4,9 @@
     <meta name="description" content="FlyBase: a database for drosophila genetics and molecular biology">
     <meta name="keywords" content="Drosophila,genome,melanogaster,fruit fly,research resource">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://flybase.org/submission/publication/">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries 
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
          NB: Respond.js doesn't work if you view the page via file://-->
     <!--[if lt IE 9]>
          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js?FB2015_02"></script>
@@ -24,7 +25,9 @@
 
     <link rel="stylesheet" type="text/css" href="/css/home/home.css">
     <link rel="stylesheet" type="text/css" href="/css/typeaheadjs.css">
-    <style>
+    <link rel="stylesheet" type="text/css" href="/reactbundles/homePageInjector.css">
+	<style>
+    div.container-fluid { margin-bottom: -2em; }  /* to compensate for footer margin-top: 3em, which looks funny here */
     #imagelinks img {
       height: 75px;
       width: 123px;
@@ -39,23 +42,36 @@
     }
     .FBiconLink { padding: 0; }
     #contributeBox {
-      margin-top: 1em;
-      background-color: cyan;
+      background-color: #f9c;
       border: 2px solid black;
       border-radius: 5px;
+      margin: 1em auto;
+    /* these changes limit banner size */
+      max-width: 1000px;
+    /*max-height: 200px;*/
     }
     @keyframes flashfade { from { background: #fcc; } to { background: seashell; } }
+    /*@keyframes blink-ani { to { visibility: hidden } }*/
+    @keyframes blink-ani { from { color: #f00; } to { color: rgba(255,0,0,0.1) } }
+    #contributeBox #blinker {
+      animation: blink-ani 1s steps(10, start) infinite;
+      -webkit-animation: blink-ani 1s steps(10, start) infinite;
+    }
+    #contributeBox span { font-size: 2vw; }
     /* width cutoffs below should match boundary between bootstrap sm and md */
     @media screen and (min-width: 992px) {
       #sidebar { border-right: 1px solid lightgrey }
-      #contributeBox { font-size: 1.7vw; }
+      #contributeBox { font-size: 1.25em; }
+    /*#contributeBox { font-size: initial; }*/
     }
     @media screen and (max-width: 991px) {
-      #sidebar { border-top: 1px solid lightgrey; padding-top: 1em }
-      #contributeBox { font-size: 2.25vw; }
+      #contributeBox { font-size: 2vw; }
       #searchbox-col { padding: 0 }
       #commentary-panel-collapse { height: 240px; overflow: auto }
       fieldset#searchbox { padding: 0 0.25em }
+    }
+    @media screen and (max-width: 768px) {
+      #sidebar { border-top: 1px solid lightgrey; padding-top: 1em }
     }
     /* this width cutoff is specific to QuickSearch */
     @media screen and (max-width: 639px) {
@@ -93,6 +109,7 @@
       text-align: right;
       margin-right: 2em;
     }
+    fieldset#searchbox { margin-top: 2em; }
     #searchbox .form-group {         /* make the form more compact (Bootstrap uses 15px here!)*/
       margin-bottom: 4px;
     }
@@ -130,7 +147,32 @@
       margin: 0 1em 0 0;
     }
     .fa-question-circle-o { font-size: 20px; }
+	.sidebar-heading {
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-weight: 500;
+          font-size: 16pt;
+		text-align: left;
+		margin: 15px;
+		padding: 40px 0 5px 0;
+		font-weight: 900;
+		border-bottom: solid 3px rgb(0, 60, 120);
+	}
+	.sidebar-accordion {
+		margin: 15px 15px 15px 30px !important;
+	}
+	.call-to-action {
+		color: white;
+		font-size: 16pt;
+		font-weight: 500;
+		text-decoration: none;
+		margin: 15px;
+		display: flex;
+	}
+	.call-to-action:focus, .call-to-action:hover { color: white; text-decoration: none; cursor: pointer; }
+	.call-to-action h4 { box-shadow: inset 0px 0px 6px 3px rgba(0,0,0,.1); display: flex; align-items: center; justify-content: center; letter-spacing: 1.5px; margin: 0; padding: 15px 25px; border-radius: 8px; background-color: #5bc0de; width: 100%; }
+	#flyBaseMastodonFeed { padding-left: 15px; }
     </style>
 
     <title>Fast Track Your Paper</title>
+    <script async="" src="https://www.google-analytics.com/analytics.js"></script><script defer="" src="/js/recovery-maintenance.js?recovery=maintenance-538abdb2df0d"></script>
   

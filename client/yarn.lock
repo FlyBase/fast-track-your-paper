@@ -3029,11 +3029,6 @@ siginfo@^2.0.0:
   resolved "https://registry.npmjs.org/siginfo/-/siginfo-2.0.0.tgz#32e76c70b79724e3bb567cb9d543eb858ccfaf30"
   integrity sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==
 
-simple-html-templates@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/simple-html-templates/-/simple-html-templates-1.0.3.tgz#ace122ec6c657e9256a74c3ef07211cdb06cdb2f"
-  integrity sha512-3tyuqRfVvSdVMZGIuHkyKCUEw9s/CNO4pvPktRorpknvREwd4IKwI92UIKz/IS41lIfFZTVyEbOxw14xHdhR9Q==
-
 slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"

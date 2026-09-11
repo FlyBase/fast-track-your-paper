@@ -1,5 +1,27 @@
 <div class="container-fluid top-buffer">
-      <style>#social .fa { font-size: 2em; }</style>
+      <style>
+        #social .fa { font-size: 2em; }
+        #social a[title~="@Mastodon"] {
+          background: url("/images/icons/MastodonTN.png") no-repeat;
+          padding: 0;
+          margin: 6px 12px;
+          height: 32px;
+          width:  32px;
+        }
+        #social a[title~="@Mastodon"]:hover {
+          background: url("/images/icons/MastodonTNblk.png") no-repeat;
+        }
+        #social a[title~="@Bluesky"] {
+          background: url("/images/icons/bluesky2TN.png") no-repeat;
+          padding: 0;
+          margin: 6px 12px;
+          height: 32px;
+          width:  32px;
+        }
+        #social a[title~="@Bluesky"]:hover {
+          background: url("/images/icons/bluesky2TNblk.png") no-repeat;
+        }
+      </style>
       <div class="row">
         <div class="col-xs-12 grey">
           <footer>
@@ -7,7 +29,7 @@
         <div class="row" id="acknowledgement">
           <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-10 col-lg-offset-1">
             <br>
-            <a href="/wiki/FlyBase:About#FlyBase_Support">FlyBase Support</a>
+            <a href="/wiki/FlyBase:About#Grants_Supporting_FlyBase">Grants Supporting FlyBase</a>
              
             <a href="/wiki/FlyBase:About#FlyBase_Copyright">Copyright&nbsp;Statement</a>.
           </div>
@@ -15,22 +37,27 @@
         <!-- end acknowledgement.tx -->
 
             <div class="row" id="last_element">
-              <div class="col-sm-offset-4 col-sm-4" style="margin-top:8px;">
+              <div class="col-xs-12 col-sm-offset-3 col-sm-6" style="margin-top:8px;">
                 <div class="row">
                   <div class="col-xs-12 text-center">
-                    <strong id="release">version FB2022_03, released June 9, 2022</strong>
+                    <strong id="release">version FB2026_02, released June 18, 2026</strong>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-offset-3 col-xs-3 col-sm-offset-2 col-sm-4 text-center">
+                  <div class="col-xs-offset-3 col-xs-2 col-sm-offset-1 col-sm-4 col-md-offset-2 col-md-3 col-lg-offset-3 col-lg-2 text-center">
                     <a href="/contact/email">Contact&nbsp;FlyBase</a>
                   </div>
-                  <div class="col-xs-3 col-sm-4 text-center">
-                    <a href="/wiki/FlyBase:About#Citing_FlyBase">&nbsp;&nbsp;Cite&nbsp;FlyBase</a>
+                  <div class="col-xs-2 col-sm-2 text-center">
+                    <a href="/wiki/FlyBase:FAQ">FAQ</a>
+                  </div>
+                  <div class="col-xs-2 col-sm-4 col-md-3 col-lg-2 text-center">
+                    <a href="/wiki/FlyBase:CitationAndGuides">&nbsp;&nbsp;Citing&nbsp;FlyBase</a>
                   </div>
                 </div>
               </div>
-              <div id="social" class="col-xs-12 col-sm-offset-1 col-sm-3 col-lg-offset-2 col-lg-2 text-center" style="white-space:nowrap;">
+              <div id="social" class="col-xs-12 col-sm-3 text-center" style="white-space:nowrap;">
+                <a class="btn" href="https://bsky.app/profile/flybase.bsky.social" title="FlyBase @Bluesky"></a>
+                <a class="btn" href="https://mstdn.science/@FlyBase" title="FlyBase @Mastodon"></a>
                 <a class="btn" href="https://twitter.com/FlyBaseDotOrg"><i class="fa fa-twitter"></i></a>
                 <a class="btn" href="https://www.youtube.com/c/FlyBaseTV"><i class="fa fa-youtube"></i></a>
                 <a class="btn" href="/contact/email"><i class="fa fa-at"></i></a>
