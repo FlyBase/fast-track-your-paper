@@ -1,6 +1,7 @@
--- Preparation candidate, not a complete deployment migration.
+-- Incremental submission boundary; apply before public_catalog_acl.sql.
 -- Apply as the dedicated FTYP database schema owner with API access closed.
 BEGIN;
+CREATE SCHEMA IF NOT EXISTS ftyp_admin;
 CREATE ROLE ftyp_public NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
 CREATE ROLE ftyp_admin_api NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
 CREATE ROLE ftyp_submission_writer NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
