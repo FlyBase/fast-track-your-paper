@@ -3,6 +3,12 @@ import { flags2HTMLstring } from './flagText'
 
 import './index.css'
 
+// Preserve trusted label markup while rendering submitted values as text.
+const escapeSubmittedText = (value) =>
+  String(value).replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[character]))
+
 const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
   let pubcite = submission.publication ? (
     <>
@@ -101,14 +107,13 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
                       : '<b>' + flag.replace(/_/g, ' ') + '</b>'
                     dataFlagHTML +=
                       '<pre style="margin:0; font-style:italic;">' +
-                      submission.flags[flag] +
+                      escapeSubmittedText(submission.flags[flag]) +
                       '</pre>'
                     listyle = { listStyleType: 'none', margin: 0 }
                   }
                   if (typeof dataFlagHTML == 'object') {
                     dataFlagHTML =
-                      /*(submission.flags[flag].length) ? submission.flags[flag].join(', ') :*/ submission
-                        .flags[flag]
+                      escapeSubmittedText(submission.flags[flag])
                     listyle = { listStyleType: 'none', paddingLeft: '1em' }
                   }
                   return (
@@ -182,7 +187,7 @@ const ConfirmStep = ({ submission = {}, dispatch = () => {}, children }) => {
                   dangerouslySetInnerHTML={{
                     __html:
                       '<b>dataset repository IDs: </b>' +
-                      submission.flags.dataset_accession_numbers,
+                      escapeSubmittedText(submission.flags.dataset_accession_numbers),
                   }}
                 />
               )}

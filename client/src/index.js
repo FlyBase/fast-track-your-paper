@@ -50,7 +50,9 @@ const baseName = process?.env?.PUBLIC_URL
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
-    uri: `${baseName ?? ''}/graphql`,
+    // The two native admin documents use the separately authenticated API.
+    uri: ({ operationName }) =>
+      `${baseName ?? ''}${['Submissions', 'Submission'].includes(operationName) ? '/admin' : ''}/graphql`,
   }),
 })
 
