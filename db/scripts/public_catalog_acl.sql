@@ -1,5 +1,5 @@
--- UNEXECUTED integration candidate. Requires complete trusted Chado DDL,
--- pinned helper signatures and the native FTYP schema to exist first.
+-- Apply after submission_boundary.sql against the retained trusted FTYP catalog.
+-- Core native tables/signatures are required; wider Chado catalogs are optional.
 -- Execute as schema owner before exposing either API. No submitted data reads.
 BEGIN;
 REVOKE CREATE ON SCHEMA flybase FROM PUBLIC;
@@ -10,12 +10,24 @@ GRANT SELECT ON public.pub, public.cvterm, public.pubprop,
  public.feature, public.feature_pub, public.feature_dbxref,
  public.dbxref, public.db, public.pub_dbxref,
  public.feature_synonym, public.synonym,
- public.stock, public.stock_genotype, public.genotype,
- public.grp, public.grp_synonym, public.strain, public.strain_synonym,
- public.cell_line, public.cell_line_synonym, public.humanhealth,
- public.humanhealth_synonym, public.library, public.library_synonym,
  ftyp_hidden.pub_search, ftyp_hidden.gene_search,
  ftyp_hidden.text_mining_flag TO ftyp_public;
+-- Preserve support for these native identifier classes when the deployment
+-- includes the corresponding Chado catalogs. Do not manufacture missing tables.
+DO $$
+DECLARE catalog_name text;
+BEGIN
+  FOREACH catalog_name IN ARRAY ARRAY[
+    'stock', 'stock_genotype', 'genotype', 'grp', 'grp_synonym',
+    'strain', 'strain_synonym', 'cell_line', 'cell_line_synonym',
+    'humanhealth', 'humanhealth_synonym', 'library', 'library_synonym'
+  ] LOOP
+    IF pg_catalog.to_regclass(pg_catalog.format('public.%I', catalog_name)) IS NOT NULL THEN
+      EXECUTE pg_catalog.format('GRANT SELECT ON TABLE public.%I TO ftyp_public', catalog_name);
+    END IF;
+  END LOOP;
+END
+$$;
 GRANT EXECUTE ON FUNCTION
  ftyp.search_pubs(text), ftyp.search_gene_identifiers(text,text),
  ftyp.validate_ids(text[]), ftyp.get_text_mining_flags(text),
