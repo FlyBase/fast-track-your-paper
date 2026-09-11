@@ -1,51 +1,50 @@
 import { interpret } from 'xstate'
-import { ftypSteps } from '../'
+import { createStepMachine, getInitialContext } from '../'
 
-const ftypStepsWithPub = ftypSteps
-  .withConfig({
-    actions: {
-      persist: () => {},
-    },
-  })
-  .withContext({
-    ...ftypSteps.context,
-    submission: {
-      publication: {
-        fbrf: 'FBrf0001234',
-      },
-    },
-  })
+const services = []
+const start = () => {
+  const machine = createStepMachine()
+    .withConfig({ actions: { persist: () => {} } })
+    .withContext(getInitialContext())
+  const service = interpret(machine).start()
+  services.push(service)
+  return service
+}
+afterEach(() => {
+  services.splice(0).forEach(service => service.stop())
+  localStorage.clear()
+})
 
-const ftypStepsWithCitation = ftypSteps
-  .withConfig({
-    actions: {
-      persist: () => {},
-    },
-  })
-  .withContext({
-    ...ftypSteps.context,
-    submission: {
-      citation: 'A custom user entered citation.',
-    },
+describe('native step machine', () => {
+  it('keeps the publication step without a selection', () => {
+    const service = start()
+    expect(service.state.matches('pending.pub')).toBe(true)
+    service.send('NEXT')
+    expect(service.state.matches('pending.pub')).toBe(true)
   })
 
-describe('stepMachine', () => {
-  it('Should not leave because hasPublication is false', () => {
-    const stepService = interpret(ftypSteps).start()
-    expect(stepService.state.value).toEqual('pub')
-    stepService.send('NEXT')
-    expect(stepService.state.value).toEqual('pub')
+  it('advances an uncurated publication through the native SET_PUB event', () => {
+    const service = start()
+    service.send({ type: 'SET_PUB', pub: {
+      uniquename: 'FBrf0001234', curationStatus: null, type: { name: 'paper' },
+    } })
+    service.send('NEXT')
+    expect(service.state.matches('pending.author')).toBe(true)
   })
 
-  it('Should leave because hasPublication is true', () => {
-    let stepService = interpret(ftypStepsWithPub).start()
-    expect(stepService.state.value).toEqual('pub')
-    stepService.send('NEXT')
-    expect(stepService.state.value).toEqual('author')
+  it('retains a free citation with a null publication through the native event', () => {
+    const service = start()
+    service.send({ type: 'SET_CITATION', citation: 'A custom user entered citation.' })
+    expect(service.state.context.submission.citation).toBe('A custom user entered citation.')
+    expect(service.state.context.submission.publication).toBeNull()
+  })
 
-    stepService = interpret(ftypStepsWithCitation).start()
-    expect(stepService.state.value).toEqual('pub')
-    stepService.send('NEXT')
-    expect(stepService.state.value).toEqual('author')
+  it('does not advance a curated publication', () => {
+    const service = start()
+    service.send({ type: 'SET_PUB', pub: {
+      uniquename: 'FBrf0001234', curationStatus: 'curated', type: { name: 'paper' },
+    } })
+    service.send('NEXT')
+    expect(service.state.matches('pending.pub')).toBe(true)
   })
 })

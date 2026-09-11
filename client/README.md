@@ -1,105 +1,38 @@
-# Fast Track Your Paper
+# Fast Track Your Paper client
 
-## QuickStart
+The client retains React 17, React Router 5, native GraphQL documents and forms.
+Vite replaces the retired Create React App build chain. Use Node 22.12 or newer
+and Yarn 1.22.22. The canonical Dockerfile pins the Node 22 build image and Nginx
+runtime image by digest.
 
-```bash
-git clone https://github.com/FlyBase/fast-track-your-paper
-cd fast-track-your-paper
-```
+## Local development
 
-## Development Guidelines
+Run `yarn install --frozen-lockfile --ignore-scripts`, then `yarn start`.
+Open http://127.0.0.1:5173/submission/publication/.
+The development server proxies only the native public/admin GraphQL paths to
+127.0.0.1:8888; the API proxy still enforces the separate admin authentication.
+Main-site /css, /js and /font assets remain main-site dependencies.
 
-1. Install [git-flow](https://github.com/nvie/gitflow)
-2. Use git-flow conventions
-  * [Using git-flow to automate your git branching workflow](https://jeffkreeftmeijer.com/git-flow/)
-  * [Vincent Driessen's "git flow" branching model](https://nvie.com/posts/a-successful-git-branching-model/) 
-3. Install / Use [yarn](https://yarnpkg.com/lang/en/)
+Run `yarn test` for the unit suite. Run `yarn build` for production output in
+`build/`. `PUBLIC_URL` defaults to `/submission/publication`; the native
+public/index.html is retained as the template and the generated root index.html
+is ignored. GraphQL and styled-components macros remain build-time transforms.
+`REACT_APP_SENTRY_DSN` is the optional public client DSN.
 
-## Directory layout
+## Immutable client image
 
-* api     - GraphQL API server for PostgreSQL provided by Postgraphile 
-* db      - PostgreSQL docker container related files 
-* proxy   - nginx proxy server to map all HTTP ports behind a single source.
-* scripts - Misc scripts.
+`docker build -t ftyp-client ./client` from the repository root builds and embeds
+the static client. The Compose client service builds this Dockerfile and serves
+port 5000 without a host source mount. It does not initialize or migrate a
+database. Production must use the reviewed dedicated-server data-preserving
+deployment configuration, pinned images and protected API/admin credentials;
+the repository's legacy database service is not an upgrade procedure.
 
-## Client
+## Manual main-site header refresh
 
-The FTYP client was bootstrapped with Create React App (CRA).  To start developing you will need to install the dependencies and run `yarn run start`
-
-e.g.
-```bash
-cd fast-track-your-paper/client
-yarn install
-yarn run start
-```
-
-## Create React App Info
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Run `yarn playwright install chromium` once, then `yarn update-header-footer`
+to use Playwright to extract the native head/navbar/footer and regenerate
+public/index.html through the existing template. The default source is
+https://flybase.org. `FTYP_HEADER_SOURCE` is an operator-only override for a
+trusted local fixture or preview. Do not run this utility as part of a build.
+The production ingress retains ownership of root main-site assets.
