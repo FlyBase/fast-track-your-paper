@@ -5,7 +5,9 @@ RUN yarn install --frozen-lockfile --ignore-scripts --non-interactive --registry
 COPY . .
 ARG PUBLIC_URL=/submission/publication
 ENV PUBLIC_URL=$PUBLIC_URL
-RUN yarn run build
+ARG FTYP_RELEASE
+RUN test -n "$FTYP_RELEASE" || (echo "Set --build-arg FTYP_RELEASE=FBYYYY_NN after refreshing the header/footer" >&2; exit 1)
+RUN FTYP_RELEASE="$FTYP_RELEASE" yarn run build
 
 FROM nginx@sha256:dc5069ad14f19660b141b21236140b91656bf89bbc3e2417c70ae650cd66104c
 COPY --from=build /app/build/ /usr/share/nginx/html/submission/publication/

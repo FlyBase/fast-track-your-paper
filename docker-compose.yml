@@ -57,6 +57,8 @@ services:
     image: flybase/ftyp-client:${TAG:-latest}
     build:
       context: ./client
+      args:
+        FTYP_RELEASE: ${FTYP_RELEASE:-}
     read_only: true
     tmpfs:
       - /tmp
