@@ -56,7 +56,8 @@ For full details see the db [README](./db/README.md).
 * clean - Stops the containers, removes the disk volumes, and removes all pulled DB data.
 * pull-data - Pulls data from the production Chado database.
 * load-data - Loads data from the pulled sources and stores it in the docker DB container.
-* build-client - Updates the header/footer and builds the compiled javascript client app.
+* build-client - Builds the client from the reviewed header/footer snapshot.
+* update-header-footer - Refreshes the main-site header/footer and rebuilds the client; review and commit this snapshot with each FlyBase release.
 * export-submissions - Exports the unprocessed submissions into a JSON file suitable for curation processing.
 * backup-submissions - Produces a SQL data file containing all rows of the submissions table.
 * restore-submissions - Restores all rows from the file produced by `backup-submissions`.

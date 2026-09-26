@@ -32,11 +32,12 @@
   },
   "scripts": {
     "start": "node scripts/prepare-index.cjs && vite --host 127.0.0.1",
-    "build": "node scripts/prepare-index.cjs && vite build",
+    "build": "node scripts/check-release.cjs && node scripts/assemble-index.cjs && node scripts/prepare-index.cjs && vite build",
     "test": "vitest run",
     "format": "prettier --write 'src/**/*.{js,gql,css}'",
     "update-header-footer": "node scripts/fetch_header_footer.js",
-    "postupdate-header-footer": "node scripts/assemble-index.cjs"
+    "postupdate-header-footer": "node scripts/assemble-index.cjs",
+    "test:release": "node --test scripts/test-release.cjs"
   },
   "browserslist": {
     "production": [

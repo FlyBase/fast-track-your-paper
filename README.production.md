@@ -39,3 +39,8 @@ rows and sequence state, and actual network/port behavior on the dedicated host.
 Coordinate the main and embedded maintenance labels only when the service is
 verified. Refresh the embedded header through the documented manual client
 utility; it is intentionally not a build-time network dependency.
+
+For each FlyBase release, run the manual refresh in `client/README.md`, review and
+commit the fragments, then build the client with `--build-arg FTYP_RELEASE=FBYYYY_NN`.
+The image build requires this argument and rejects a snapshot from another
+release. Weekly `ftypctl promote` does not replace the client image.
