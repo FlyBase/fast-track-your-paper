@@ -62,6 +62,10 @@ COMMIT;
         raise RuntimeError("Invalid submission export identifiers")
     run = Path(tempfile.mkdtemp(prefix="delivery-", dir=spool))
     payload = run / "submissions.json"
+    # Preserve the curator file contract: no submissions means an empty file.
+    # Keep nonempty JSON byte-for-byte for delivery and exact-row acknowledgement.
+    if not rows:
+        raw = b""
     payload.write_bytes(raw)
     receipt = {"destination": "s3://ftyp/submissions/ftyp-export-" + day + ".json",
                "rows": len(rows or []), "sha256": hashlib.sha256(raw).hexdigest(),

@@ -11,7 +11,7 @@ def case(name,upload_code=0,ack=b'1\n',data=rows,role=b't\n',expect_error=False)
  def fake(cmd,**kw):
   calls.append((cmd,kw))
   if cmd[0]=='aws':
-   assert Path(cmd[-2]).read_bytes()==(json.dumps(data)+'\n').encode()
+   assert Path(cmd[-2]).read_bytes()==((json.dumps(data)+'\n').encode() if data else b'')
    return subprocess.CompletedProcess(cmd,upload_code,b'',b'')
   sql=kw['input'].decode()
   if 'pg_roles' in sql:out=role
@@ -35,11 +35,12 @@ def case(name,upload_code=0,ack=b'1\n',data=rows,role=b't\n',expect_error=False)
 case('delivery-before-exact-ack')
 case('failed-delivery-leaves-dates',upload_code=1,expect_error=True)
 case('changed-row-detected',ack=b'0\n',expect_error=True)
-case('empty-preserves-null-contract',data=None)
+case('empty-null-produces-empty-file',data=None)
+case('empty-array-produces-empty-file',data=[])
 case('privileged-login-rejected',role=b'f\n',expect_error=True)
 try:m.sql_command('bad name')
 except ValueError:checks.append('invalid-container-rejected')
-assert len(checks)==6
+assert len(checks)==7
 (p/'synthetic-result.json').write_text(json.dumps({'pass':True,'checks':checks,'real_database_used':False,'s3_used':False},indent=2)+'\n')
 print(json.dumps({'pass':True,'checks':len(checks)}))
 

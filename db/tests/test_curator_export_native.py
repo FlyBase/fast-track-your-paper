@@ -59,7 +59,7 @@ try:
   def hooked(cmd,**kw):
    if cmd[0]=='docker':return run(['sudo']+cmd,**kw)
    if cmd[0]=='aws':
-    raw=Path(cmd[-2]).read_bytes();exported.append(json.loads(raw))
+    raw=Path(cmd[-2]).read_bytes();exported.append(json.loads(raw) if raw else b'')
     if mode=='change':admin("""UPDATE ftyp_hidden.submissions SET user_data='{"text":"edited"}' WHERE submission_id=1;""")
     if mode=='insert':admin("INSERT INTO ftyp_hidden.submissions (submission_id,fbrf) VALUES (2,'FBrf0000002');")
     return subprocess.CompletedProcess(cmd,1 if mode=='fail' else 0,b'',b'')
@@ -73,14 +73,14 @@ try:
    processed=admin("SELECT count(*) FROM ftyp_hidden.submissions WHERE date_processed IS NOT NULL;")
    assert processed==('1' if mode in ('success','insert') else '0'),label
    if mode=='insert':assert admin("SELECT date_processed IS NULL FROM ftyp_hidden.submissions WHERE submission_id=2;")=='t'
-   if mode=='empty':assert exported==[None]
+   if mode=='empty':assert exported==[b'']
    else:assert set(exported[0][0])=={'submission_id','fbrf','submitted_to_flybase','date_processed','user_data'}
    if mode=='success':
     assert result['acknowledged_rows']==1
    checks.append(label)
  for label,mode in [('native-full-row-delivery','success'),('failed-upload-no-ack','fail'),
                     ('edited-row-not-acknowledged','change'),('new-row-not-acknowledged','insert'),
-                    ('empty-json-null','empty')]:case(label,mode)
+                    ('empty-zero-byte-file','empty')]:case(label,mode)
  for target in ('DATABASE ftyp','TABLE ftyp_hidden.submissions'):
   admin('ALTER '+target+' OWNER TO ftyp_export_login;')
   def only_database(cmd,**kw):

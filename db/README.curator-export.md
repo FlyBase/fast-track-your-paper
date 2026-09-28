@@ -26,7 +26,9 @@ For example, after substituting the actual pinned deployment paths/container:
 The process takes a local nonblocking lock. It writes a private payload and
 receipt, uploads the full-row JSON, then acknowledges only delivered rows whose
 values have not changed. SQL is bounded by a240s statement timeout and30s lock
-timeout, with an outer300s client timeout. Empty selections emit JSON null.
+timeout, with an outer300s client timeout. Empty selections upload a zero-byte file, matching the curator export contract;
+nonempty selections retain their full-row JSON array. A zero-row acknowledged
+receipt means the export succeeded with no pending submissions.
 Nonzero exit requires inspecting the protected receipt; a delivered but
 unacknowledged file must not be blindly replayed or marked processed. Keep failed
 or partial receipts until reconciled. Configure retention for completed private
