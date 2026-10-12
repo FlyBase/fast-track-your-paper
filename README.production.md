@@ -44,3 +44,31 @@ For each FlyBase release, run the manual refresh in `client/README.md`, review a
 commit the fragments, then build the client with `--build-arg FTYP_RELEASE=FBYYYY_NN`.
 The image build requires this argument and rejects a snapshot from another
 release. Weekly `ftypctl promote` does not replace the client image.
+
+## Production database storage and weekly updates
+
+The production PostgreSQL database is managed separately from this application
+Compose stack by `ftypctl` in FlyBase/docker_production (`operations/ftyp`).
+Do not use the development Makefile's `down`/`clean` targets on production.
+
+Each database generation has its own Docker named volume, `ftyp-pg-RUN`.
+The local volume driver binds a protected directory on the server's data disk;
+it does not store the database on Docker's default boot-disk volume directory.
+The backing directory is outside website containers' mounts. Named volumes
+separate container ownership; they do not imply a separate physical disk.
+
+Operators continue to use the installed FTYP SOP and `ftypctl prepare`, `preview`,
+`promote` and `verify`. Preparing a generation creates its volume; promotion keeps
+that volume attached when the candidate becomes live. A predecessor remains
+available until the operator deliberately retires it. Use `ftypctl retire RUN
+--check` first: it checks ownership and all other container/volume references
+without removing data. Historical receipts copied from another host do not prove
+that a predecessor exists locally, and a completed update cannot be rolled back
+by blindly restoring an old database after newer submissions have arrived.
+
+Never manually remove production volumes, run `docker volume prune`, or run
+`docker compose down -v`. A bind-backed named volume is not a backup; deleting its
+Docker handle alone does not delete the backing files. Backups/restores must
+preserve database contents and roles, update metadata, protected configuration,
+and submission-export delivery state together. Follow the installed server SOP
+for actual paths, mount dependencies and recovery commands.
