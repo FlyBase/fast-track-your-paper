@@ -31,6 +31,7 @@ psql -d $POSTGRES_DB -f /chado/schema/properties/get_prop.sql
 psql -d $POSTGRES_DB -f /chado/schema/FBrf/main.sql
 
 psql -d $POSTGRES_DB -f /ftyp/scripts/load_flags.sql
+psql -v ON_ERROR_STOP=1 -d "$POSTGRES_DB" -f /ftyp/scripts/materialized_view_search_path.sql
 psql -d $POSTGRES_DB -f /ftyp/scripts/ftyp.sql
 
 vacuumdb -f -v -z -t ftyp_hidden.gene_search -t ftyp_hidden.pub_search $POSTGRES_DB

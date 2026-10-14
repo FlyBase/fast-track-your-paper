@@ -3,7 +3,9 @@ from pathlib import Path
 from unittest.mock import patch
 base=Path(os.environ['FTYP_EXPORT_TEST_EVIDENCE']);base.mkdir(parents=True,exist_ok=True)
 name='recovery-ftyp-export-native-'+str(os.getpid())
-image='sha256:5f71c21b69a7977b82247582e2e731ed76bdebaadb7dd7945ed76bcc9ed06632'
+image=os.environ.get('FTYP_EXPORT_TEST_IMAGE','sha256:5f71c21b69a7977b82247582e2e731ed76bdebaadb7dd7945ed76bcc9ed06632')
+storage=os.environ.get('FTYP_EXPORT_TEST_STORAGE_ROOT','/var/lib/postgresql/data')
+assert storage in ('/var/lib/postgresql/data','/var/lib/postgresql')
 run=subprocess.run
 os.umask(0o077)
 fd,secret_name=tempfile.mkstemp(prefix='fixture-pgpass-',dir=base)
@@ -15,7 +17,7 @@ run(['sudo','chmod','400',str(secret)],check=True)
 cmd=['sudo','docker','run','-d','--name',name,'--network','none','--read-only',
  '--user','999:999','--memory','512m','--cpus','1','--pids-limit','128',
  '--security-opt','no-new-privileges','--cap-drop','ALL',
- '--tmpfs','/var/lib/postgresql/data:uid=999,gid=999,mode=700',
+ '--tmpfs',storage+':uid=999,gid=999,mode=700',
  '--tmpfs','/var/run/postgresql:uid=999,gid=999,mode=700',
  '--tmpfs','/tmp:uid=999,gid=999,mode=700',
  '-v',str(secret)+':/run/secrets/ftyp_export_pgpass:ro',
@@ -31,7 +33,7 @@ def admin(sql):
  return r.stdout.decode().strip()
 try:
  for _ in range(40):
-  r=run(['sudo','docker','exec',name,'pg_isready','-U','postgres','-d','ftyp'],capture_output=True)
+  r=run(['sudo','docker','exec',name,'pg_isready','-h','127.0.0.1','-U','postgres','-d','ftyp'],capture_output=True)
   if r.returncode==0:break
   time.sleep(.5)
  else:raise RuntimeError('Fixture startup failed')

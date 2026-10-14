@@ -1,0 +1,10 @@
+# Independent FTYP preview runtime
+
+This overlay modernizes Jim's preserved preview checkout at commit 8def1ad without replacing its application source with production master. It is separate from the production weekly staging workflow.
+
+- API: build `api/Dockerfile.preview` against the production `api` directory's pinned package files. Compose must pass `--host 0.0.0.0`, retain its other preview flags, and export schema to `/tmp/schema.graphql`. Production uses `api/Dockerfile` and retains public/admin role separation and submission validation.
+- Client: copy this directory's client manifest, npm lockfile, Vite configuration and preparation script over the corresponding preview files. Keep preview `client/src` and `public` unchanged. Build with the pinned Node24 image and `npm ci --legacy-peer-deps --ignore-scripts && npm run build`. PUBLIC_URL is `/submission/publication`. npm is the authoritative lockfile for this overlay; the original yarn lock remains historical in the preserved checkout. Build on an isolated builder, never install dependencies inside a live serving container.
+- Serve the preview build directory read-only at `/usr/share/nginx/html` with the patched nginx runtime and `client-nginx.conf` mounted at `/etc/nginx/conf.d/default.conf`. Preserve proxy configuration, Basic Auth file, local shared assets, internal networks and loopback18892.
+- Database: build `db/Dockerfile.runtime`. PostgreSQL18 requires a fresh logical restore into a separate named volume mounted at `/var/lib/postgresql`; never reuse PostgreSQL13's physical data directory. Apply `db/scripts/materialized_view_search_path.sql` after loading the Chado helpers and before refreshing search views. The legacy load script does this explicitly; production weekly staging copies these settings from the live schema.
+
+Production and preview have separate credentials, data and jobs. No export timer or delivery credentials are installed for independent preview. Preserve original images, code and database until acceptance, and reconcile any new submissions before rolling back to an old database.

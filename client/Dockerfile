@@ -1,4 +1,4 @@
-FROM node@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 AS build
+FROM node:24-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 AS build
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --ignore-scripts --non-interactive --registry https://registry.npmjs.org
@@ -9,10 +9,10 @@ ARG FTYP_RELEASE
 RUN test -n "$FTYP_RELEASE" || (echo "Set --build-arg FTYP_RELEASE=FBYYYY_NN after refreshing the header/footer" >&2; exit 1)
 RUN FTYP_RELEASE="$FTYP_RELEASE" yarn run build
 
-FROM nginx@sha256:dc5069ad14f19660b141b21236140b91656bf89bbc3e2417c70ae650cd66104c
+FROM nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
 COPY --from=build /app/build/ /usr/share/nginx/html/submission/publication/
 COPY nginx.template start.sh /opt/
-RUN chmod 755 /opt/start.sh
+RUN apk upgrade --no-cache && chmod 755 /opt/start.sh
 USER 101:101
 ENV FTYP_LISTEN=5000
 EXPOSE 5000
