@@ -72,3 +72,18 @@ Docker handle alone does not delete the backing files. Backups/restores must
 preserve database contents and roles, update metadata, protected configuration,
 and submission-export delivery state together. Follow the installed server SOP
 for actual paths, mount dependencies and recovery commands.
+
+
+## October 2026 runtime refresh
+
+Production API/builds use pinned Node24 LTS; client/proxy images use pinned nginx with available Alpine package updates. npm/yarn are removed from the running API after installing its pinned dependencies. Existing API mode validation, public/admin role separation, submission validation, Basic Auth and export logic are unchanged.
+
+Build the PostgreSQL18 runtime with `docker build -f db/Dockerfile.runtime -t <immutable-release-tag> db`. It uses a pinned official PostgreSQL18 image plus distribution updates and upstream gosu1.19 rebuilt from a pinned commit with a current pinned Go compiler. The older `db/Dockerfile` is a historical development recipe, not the production database runtime. Scan each built image and the client dependency lockfile; zero findings in an image does not cover externally mounted JavaScript or guarantee no vulnerabilities. The October14 database scan still reports an unfixed libxml2 critical finding; this release does not claim universal CVE closure.
+
+PostgreSQL18 stores its data below `/var/lib/postgresql/18/docker`; mount its separate named Docker volume at `/var/lib/postgresql`. Upgrade by logical backup/restore into a fresh volume. Never attach an older major's existing data directory. The docker_production FTYP updater supports both pre18 and18 mount layouts for staging and retirement. Deploy that helper update with the database upgrade.
+
+Apply `db/scripts/materialized_view_search_path.sql` after importing/replacing Chado helper functions and before creating or refreshing materialized views. PostgreSQL17+ restricts their refresh search path. Production weekly updates copy the repaired helper definitions from the live schema; the legacy full import script applies the repair explicitly.
+
+Prebuild and rehearse all changes before live maintenance. Put the FTYP page into maintenance with a clear, short estimate; leave the main website available. Hold both the updater and delivery locks, pause export timers, stop public/admin API writers, copy final submissions and their sequence exactly, and compare before opening the new service. Retain the original database volume and image. Once writes reopen, the new database is authoritative: never roll back to a stale volume and lose submissions. Restore only compatible application images or reconcile new submissions first. Resume both export timers and verify role boundaries, public searches, admin401 and the public page.
+
+Jim's independent preview is described in [preview-runtime/README.md](preview-runtime/README.md); do not replace its application source with production master.
