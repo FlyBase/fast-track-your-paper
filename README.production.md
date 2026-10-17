@@ -90,3 +90,16 @@ Jim's independent preview is described in [preview-runtime/README.md](preview-ru
 
 
 Deployment completed October14,2026: independent preview at20:09UTC; production at20:28:15UTC after a12.14second maintenance notice. Production's3,236submissions and sequence matched after final sync. PostgreSQL18 volume `ftyp-pg-runtime-pg18-20261014` is backed by `/srv/ftyp/updates/runtime-pg18-20261014/postgres`. Original PG16 remains stopped and disconnected as `ftyp-pg16-retained-20261014`; retain it and the private backup/checkpoints, but do not switch back after new submissions without reconciliation. The PG18-aware updater is installed. Public browser/search/admin-denial checks passed and both export timers resumed. The docker_production release log records immutable image IDs, tests, the earlier preparation restart, and recovery details.
+
+
+### October17 frontend dependency audit
+
+Production's complete Yarn dependency tree and independent preview's npm tree
+now include patched build/test dependencies (source-map-js1.2.2,
+@babel/runtime-corejs3 7.26.10 and yaml1.10.3 respectively). The current browser
+files already matched clean builds; patched builds are also byte-identical.
+No live image replacement or downtime was required. Preview's obsolete2022
+node_modules and12unreferenced CRA output files were archived outside its nginx
+document root, and its current build manifest/lock/test overlay were installed.
+See [frontend checks](client/README.md) and [preview hygiene](preview-runtime/README.md)
+for complete dependency scans, clean build publication and recovery.

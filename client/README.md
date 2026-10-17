@@ -49,3 +49,18 @@ the index from the reviewed fragments. Run `yarn test:release` for these checks.
 
 Weekly catalog promotion updates only the database; it does not refresh this
 immutable client. Deploy the reviewed client image with each main-site release.
+
+## Dependency security checks
+
+Use `yarn install --frozen-lockfile --ignore-scripts` with the pinned Node builder.
+Run `yarn build`, `yarn test`, and `yarn test:release`; builds require the intended
+`FTYP_RELEASE` and refreshed release templates. Scan `yarn.lock` with
+`trivy fs --scanners vuln --include-dev-deps` (exclude node_modules/build when
+scanning the lock). Include development dependencies: the default scan missed
+the source-map-js build-tool finding fixed by the1.2.2 resolution.
+
+On October17,2026 the patched build matched every file in the deployed static
+image085e6b0cc82d byte-for-byte. Full lock scan:474package records, zero findings
+with the October16 database snapshot. No production image replacement was needed;
+future builds use the patched lock. Scan the nginx image and externally served
+shared assets separately; lock results alone do not cover those components.
