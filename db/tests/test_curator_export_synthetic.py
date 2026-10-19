@@ -13,6 +13,8 @@ def case(name,upload_code=0,ack=b'1\n',data=rows,role=b't\n',expect_error=False)
   if cmd[0]=='aws':
    assert Path(cmd[-2]).read_bytes()==((json.dumps(data)+'\n').encode() if data else b'')
    return subprocess.CompletedProcess(cmd,upload_code,b'',b'')
+  assert cmd[cmd.index('--user')+1]=='postgres'
+  assert cmd[cmd.index('-U')+1]=='ftyp_export_login'
   sql=kw['input'].decode()
   if 'pg_roles' in sql:out=role
   elif 'BEGIN READ ONLY' in sql:out=(json.dumps(data)+'\n').encode()

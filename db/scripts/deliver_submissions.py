@@ -14,7 +14,7 @@ import tempfile
 def sql_command(container):
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", container):
         raise ValueError("Invalid database container name")
-    return ["docker", "exec", "--user", "999:999",
+    return ["docker", "exec", "--user", "postgres",
             "-e", "PGPASSFILE=/run/secrets/ftyp_export_pgpass",
             "-e", "PGOPTIONS=-c statement_timeout=240000 -c lock_timeout=30000",
             "-i", container,
