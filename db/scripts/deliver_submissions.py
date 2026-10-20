@@ -119,6 +119,11 @@ def deliver(container, day, spool):
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             raise RuntimeError("Another delivery is running")
+        # Check after acquiring the shared delivery lock. A controller may have
+        # fenced the deployment while this invocation was waiting to enter.
+        # Malformed files and dangling links also require operator reconciliation.
+        if os.path.lexists("/etc/ftyp/maintenance.json"):
+            raise RuntimeError("FTYP deployment maintenance is active; delivery is deferred")
         return _deliver(container, day, path)
 
 if __name__ == "__main__":
