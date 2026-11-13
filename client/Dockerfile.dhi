@@ -1,0 +1,21 @@
+# Production DHI runtime; the public FTYP deployment already uses this vendor base.
+FROM node:24-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 AS build
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --ignore-scripts --non-interactive --registry https://registry.npmjs.org
+COPY . .
+ARG PUBLIC_URL=/submission/publication
+ENV PUBLIC_URL=$PUBLIC_URL
+ARG FTYP_RELEASE
+RUN test -n "$FTYP_RELEASE" || (echo "Set FTYP_RELEASE after reviewing the header/footer" >&2; exit 1)
+RUN FTYP_RELEASE="$FTYP_RELEASE" yarn run build
+# The shell-free production runtime listens on the existing internal port5000.
+RUN sed 's/${FTYP_LISTEN}/5000/g' nginx.template > /app/nginx.conf
+
+FROM dhi.io/nginx@sha256:00ae6cadd9309386db244a6099f887529d9fb86bf04d9b988a19df6a647eedfb
+COPY --from=build --chown=101:101 /app/build/ /usr/share/nginx/html/submission/publication/
+COPY --from=build --chown=101:101 /app/nginx.conf /etc/nginx/nginx.conf
+USER 101:101
+EXPOSE 5000
+ENTRYPOINT ["nginx"]
+CMD ["-c", "/etc/nginx/nginx.conf", "-g", "daemon off;"]

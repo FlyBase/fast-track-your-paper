@@ -26,3 +26,6 @@ yarn-error.log*
 
 # Vite HTML entry generated from the native header/footer template.
 /index.html
+
+# Content-hashed header assets generated during preparation.
+/public/ftyp-header/
