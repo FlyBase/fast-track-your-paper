@@ -55,6 +55,7 @@ test('real production select restores legacy mode, preserves storage and submits
   const form = doc.querySelector('#j2g_search_form'), input = doc.querySelector('#GeneSearch')
   assert.equal(doc.querySelector('#GeneSearchSlct').value, 'sch')
   assert.equal(input.name, 'query')
+  assert.equal(window.localStorage.getItem('ftyp-header-search-mode'), null)
   assert.equal(window.localStorage.getItem('simpleStorage'), legacy)
   input.value = 'fixture'
   assert.deepEqual(Array.from(new window.FormData(form).entries()), [['species', 'Dmel'], ['query', 'fixture']])
@@ -62,5 +63,40 @@ test('real production select restores legacy mode, preserves storage and submits
   assert.deepEqual(Array.from(new window.FormData(form).entries()), [['species', 'Dmel'], ['caller', 'genejump'], ['context', 'fixture']])
   input.value = '   '
   assert.equal(form.dispatchEvent(new window.Event('submit', { cancelable: true })), false)
+  dom.window.close()
+})
+
+
+test('alternate script URLs and inline legacy dependencies fail closed', t => {
+  const { tmp, prepare } = fixture(t), p = path.join(tmp, 'public/index.html')
+  const original = fs.readFileSync(p, 'utf8')
+  for (const tag of [
+    "<script src='/js/new.js'></script>",
+    '<script src="//flybase.org/js/new.js"></script>',
+    '<script src="https://flybase.org/js/new.js"></script>',
+    '<script src="https://unreviewed.invalid/new.js"></script>',
+    '<script>jQuery(document).ready(function () {})</script>',
+    '<script>$("#header2023").show()</script>',
+  ]) {
+    fs.writeFileSync(p, original.replace('</body>', tag + '</body>'))
+    assert.throws(prepare, /Unaudited shared script|removed header dependency/)
+  }
+})
+
+test('startup follows later shared-site preferences and blocked storage stays functional', () => {
+  const markup = fs.readFileSync(path.join(root, 'public/navbar.html'), 'utf8')
+  const script = fs.readFileSync(path.join(root, 'header/ftyp-header.js'), 'utf8')
+  const dom = new JSDOM(markup, { url: 'https://ftyp.test', runScripts: 'outside-only' })
+  const { window } = dom
+  window.localStorage.setItem('simpleStorage', JSON.stringify({FlyBase_session:{j2g:'sch'}}))
+  window.eval(script)
+  assert.equal(window.localStorage.getItem('ftyp-header-search-mode'), null)
+  window.localStorage.setItem('simpleStorage', JSON.stringify({FlyBase_session:{j2g:'j2g'}}))
+  window.eval(script)
+  assert.equal(window.document.querySelector('#GeneSearchSlct').value, 'j2g')
+  Object.defineProperty(window, 'localStorage', {get() {throw new Error('Storage blocked')}})
+  window.eval(script)
+  window.j2gSearchSelector('sch')
+  assert.equal(window.document.querySelector('#GeneSearch').name, 'query')
   dom.window.close()
 })

@@ -3,6 +3,13 @@
 #header2023 .dropdown-menu.show,
 #stack-nav .dropdown-menu.show { display: block; }
 
+/* Bootstrap 3's global .show utility otherwise overrides the native flex
+   alignment on the toggle itself. Keep .show for Bootstrap's close behavior. */
+#header2023 .nav.navbar-nav > li.dropdown > a.dropdown-toggle.show,
+#stack-nav .nav.navbar-nav > li.dropdown > a.dropdown-toggle.show {
+  display: flex !important;
+}
+
 /* Bootstrap 5.3 carousel transition classes, adapted from the vendor CSS (MIT;
    distributed bootstrap-LICENSE.txt). Retain legacy .item for theme selectors. */
 #stack-nav .carousel-inner > .carousel-item {

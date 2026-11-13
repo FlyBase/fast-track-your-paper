@@ -147,9 +147,13 @@ const build = path.resolve(process.env.FTYP_BUILD_DIR || "build");
     });
     await page.locator("#header2023 .dropdown-toggle").filter({ hasText: "Tools" }).click();
     assert((await page.locator("li.dropdown.open").count()) > 0);
+    const desktopToggle = page.locator('#header2023 .dropdown-toggle').filter({ hasText: 'Tools' });
+    assert.equal(await desktopToggle.evaluate(el => getComputedStyle(el).display), 'flex');
+    await page.screenshot({path:path.join(output, 'desktop-menu.png'), fullPage:true});
     await page.keyboard.press("ArrowDown");
     assert(await page.evaluate(() => Boolean(document.activeElement.closest(".dropdown-menu"))));
     await page.keyboard.press("Escape");
+    assert.equal(await page.locator('#header2023 li.dropdown.open').count(), 0);
     await page.locator("#GeneSearchSlct").selectOption("sch");
     assert.equal(
       await page.locator("#j2g_search_form").getAttribute("action"),
@@ -188,6 +192,13 @@ const build = path.resolve(process.env.FTYP_BUILD_DIR || "build");
     await page.locator('#hamburger').click();
     await page.waitForFunction(() => document.querySelector('#stack-nav').classList.contains('open'));
     await page.screenshot({ path: path.join(output, 'mobile.png'), fullPage: true });
+    const mobileToggle = page.locator('#stack-nav .dropdown-toggle').filter({hasText:'Tools'});
+    await mobileToggle.click();
+    assert.equal(await mobileToggle.evaluate(el => getComputedStyle(el).display), 'flex');
+    await page.screenshot({path:path.join(output, 'mobile-menu.png'), fullPage:true});
+    await page.locator('#close-stack-nav').click({position:{x:10,y:10}});
+    assert.equal(await page.locator('#stack-nav li.dropdown.open').count(), 0);
+    await page.locator('#hamburger').click();
     const carousel = page.locator('#FBcarousel-mobile');
     const activeIndex = () => carousel.locator('.carousel-inner > .item').evaluateAll(items => items.findIndex(el => el.classList.contains('active')));
     assert.equal(await activeIndex(), 1);

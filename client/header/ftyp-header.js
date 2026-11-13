@@ -20,8 +20,10 @@
     /* Storage is optional in private browsing. */
   }
 
-  window.j2gSearchSelector = (requested = mode) => {
-    mode = requested === 'sch' ? 'sch' : 'j2g'
+  window.j2gSearchSelector = (requested) => {
+    const remember = requested === 'sch' || requested === 'j2g'
+    if (remember) mode = requested
+    mode = mode === 'sch' ? 'sch' : 'j2g'
     const genejump = mode === 'j2g'
     input.placeholder = genejump ? 'Jump to Gene' : 'Search FlyBase'
     input.name = genejump ? 'context' : 'query'
@@ -38,7 +40,9 @@
         el.disabled = true
       })
     try {
-      localStorage.setItem(modeKey, mode)
+      // Startup must not shadow later shared-site choices. Remember only an
+      // explicit FTYP selection; never rewrite another application's store.
+      if (remember) localStorage.setItem(modeKey, mode)
     } catch (_) {
       /* Optional preference. */
     }

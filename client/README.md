@@ -78,7 +78,8 @@ Only desktop/mobile header dropdowns and the mobile carousel receive Bootstrap 5
 attributes. The existing native hamburger and resize handlers, Bootstrap 3 theme,
 React application and help links stay intact. The small scoped CSS bridge supplies
 Bootstrap 5 carousel transition classes without changing form styling. Search
-restores the previous stored mode, tolerates unavailable storage and prevents
+reads the shared-site mode until the user explicitly chooses an FTYP preference,
+tolerates unavailable storage and prevents
 blank/duplicate queries. No dependency is loaded from a new external CDN.
 
 Yarn remains authoritative; Vite 7.3.7 and Vitest 4.1.12 include the November 13

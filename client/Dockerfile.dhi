@@ -13,8 +13,8 @@ RUN FTYP_RELEASE="$FTYP_RELEASE" yarn run build
 RUN sed 's/${FTYP_LISTEN}/5000/g' nginx.template > /app/nginx.conf
 
 FROM dhi.io/nginx@sha256:00ae6cadd9309386db244a6099f887529d9fb86bf04d9b988a19df6a647eedfb
-COPY --from=build --chown=101:101 /app/build/ /usr/share/nginx/html/submission/publication/
-COPY --from=build --chown=101:101 /app/nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/build/ /usr/share/nginx/html/submission/publication/
+COPY --from=build /app/nginx.conf /etc/nginx/nginx.conf
 USER 101:101
 EXPOSE 5000
 ENTRYPOINT ["nginx"]

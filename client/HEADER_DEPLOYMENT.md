@@ -9,13 +9,13 @@ application source into production.
 
 Build with `client/Dockerfile.dhi`, the reviewed release argument and authoritative
 Yarn lock. Candidate image tested locally:
-`sha256:b5de3991ebaaca94bdbcc598ff425983ae368c882f72a5fa97244b30764934a3`.
+`sha256:16852235217ecbf34b007eb77b478056be151ac363939fd79822ff508c767ec1`.
 Vendor base is the same DHI nginx1.30.6 manifest as the serving production client:
 `dhi.io/nginx@sha256:00ae6cadd9309386db244a6099f887529d9fb86bf04d9b988a19df6a647eedfb`.
 No custom nginx/dependency builds or hand-maintained package backports.
 
-Eight application tests, four release checks and four header tests pass. Baseline,
-candidate-file and candidate-image browser journeys pass menu keyboard behavior,
+Eight application tests, four release checks and six header tests pass. Baseline,
+candidate-file and candidate-image browser journeys pass menu keyboard behavior and open-menu alignment,
 search select/persistence, mobile menu, carousel next/previous/indicator/no-wrap,
 invalid-contact rejection, gene lookup/selection, back navigation and synthetic
 submission. All browser network traffic is intercepted; analytics is stubbed,
@@ -39,9 +39,16 @@ the separate runtime-image work; do not treat the lock scan as image clearance.
 
 Evidence is local under
 `/data/ctabone/flybase/software_update/build/ftyp-production-header-20261113/`:
-final-build.log, final-trivy.json, image-trivy.json, base-image-trivy.json,
-image-contract.json, image-http-checks.json and the three browser evidence folders.
-Independent review findings and disposition belong in software_update tracking.
+review-fixed-build.log, final-trivy.json, image-trivy-v2.json, base-image-trivy.json,
+image-contract-v2.json, image-http-checks-v2.json and final-baseline-browser,
+final-candidate-browser and final-image-browser.
+Independent Opus5.5 review (requested medium effort) found a menu alignment defect
+and lower-severity preservation/build gaps. All were corrected; its focused
+follow-up reports no remaining material issues. The final image archive is
+`ftyp-production-header-20261113-v2.tar.gz`, SHA256
+`18ec04320be02dc415df29a64fd40b784e790afaf041822b7d04812eb6b854a4`.
+Earlier candidate b5de3991 and its archive are superseded; do not deploy them.
+Review evidence/disposition is retained in software_update tracking.
 
 ## Scoped rollout to prepare after acceptance
 

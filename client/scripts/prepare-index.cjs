@@ -22,24 +22,35 @@ const retired = [
   'jquery/jquery.cookie.js',
 ]
 const retained = new Set(['google_analytics.js', 'autotrack/autotrack.js', 'recovery-maintenance.js'])
-const seen = new Map(retired.map((name) => [name, 0]))
-html = html.replace(
-  /<script\b[^>]*\bsrc="\/js\/([^"?]+)(?:\?[^"<>]*)?"[^>]*>\s*<\/script>/g,
-  (tag, name) => {
-    if (retained.has(name)) return tag
-    if (!seen.has(name)) throw new Error(`Unaudited shared script: ${name}`)
-    seen.set(name, seen.get(name) + 1)
-    return ''
-  }
-)
-for (const [name, count] of seen) {
-  if (count !== 1)
-    throw new Error(`Expected one legacy script ${name}; found ${count}`)
-}
-// Transform generated markup only. The reviewed source fragments, analytics,
-// maintenance script and native hamburger/resize handler remain unchanged.
 const dom = new JSDOM(html)
 const doc = dom.window.document
+const seen = new Map([...retired, ...retained].map((name) => [name, 0]))
+let analytics = 0
+for (const script of doc.querySelectorAll('script')) {
+  const src = script.getAttribute('src')
+  if (src === null) {
+    if (/\b(?:jQuery|simpleStorage|getFBsession|FBsession|activate_autocomplete)\b|(?:^|[^\w$])\$\s*[.(]/.test(script.textContent))
+      throw new Error('Inline script references a removed header dependency')
+    continue
+  }
+  if (src === 'https://www.google-analytics.com/analytics.js') {
+    analytics += 1
+    continue
+  }
+  // Validate DOM attributes, not HTML quote style. Absolute/protocol-relative
+  // shared URLs and every new script require a reviewed contract update.
+  const match = /^\/js\/([^?#]+)(?:\?[^#]*)?$/.exec(src)
+  const name = match && match[1]
+  if (!seen.has(name)) throw new Error(`Unaudited shared script: ${src}`)
+  seen.set(name, seen.get(name) + 1)
+  if (!retained.has(name)) script.remove()
+}
+for (const [name, count] of seen) {
+  if (count !== 1) throw new Error(`Expected one legacy script ${name}; found ${count}`)
+}
+if (analytics !== 1) throw new Error('Expected one retained analytics loader')
+// Transform generated markup only. The reviewed source fragments, analytics,
+// maintenance script and native hamburger/resize handler remain unchanged.
 for (const id of ['header2023', 'stack-nav', 'j2g_search_form', 'GeneSearch', 'GeneSearchSlct']) {
   if (doc.querySelectorAll('#' + id).length !== 1)
     throw new Error('Expected one production header element: ' + id)
