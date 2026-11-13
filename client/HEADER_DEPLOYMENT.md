@@ -85,3 +85,82 @@ Review evidence/disposition is retained in software_update tracking.
 
 Production analytics modernization is a separate decision. Removing analytics was
 authorized only for the private preview.
+
+## November 13 vendor reconciliation and preflight
+
+Chris authorized source merges, vendor investigation and rollout preparation,
+with an explicit checkpoint **before any production deployment**. These steps do
+not change the serving image or authorize the commands below to run yet.
+
+The two raw high findings were checked against current Docker package VEX and
+Debian/upstream records:
+
+- **CVE-2026-16742 / libsystemd0:** the vulnerable component is systemd-homed and
+  its homework helper, rather than every consumer of libsystemd. The exact
+  candidate image contains no systemd-homed, systemd-homework or homectl. This
+  supports nonapplicability to this static nginx service; it does not assert that
+  the packaged systemd source is patched. [Upstream advisory](https://github.com/systemd/systemd/security/advisories/GHSA-jm29-p7hh-vjhv).
+- **CVE-2026-54369 / libacl1:** Debian still lists this library line as vulnerable.
+  The issue needs attacker-controlled paths processed by a privileged ACL caller.
+  Nginx's direct ELF dependencies do not include libacl; the candidate config loads
+  no dynamic modules, and no setuid/setgid files are present. Fresh live runtime
+  inspection confirms only UID101 nginx master/worker, read-only root, cap-dropALL,
+  no-new-privileges and no client host mounts. These constrain exposure; retain
+  the unpatched library finding and do not claim complete reachability proof.
+  [Debian status](https://security-tracker.debian.org/tracker/CVE-2026-54369).
+
+Docker's public package VEX entries use unversioned package identifiers and cite
+Debian `no-dsa`. They are applicability statements, not proof of a vendor backport:
+[libacl1 VEX](https://raw.githubusercontent.com/docker-hardened-images/advisories/main/pkg/deb/debian/libacl1/libacl1.vex.json),
+[libsystemd0 VEX](https://raw.githubusercontent.com/docker-hardened-images/advisories/main/pkg/deb/debian/libsystemd0/libsystemd0.vex.json).
+Raw scanner results and fleet monitoring remain unchanged.
+
+Registry checks and local scans at16:12–16:15UTC found:
+
+| Vendor tag | Resolved index digest | Version | Raw result |
+| --- | --- | --- | --- |
+| `1.30-debian13` | `sha256:99a910ff655749239e57ba05a335a39fb578f6a08fe169db2172b1edf4ad1094` |1.30.6, November4rebuild |Same60findings, including both highs |
+| `1-debian13` | `sha256:acb2db8f35512cf8628eaab974b4f803e320cfd260e8f795684d97b1b394f361` |1.31.8, November4rebuild |Same60findings, including both highs |
+
+Neither inspected newer image resolves these two findings. Retain the tested
+16852235frontend candidate for this scoped rollout; track vendor-base refresh
+separately when its patch/compatibility benefit is established. No custom package
+backports or vulnerability suppressions were introduced.
+
+At16:15:29UTC, a read-only render of the canonical production Compose model with
+only an in-memory `FTYP_CLIENT_IMAGE` override proved the **only model difference
+is `services.client.image`**. Canonical files were not written. Current client is
+d839c650 (image69f184db), proxy926a61e (image4553492f); old client image is present,
+maintenance marker absent, hardening intact. Recheck these facts at execution.
+Evidence: local `build/ftyp-predeploy-20261113/compose-preflight.json`, image
+inventories, current registry resolutions, raw scans and retrieved VEX files.
+
+## Concrete cutover commands — approval pending
+
+After the explicit production checkpoint, hold the existing update lock for the
+whole backup/pin/switch/verification transaction. Refuse an active maintenance
+marker. Create a fresh root-only backup directory, save the environment and both
+Compose files with ownership/modes, retain the old image, transfer/verify the
+candidate archive and check its immutable image ID. Privately test the candidate
+on the host before changing the protected environment. Replace exactly the
+existing `FTYP_CLIENT_IMAGE` value atomically; compare the rendered models again.
+
+The reviewed selected-service commands would then be:
+
+```sh
+sudo docker compose -p ftyp-dhi \
+  --env-file /etc/ftyp/production.env \
+  -f /srv/ftyp/app/compose.production.yml \
+  -f /etc/ftyp/compose.runtime.yml \
+  up -d --no-deps --no-build --pull never client
+sudo docker exec ftyp-dhi-proxy-1 nginx -t
+sudo docker exec ftyp-dhi-proxy-1 nginx -s reload
+```
+
+Verify private client readiness before proxy reload; then verify public page,
+all generated asset hashes, both admin gates, read-only form/header behavior and
+unaffected process identities. Allow for a brief frontend interruption while
+replacing the client. If readiness or validation fails, restore the backed-up
+image pin and execute the same client-only commands plus proxy test/reload to
+recover the retained old image. APIs, database generation, weekly jobs and delivery
+configuration are outside the delta. Record actual results in docker_production.
