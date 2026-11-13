@@ -1,0 +1,8 @@
+/* Bootstrap 5 behavior with the existing FlyBase Bootstrap 3 header stylesheet.
+   Scoped to the header; do not change the React form's Bootstrap 3 classes. */
+#flybase-preview-navbar .dropdown-menu.show {
+  display: block;
+}
+#flybase-preview-navbar .navbar-collapse.show {
+  display: block;
+}

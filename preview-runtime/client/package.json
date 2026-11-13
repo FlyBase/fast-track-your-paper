@@ -29,7 +29,9 @@
     "yup": "0.32.9",
     "formik-persist": "1.1.0",
     "use-clipboard-copy": "0.1.2",
-    "lodash.isempty": "4.4.0"
+    "lodash.isempty": "4.4.0",
+    "bootstrap": "5.3.9",
+    "@popperjs/core": "2.11.8"
   },
   "scripts": {
     "start": "node scripts/prepare-index.cjs && vite --host 127.0.0.1",
@@ -56,12 +58,12 @@
     "prettier": "2.8.8",
     "react-axe": "3.5.4",
     "graphql.macro": "1.4.2",
-    "vite": "7.3.6",
+    "vite": "7.3.7",
     "@vitejs/plugin-react": "5.2.0",
     "babel-plugin-macros": "3.1.0",
     "@babel/core": "7.29.7",
     "playwright": "1.63.0",
-    "vitest": "4.1.11",
+    "vitest": "4.1.12",
     "jsdom": "26.1.0",
     "@babel/plugin-transform-react-jsx": "7.29.7"
   },
