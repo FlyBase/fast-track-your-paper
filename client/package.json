@@ -28,7 +28,9 @@
     "xstate": "4.16.2",
     "yup": "0.32.9",
     "formik-persist": "1.1.0",
-    "use-clipboard-copy": "0.1.2"
+    "use-clipboard-copy": "0.1.2",
+    "bootstrap": "5.3.9",
+    "@popperjs/core": "2.11.8"
   },
   "scripts": {
     "start": "node scripts/prepare-index.cjs && vite --host 127.0.0.1",
@@ -37,7 +39,8 @@
     "format": "prettier --write 'src/**/*.{js,gql,css}'",
     "update-header-footer": "node scripts/fetch_header_footer.js",
     "postupdate-header-footer": "node scripts/assemble-index.cjs",
-    "test:release": "node --test scripts/test-release.cjs"
+    "test:release": "node --test scripts/test-release.cjs",
+    "test:header": "node --test scripts/test-header.cjs"
   },
   "browserslist": {
     "production": [
@@ -57,12 +60,12 @@
     "prettier": "2.8.8",
     "react-axe": "3.5.4",
     "graphql.macro": "1.4.2",
-    "vite": "7.3.6",
+    "vite": "7.3.7",
     "@vitejs/plugin-react": "5.2.0",
     "babel-plugin-macros": "3.1.0",
     "@babel/core": "7.29.7",
     "playwright": "1.63.0",
-    "vitest": "4.1.11",
+    "vitest": "4.1.12",
     "jsdom": "26.1.0",
     "@babel/plugin-transform-react-jsx": "7.29.7"
   },
@@ -88,7 +91,8 @@
     "path-to-regexp": "1.9.0",
     "@babel/runtime-corejs2": "7.26.10",
     "moment": "2.31.0",
-    "source-map-js": "1.2.2"
+    "source-map-js": "1.2.2",
+    "vite": "7.3.7"
   },
   "overrides": {
     "lodash": "4.18.1",
@@ -96,6 +100,7 @@
     "path-to-regexp": "1.9.0",
     "@babel/runtime-corejs2": "7.26.10",
     "moment": "2.31.0",
-    "source-map-js": "1.2.2"
+    "source-map-js": "1.2.2",
+    "vite": "7.3.7"
   }
 }

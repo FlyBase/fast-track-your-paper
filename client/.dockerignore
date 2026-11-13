@@ -5,3 +5,6 @@ index.html
 .env
 .env.*
 *.log
+
+# Generated header assets must always come from the pinned build inputs.
+public/ftyp-header
